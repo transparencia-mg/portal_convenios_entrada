@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Dashboard de Convênios de Entrada - Governo de Minas Gerais</title>
+
+    <!-- ESTILOS E BIBLIOTECAS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        :root {
+            --primary-dark: #1a3a5c;
+            --accent-red: #b93c42;
+            --background-light: #f5f7fa;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: var(--background-light); 
+            padding-bottom: 30px;
+        }
+        .container-fluid { max-width: 98% !important; margin: 0 auto; padding: 0 20px; }
+        .filter-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .form-control, .form-select {
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 13px;
+        }
+        .btn-primary-custom {
+            background: var(--primary-dark);
+            border: none;
+            padding: 8px 20px;
+            font-weight: 600;
+            border-radius: 8px;
+            color: white;
+            transition: all 0.2s;
+        }
+        .btn-primary-custom:hover { background: var(--accent-red); transform: translateY(-1px); }
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--accent-red);
+            margin-bottom: 20px;
+        }
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .table {
+            margin-bottom: 0;
+            font-size: 12px;
+        }
+        .table thead th {
+            background-color: var(--primary-dark);
+            color: white;
+            font-weight: 600;
+            padding: 10px;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .table tbody td {
+            padding: 8px 10px;
+            vertical-align: middle;
+            border-bottom: 1px solid #edf2f7;
+        }
+        .table tbody tr:hover { background-color: #f8fafc; }
+        .link-doc { color: var(--accent-red); text-decoration: none; font-weight: 500; font-size: 12px; }
+        .link-doc:hover { text-decoration: underline; }
+        .badge-status {
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .badge-vigente { background: #c6f6d5; color: #22543d; }
+        .badge-vencido { background: #fed7d7; color: #9b2c2c; }
+        .nav-tabs .nav-link {
+            font-weight: 600;
+            color: var(--primary-dark);
+            border: none;
+            padding: 10px 20px;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: var(--primary-dark);
+            color: white;
+            border-radius: 8px;
+        }
+        .pagination-container {
+            padding: 12px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+        .modal-full-custom { max-width: 90%; width: 90%; }
+        .info-card {
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .info-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 600;
+        }
+        .info-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            word-break: break-word;
+        }
+        .total-footer { background-color: #f1f5f9; font-weight: 700; }
+        .btn-sm-icon { padding: 4px 8px; font-size: 11px; margin: 2px; }
+        .orgao-link {
+            color: var(--accent-red);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .orgao-link:hover { text-decoration: underline; }
+        canvas { max-height: 280px; }
+        .loading { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid py-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0" style="color: var(--primary-dark);"><i class="material-icons me-2">account_balance</i>Dashboard de Convênios de Entrada</h3>
+        <div class="text-muted small">Dados atualizados em: <span id="dataAtualizacao"></span></div>
+    </div>
+
+    <ul class="nav nav-tabs mb-4" id="mainTabs" role="tablist">
+        <li class="nav-item"><button class="nav-link active" id="tab-visao" data-bs-toggle="tab" data-bs-target="#visaoGeral"><i class="material-icons me-1">bar_chart</i> Visão Geral</button></li>
+        <li class="nav-item"><button class="nav-link" id="tab-consulta" data-bs-toggle="tab" data-bs-target="#consultaIndividual"><i class="material-icons me-1">search</i> Consulta Individual</button></li>
+        <li class="nav-item"><button class="nav-link" id="tab-pagamento" data-bs-toggle="tab" data-bs-target="#pagamentos"><i class="material-icons me-1">payments</i> Pagamentos por Convênio</button></li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- ABA 1: VISÃO GERAL -->
+        <div class="tab-pane fade show active" id="visaoGeral">
+            <div class="filter-container">
+                <div class="row g-3">
+                    <div class="col-md-3"><label class="filter-label">Ano</label><select id="filtroAnoVG" class="form-select"><option value="todos">Todos</option><option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option></select></div>
+                    <div class="col-md-3"><label class="filter-label">Situação</label><select id="filtroSituacaoVG" class="form-select"><option value="">Todas</option><option value="VIGENTE">Vigente</option><option value="VENCIDO">Vencido</option></select></div>
+                    <div class="col-md-3"><label class="filter-label">Órgão Concedente</label><input type="text" id="filtroOrgaoVG" class="form-control" placeholder="Digite o nome..."></div>
+                    <div class="col-md-3"><button class="btn btn-primary-custom w-100" onclick="aplicarFiltrosVG()"><i class="material-icons">search</i> Filtrar</button></div>
+                </div>
+            </div>
+            <div class="row" id="metricasVG"></div>
+            <div class="row mb-3">
+                <div class="col-md-6"><canvas id="chartOrgaos"></canvas></div>
+                <div class="col-md-6"><canvas id="chartSituacao"></canvas></div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div><button class="btn btn-sm btn-outline-secondary" onclick="exportarVGCSV()"><i class="material-icons" style="font-size:16px">description</i> CSV</button>
+                <button class="btn btn-sm btn-outline-secondary ms-2" onclick="exportarVGPDF()"><i class="material-icons" style="font-size:16px">print</i> PDF</button></div>
+                <div><span id="totalOrgaosBadge" class="badge bg-secondary">0 órgãos</span></div>
+            </div>
+            <div class="table-container">
+                <div style="overflow-x: auto; max-height: 500px;">
+                    <table class="table table-hover" id="tabelaVisaoGeral">
+                        <thead><tr><th>Órgão Concedente</th><th>Total Convênios</th><th>Valor Total (R$)</th><th>Valor Concedente (R$)</th><th>Valor Proponente (R$)</th></thead>
+                        <tbody id="tbodyVG"></tbody>
+                        <tfoot id="tfootVG"></tfoot>
+                    </table>
+                </div>
+                <div id="paginacaoVG" class="pagination-container"></div>
+            </div>
+        </div>
+
+        <!-- ABA 2: CONSULTA INDIVIDUAL -->
+        <div class="tab-pane fade" id="consultaIndividual">
+            <div class="filter-container">
+                <div class="row g-2">
+                    <div class="col-md-3"><label class="filter-label">Código SIAFI</label><input type="text" id="filtroSiafiCI" class="form-control" placeholder="Ex: 9319205"></div>
+                    <div class="col-md-2"><label class="filter-label">Ano</label><select id="filtroAnoCI" class="form-select"><option value="">Todos</option><option>2026</option><option>2025</option><option>2024</option><option>2023</option><option>2022</option><option>2021</option></select></div>
+                    <div class="col-md-2"><label class="filter-label">Situação</label><select id="filtroSituacaoCI" class="form-select"><option value="">Todas</option><option>VIGENTE</option><option>VENCIDO</option></select></div>
+                    <div class="col-md-2"><label class="filter-label">Unid. Orçamentária</label><input type="text" id="filtroUOCI" class="form-control" placeholder="Código"></div>
+                    <div class="col-md-3"><label class="filter-label">Proponente</label><input type="text" id="filtroProponenteCI" class="form-control" placeholder="Nome"></div>
+                </div>
+                <div class="row g-2 mt-2">
+                    <div class="col-md-4"><label class="filter-label">Concedente</label><input type="text" id="filtroConcedenteCI" class="form-control" placeholder="Nome"></div>
+                    <div class="col-md-6"><label class="filter-label">Objeto</label><input type="text" id="filtroObjetoCI" class="form-control" placeholder="Palavra-chave"></div>
+                    <div class="col-md-2"><button class="btn btn-primary-custom w-100" onclick="aplicarFiltrosCI()"><i class="material-icons">search</i> Buscar</button></div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-12"><button class="btn btn-sm btn-outline-secondary" onclick="limparFiltrosCI()">Limpar Filtros</button>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" onclick="exportarCICSV()">Exportar CSV</button>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" onclick="exportarCIPDF()">Exportar PDF</button></div>
+                </div>
+            </div>
+            <div class="table-container">
+                <div style="overflow-x: auto; max-height: 550px;">
+                    <table class="table table-hover" id="tabelaConsulta">
+                        <thead><tr><th>Código SIAFI</th><th>Instrumento</th><th>Título</th><th>Proponente</th><th>Concedente</th><th>Situação</th><th>Valor Total</th><th>Ações</th></thead>
+                        <tbody id="tbodyCI"></tbody>
+                    </table>
+                </div>
+                <div id="paginacaoCI" class="pagination-container"></div>
+            </div>
+        </div>
+
+        <!-- ABA 3: PAGAMENTOS -->
+        <div class="tab-pane fade" id="pagamentos">
+            <div class="filter-container">
+                <div class="row g-2">
+                    <div class="col-md-2"><label class="filter-label">Nº SIAFI</label><input type="text" id="filtroSiafiPag" class="form-control" placeholder="Código SIAFI"></div>
+                    <div class="col-md-2"><label class="filter-label">Ano Empenho</label><select id="filtroAnoEmpenhoPag" class="form-select"><option value="">Todos</option><option>2026</option><option>2025</option><option>2024</option><option>2023</option><option>2022</option><option>2021</option></select></div>
+                    <div class="col-md-2"><label class="filter-label">Nº Empenho</label><input type="text" id="filtroNumEmpenhoPag" class="form-control" placeholder="Número"></div>
+                    <div class="col-md-2"><label class="filter-label">Unid. Orçamentária</label><input type="text" id="filtroUOPag" class="form-control" placeholder="Código UO"></div>
+                    <div class="col-md-2"><label class="filter-label">Situação</label><select id="filtroSituacaoPag" class="form-select"><option value="">Todas</option><option>VIGENTE</option><option>VENCIDO</option></select></div>
+                    <div class="col-md-2"><button class="btn btn-primary-custom w-100" onclick="buscarPagamentos()"><i class="material-icons">search</i> Buscar</button></div>
+                </div>
+                <div class="row g-2 mt-2">
+                    <div class="col-md-4"><label class="filter-label">Proponente</label><input type="text" id="filtroProponentePag" class="form-control" placeholder="Nome"></div>
+                    <div class="col-md-4"><label class="filter-label">Concedente</label><input type="text" id="filtroConcedentePag" class="form-control" placeholder="Nome"></div>
+                    <div class="col-md-4"><button class="btn btn-sm btn-outline-secondary" onclick="exportarPagCSV()">Exportar CSV</button>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" onclick="exportarPagPDF()">Exportar PDF</button></div>
+                </div>
+            </div>
+            <div class="row mb-3" id="resumoPagamento"></div>
+            <div class="table-container">
+                <div style="overflow-x: auto; max-height: 500px;">
+                    <table class="table table-hover" id="tabelaPagamentos">
+                        <thead><tr><th>Nº SIAFI</th><th>Nº Empenho</th><th>Ano</th><th>Data Empenho</th><th>Credor</th><th>CNPJ/CPF</th><th>Valor Empenhado</th><th>Valor Liquidado</th><th>Valor Pago</th><th>% Pago</th><th>Ações</th></thead>
+                        <tbody id="tbodyPag"></tbody>
+                        <tfoot id="tfootPag"></tfoot>
+                    </table>
+                </div>
+                <div id="paginacaoPag" class="pagination-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DETALHES CONVÊNIO -->
+<div class="modal fade" id="modalConvenio" tabindex="-1">
+    <div class="modal-dialog modal-full-custom modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header" style="background: var(--primary-dark); color: white;">
+                <h5 class="modal-title"><i class="material-icons me-2">description</i>Detalhes Completos do Convênio</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalConvenioBody"></div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DETALHES EXECUÇÃO -->
+<div class="modal fade" id="modalExecucao" tabindex="-1">
+    <div class="modal-dialog modal-full-custom modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header" style="background: var(--primary-dark); color: white;">
+                <h5 class="modal-title"><i class="material-icons me-2">receipt</i>Detalhes da Execução</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalExecucaoBody"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // GLOBAIS
+    const BASE_URL_CONV = 'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/main/dataset/data/convenios.csv';
+    let dadosConvenios = [];
+    let dadosExecucao = {};
+    let conveniosFiltrados = [];
+    let pagamentosFiltrados = [];
+    let chartOrgaos = null, chartSituacao = null;
+    let paginaAtualVG = 1, itensPorPaginaVG = 8;
+    let paginaAtualCI = 1, itensPorPaginaCI = 10;
+    let paginaAtualPag = 1, itensPorPaginaPag = 10;
+
+    document.getElementById('dataAtualizacao').innerText = new Date().toLocaleDateString('pt-BR');
+
+    async function carregarDados() {
+        showLoading(true);
+        await carregarConvenios();
+        for (let ano of ['2026','2025','2024','2023','2022','2021']) await carregarExecucaoPorAno(ano);
+        aplicarFiltrosVG();
+        aplicarFiltrosCI();
+        showLoading(false);
+    }
+
+    function showLoading(show) {
+        let el = document.getElementById('loading');
+        if (show && !el) {
+            el = document.createElement('div');
+            el.id = 'loading';
+            el.className = 'loading';
+            el.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando...</span></div><div class="mt-2">Carregando dados...</div>';
+            document.body.appendChild(el);
+        } else if (!show && el) el.remove();
+    }
+
+    function carregarConvenios() {
+        return new Promise((resolve) => {
+            Papa.parse(BASE_URL_CONV, {
+                download: true, header: true, delimiter: ';', skipEmptyLines: true,
+                complete: function(res) {
+                    dadosConvenios = res.data.map(row => ({ ...row,
+                        valor_total_convenio_r: parseFloat((row.valor_total_convenio_r || '0').replace(',', '.')) || 0,
+                        valor_concedente_r: parseFloat((row.valor_concedente_r || '0').replace(',', '.')) || 0,
+                        valor_proponente_r: parseFloat((row.valor_proponente_r || '0').replace(',', '.')) || 0,
+                        ano_conv: row.data_assinatura ? row.data_assinatura.split('/')[2] : ''
+                    }));
+                    resolve();
+                }
+            });
+        });
+    }
+
+    async function carregarExecucaoPorAno(ano) {
+        if (dadosExecucao[ano]) return;
+        const url = `https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/main/dataset/data/execucao${ano}.csv`;
+        return new Promise((resolve) => {
+            Papa.parse(url, {
+                download: true, header: true, delimiter: ';', skipEmptyLines: true,
+                complete: function(res) {
+                    dadosExecucao[ano] = (res.data || []).map(row => ({
+                        uo: row.uo, tipo_siafi: row.tipo_siafi, no_siafi: row.no_siafi, ano_empenho: row.ano_empenho,
+                        no_empenho: row.no_empenho, ue: row.ue, data_empenho: row.data_empenho, acao: row.acao,
+                        c: row.c, g: row.g, m: row.m, ed: row.ed, id: row.id, natureza_dea: row.natureza_dea,
+                        ed_dea: row.ed_dea, f: row.f, p: row.p,
+                        valor_empenhado_r: parseFloat((row.valor_empenhado_r || '0').replace(',', '.')) || 0,
+                        valor_liquidado_r: parseFloat((row.valor_liquidado_r || '0').replace(',', '.')) || 0,
+                        valor_pago_r: parseFloat((row.valor_pago_r || '0').replace(',', '.')) || 0,
+                        cnpj_cpf_credor: row.cnpj_cpf_credor, razao_social_credor: row.razao_social_credor,
+                        despesa_empenhada: row.despesa_empenhada, despesa_liquidada: row.despesa_liquidada,
+                        pago_orcamentario: row.pago_orcamentario, rpnp_inscrito: row.rpnp_inscrito,
+                        rpnp_cancelado: row.rpnp_cancelado, rpnp_restabelecido: row.rpnp_restabelecido,
+                        rpnp_liquidado: row.rpnp_liquidado, rpnp_pago: row.rpnp_pago, rpnp_anulado_pago: row.rpnp_anulado_pago,
+                        rpp_inscrito: row.rpp_inscrito, rpp_cancelado: row.rpp_cancelado, rpp_restabelecido: row.rpp_restabelecido,
+                        rpp_pago: row.rpp_pago, rpp_anulado_pago: row.rpp_anulado_pago,
+                        retido_rpnp_e_rpp: row.retido_rpnp_e_rpp, rpnp_anulado_retencao: row.rpnp_anulado_retencao,
+                        rpp_anulado_retencao: row.rpp_anulado_retencao
+                    }));
+                    resolve();
+                },
+                error: () => { dadosExecucao[ano] = []; resolve(); }
+            });
+        });
+    }
+
+    function obterPagamentos(filtros) {
+        let todos = [];
+        const anos = filtros.anoEmpenho ? [filtros.anoEmpenho] : ['2026','2025','2024','2023','2022','2021'];
+        anos.forEach(ano => {
+            if (dadosExecucao[ano]) {
+                let execs = [...dadosExecucao[ano]];
+                if (filtros.siafi) execs = execs.filter(e => e.no_siafi === filtros.siafi);
+                if (filtros.numEmpenho) execs = execs.filter(e => e.no_empenho === filtros.numEmpenho);
+                if (filtros.uo) execs = execs.filter(e => e.uo === filtros.uo);
+                todos.push(...execs);
+            }
+        });
+        return todos;
+    }
+
+    // VISÃO GERAL
+    function agruparPorConcedente(dados) {
+        const mapa = new Map();
+        dados.forEach(c => {
+            const concedente = c.concedente || 'Não informado';
+            if (!mapa.has(concedente)) mapa.set(concedente, { concedente, totalConv: 0, valorTotal: 0, valorConcedente: 0, valorProponente: 0 });
+            const item = mapa.get(concedente);
+            item.totalConv++; item.valorTotal += c.valor_total_convenio_r;
+            item.valorConcedente += c.valor_concedente_r; item.valorProponente += c.valor_proponente_r;
+        });
+        return Array.from(mapa.values()).sort((a,b) => b.valorTotal - a.valorTotal);
+    }
+
+    function aplicarFiltrosVG() {
+        let filtrados = [...dadosConvenios];
+        const ano = document.getElementById('filtroAnoVG').value;
+        if (ano !== 'todos') filtrados = filtrados.filter(c => c.ano_conv === ano);
+        const situacao = document.getElementById('filtroSituacaoVG').value;
+        if (situacao) filtrados = filtrados.filter(c => c.situacao === situacao);
+        const orgaoBusca = document.getElementById('filtroOrgaoVG').value.toLowerCase();
+        if (orgaoBusca) filtrados = filtrados.filter(c => (c.concedente || '').toLowerCase().includes(orgaoBusca));
+
+        const agrupado = agruparPorConcedente(filtrados);
+        const totalGeral = agrupado.reduce((acc, i) => acc + i.valorTotal, 0);
+        const totalConv = agrupado.reduce((acc,i) => acc + i.totalConv, 0);
+        
+        document.getElementById('metricasVG').innerHTML = `
+            <div class="col-md-3"><div class="metric-card"><div class="metric-value">${totalConv}</div><div>Total Convênios</div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-value">R$ ${totalGeral.toLocaleString('pt-BR',{minFractionDigits:2})}</div><div>Valor Total</div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-value">${agrupado.length}</div><div>Órgãos Concedentes</div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-value">${filtrados.length}</div><div>Convênios no Período</div></div></div>
+        `;
+        document.getElementById('totalOrgaosBadge').innerText = `${agrupado.length} órgãos`;
+
+        const topOrgaos = agrupado.slice(0,6);
+        const ctxOrgaos = document.getElementById('chartOrgaos').getContext('2d');
+        if (chartOrgaos) chartOrgaos.destroy();
+        chartOrgaos = new Chart(ctxOrgaos, {
+            type: 'bar', data: { labels: topOrgaos.map(o => o.concedente.length>20?o.concedente.substring(0,20)+'...':o.concedente),
+            datasets: [{ label: 'Valor Total (R$ Milhões)', data: topOrgaos.map(o => o.valorTotal/1e6), backgroundColor: '#1a3a5c' }] },
+            options: { responsive: true, maintainAspectRatio: true }
+        });
+
+        const situacaoCount = { Vigente: filtrados.filter(c=>c.situacao==='VIGENTE').length, Vencido: filtrados.filter(c=>c.situacao==='VENCIDO').length };
+        const ctxSit = document.getElementById('chartSituacao').getContext('2d');
+        if (chartSituacao) chartSituacao.destroy();
+        chartSituacao = new Chart(ctxSit, { type: 'pie', data: { labels: ['Vigente', 'Vencido'], datasets: [{ data: [situacaoCount.Vigente, situacaoCount.Vencido], backgroundColor: ['#28a745','#dc3545'] }] } });
+
+        paginacaoVG(agrupado);
+    }
+
+    function paginacaoVG(dados) {
+        const inicio = (paginaAtualVG-1)*itensPorPaginaVG;
+        const paginaDados = dados.slice(inicio, inicio+itensPorPaginaVG);
+        document.getElementById('tbodyVG').innerHTML = paginaDados.map(o => `
+            <tr><td><a class="orgao-link" onclick="irParaConsulta('${o.concedente.replace(/'/g, "\\'")}')">${o.concedente}</a></td>
+            <td>${o.totalConv}</td><td>R$ ${o.valorTotal.toLocaleString('pt-BR',{minFractionDigits:2})}</td>
+            <td>R$ ${o.valorConcedente.toLocaleString('pt-BR',{minFractionDigits:2})}</td>
+            <td>R$ ${o.valorProponente.toLocaleString('pt-BR',{minFractionDigits:2})}</td></tr>
+        `).join('');
+        const totalGeral = dados.reduce((a,b)=>a+b.valorTotal,0);
+        document.getElementById('tfootVG').innerHTML = `<tr class="total-footer"><td><strong>Total Geral</strong></td><td><strong>${dados.reduce((a,b)=>a+b.totalConv,0)}</strong></td><td><strong>R$ ${totalGeral.toLocaleString('pt-BR',{minFractionDigits:2})}</strong></td><td colspan="2"></td></tr>`;
+        const totalPag = Math.ceil(dados.length/itensPorPaginaVG);
+        document.getElementById('paginacaoVG').innerHTML = `<div class="d-flex gap-2"><button class="btn btn-sm btn-outline-secondary" onclick="paginaAtualVG--; aplicarFiltrosVG()" ${paginaAtualVG===1?'disabled':''}>Anterior</button><span>Pág ${paginaAtualVG} de ${totalPag||1}</span><button class="btn btn-sm btn-outline-secondary" onclick="paginaAtualVG++; aplicarFiltrosVG()" ${paginaAtualVG===totalPag?'disabled':''}>Próximo</button></div>`;
+    }
+
+    window.irParaConsulta = function(concedente) {
+        document.getElementById('tab-consulta').click();
+        setTimeout(() => {
+            document.getElementById('filtroConcedenteCI').value = concedente;
+            aplicarFiltrosCI();
+        }, 300);
+    };
+
+    // CONSULTA INDIVIDUAL
+    function aplicarFiltrosCI() {
+        let filtrados = [...dadosConvenios];
+        if (document.getElementById('filtroSiafiCI').value) filtrados = filtrados.filter(c => c.codigo_siafi === document.getElementById('filtroSiafiCI').value);
+        if (document.getElementById('filtroAnoCI').value) filtrados = filtrados.filter(c => c.ano_conv === document.getElementById('filtroAnoCI').value);
+        if (document.getElementById('filtroSituacaoCI').value) filtrados = filtrados.filter(c => c.situacao === document.getElementById('filtroSituacaoCI').value);
+        if (document.getElementById('filtroUOCI').value) filtrados = filtrados.filter(c => c.unidade_orcamentaria === document.getElementById('filtroUOCI').value);
+        if (document.getElementById('filtroProponenteCI').value) filtrados = filtrados.filter(c => (c.proponente||'').toLowerCase().includes(document.getElementById('filtroProponenteCI').value.toLowerCase()));
+        if (document.getElementById('filtroConcedenteCI').value) filtrados = filtrados.filter(c => (c.concedente||'').toLowerCase().includes(document.getElementById('filtroConcedenteCI').value.toLowerCase()));
+        if (document.getElementById('filtroObjetoCI').value) filtrados = filtrados.filter(c => (c.objeto||'').toLowerCase().includes(document.getElementById('filtroObjetoCI').value.toLowerCase()));
+        
+        conveniosFiltrados = filtrados;
+        const inicio = (paginaAtualCI-1)*itensPorPaginaCI;
+        const paginaDados = conveniosFiltrados.slice(inicio, inicio+itensPorPaginaCI);
+        
+        document.getElementById('tbodyCI').innerHTML = paginaDados.map(c => `
+            <tr>
+                <td>${c.codigo_siafi || '-'}</td>
+                <td>${c.instrumento || '-'}</td>
+                <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis;">${c.titulo || '-'}</td>
+                <td style="max-width:150px;">${c.proponente || '-'}</td>
+                <td style="max-width:150px;">${c.concedente || '-'}</td>
+                <td><span class="badge-status ${c.situacao==='VIGENTE'?'badge-vigente':'badge-vencido'}">${c.situacao||'-'}</span></td>
+                <td>R$ ${(c.valor_total_convenio_r||0).toLocaleString('pt-BR',{minFractionDigits:2})}</td>
+                <td><button class="btn btn-sm btn-outline-primary" onclick='verDetalhesCompletos(${JSON.stringify(c).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size:16px">visibility</i></button></td>
+             </tr>
+        `).join('');
+        
+        const totalPag = Math.ceil(conveniosFiltrados.length/itensPorPaginaCI);
+        document.getElementById('paginacaoCI').innerHTML = `<div class="d-flex gap-2"><button class="btn btn-sm btn-outline-secondary" onclick="paginaAtualCI--; aplicarFiltrosCI()" ${paginaAtualCI===1?'disabled':''}>Anterior</button><span>Pág ${paginaAtualCI} de ${totalPag||1}</span><button class="btn btn-sm btn-outline-secondary" onclick="paginaAtualCI++; aplicarFiltrosCI()" ${paginaAtualCI===totalPag?'disabled':''}>Próximo</button></div>`;
+    }
+
+    window.verDetalhesCompletos = function(conv) {
+        const campos = ['unidade_orcamentaria','codigo_sigcon','codigo_uniao','codigo_plano_de_trabalho','codigo_siafi','sei','instrumento','titulo','proponente','concedente','esfera_concedente','objeto','situacao','tipo_de_contrapartida','data_assinatura','data_publicacao','inicio_vigencia','termino_vigencia','valor_proponente_r','valor_concedente_r','valor_total_convenio_r','fim_vigencia_inicial','inteiro_teor_do_instrumento_transferegov','inteiro_teor_do_instrumento_sigcon','complementacao_do_instrumento_1','complementacao_do_instrumento_2','1degtermo_aditivo','2deg_termo_aditivo','3deg_termo_aditivo','4deg_termo_aditivo','doc_autorizativo','name','id_y','drive_resource'];
+        let html = '<div class="row">';
+        campos.forEach(campo => {
+            let valor = conv[campo] || '-';
+            if (campo.includes('instrumento') && valor.includes('http')) valor = `<a href="${valor}" target="_blank">${valor.substring(0,50)}...</a>`;
+            html += `<div class="col-md-6"><div class="info-card"><div class="info-label">${campo.replace(/_/g,' ').toUpperCase()}</div><div class="info-value">${valor}</div></div></div>`;
+        });
+        html += '</div>';
+        document.getElementById('modalConvenioBody').innerHTML = html;
+        new bootstrap.Modal(document.getElementById('modalConvenio')).show();
+    };
+
+    // PAGAMENTOS
+    window.buscarPagamentos = async function() {
+        const filtros = {
+            siafi: document.getElementById('filtroSiafiPag').value,
+            anoEmpenho: document.getElementById('filtroAnoEmpenhoPag').value,
+            numEmpenho: document.getElementById('filtroNumEmpenhoPag').value,
+            uo: document.getElementById('filtroUOPag').value
+        };
+        let pagamentos = obterPagamentos(filtros);
+        
+        const situacao = document.getElementById('filtroSituacaoPag').value;
+        const proponente = document.getElementById('filtroProponentePag').value.toLowerCase();
+        const concedente = document.getElementById('filtroConcedentePag').value.toLowerCase();
+        
+        if (situacao || proponente || concedente) {
+            const convFiltrados = dadosConvenios.filter(c => {
+                if (situacao && c.situacao !== situacao) return false;
+                if (proponente && !(c.proponente||'').toLowerCase().includes(proponente)) return false;
+                if (concedente && !(c.concedente||'').toLowerCase().includes(concedente)) return false;
+                return true;
+            });
+            const siafisValidos = new Set(convFiltrados.map(c => c.codigo_siafi));
+            pagamentos = pagamentos.filter(p => siafisValidos.has(p.no_siafi));
+        }
+        
+        pagamentosFiltrados = pagamentos;
+        const totalEmpenhado = pagamentos.reduce((s,p)=>s+p.valor_empenhado_r,0);
+        const totalPago = pagamentos.reduce((s,p)=>s+p.valor_pago_r,0);
+        document.getElementById('resumoPagamento').innerHTML = `
+            <div class="col-md-4"><div class="metric-card"><div class="metric-value">R$ ${totalEmpenhado.toLocaleString('pt-BR',{minFractionDigits:2})}</div><div>Total Empenhado</div></div></div>
+            <div class="col-md-4"><div class="metric-card"><div class="metric-value">R$ ${totalPago.toLocaleString('pt-BR',{minFractionDigits:2})}</div><div>Total Pago</div></div></div>
+            <div class="col-md-4"><div class="metric-card"><div class="metric-value">${pagamentos.length}</div><div>Empenhos</div></div></div>
+        `;
+        
+        const inicio = (paginaAtualPag-1)*itensPorPaginaPag;
+        const pagina = pagamentosFiltrados.slice(inicio, inicio+itensPorPaginaPag);
+        document.getElementById('tbodyPag').innerHTML = pagina.map(p => `
+            <tr>
+                <td>${p.no_siafi||'-'}</td><td>${p.no_empenho||'-'}</td><td>${p.ano_empenho||'-'}</td>
+                <td>${p.data_empenho||'-'}</td><td>${(p.razao_social_credor||'').substring(0,30)}</td>
+                <td>${p.cnpj_cpf_credor||'-'}</td><td>R$ ${(p.valor_empenhado_r||0).toLocaleString('pt-BR')}</td>
+                <td>R$ ${(p.valor_liquidado_r||0).toLocaleString('pt-BR')}</td>
+                <td>R$ ${(p.valor_pago_r||0).toLocaleString('pt-BR')}</td>
+                <td>${p.valor_empenhado_r ? ((p.valor_pago_r/p.valor_empenhado_r)*100).toFixed(1)+'%' : '0%'}</td>
+                <td><button class="btn btn-sm btn-outline-primary" onclick='verDetalhesExecucao(${JSON.stringify(p).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size:16px">visibility</i></button></td>
+            </tr>
+        `).join('');
+        
+        const totalPaginas = Math.ceil(pagamentosFiltrados.length/itensPorPaginaPag);
+        document.getElementById('tfootPag').innerHTML = `<tr class="total-footer"><td colspan="6"><strong>Totais</strong></td>
+            <td><strong>R$ ${pagamentosFiltrados.reduce((a,b)=>a+b.valor_empenhado_r,0).toLocaleString('pt-BR')}</strong></td>
+            <td><strong>R$ ${pagamentosFiltrados.reduce((a,b)=>a+b.valor_liquidado_r,0).toLocaleString('pt-BR')}</strong></td>
+            <td><strong>R$ ${pagamentosFiltrados.reduce((a,b)=>a+b.valor_pago_r,0).toLocaleString('pt-BR')}</strong></td>
+            <td colspan="2"></td></tr>`;
+        document.getElementById('paginacaoPag').innerHTML = `<div class="d-flex gap-2"><button class="btn btn-sm btn-outline-secondary" onclick="paginaAtualPag--; buscarPagamentos()" ${paginaAtualPag===1?'disabled':''}>Anterior</button><span>Pág ${paginaAtualPag} de ${totalPaginas||1}</span><button class="btn btn-sm btn-outline-secondary" onclick="paginaAtualPag++; buscarPagamentos()" ${paginaAtualPag===totalPaginas?'disabled':''}>Próximo</button></div>`;
+    };
+
+    window.verDetalhesExecucao = function(exec) {
+        const campos = ['uo','tipo_siafi','no_siafi','ano_empenho','no_empenho','ue','data_empenho','acao','c','g','m','ed','id','natureza_dea','ed_dea','f','p','valor_empenhado_r','valor_liquidado_r','valor_pago_r','cnpj_cpf_credor','razao_social_credor','despesa_empenhada','despesa_liquidada','pago_orcamentario','rpnp_inscrito','rpnp_cancelado','rpnp_restabelecido','rpnp_liquidado','rpnp_pago','rpnp_anulado_pago','rpp_inscrito','rpp_cancelado','rpp_restabelecido','rpp_pago','rpp_anulado_pago','retido_rpnp_e_rpp','rpnp_anulado_retencao','rpp_anulado_retencao'];
+        let html = '<div class="row">';
+        campos.forEach(campo => {
+            let valor = exec[campo] !== undefined ? exec[campo] : '-';
+            if (typeof valor === 'number') valor = valor.toLocaleString('pt-BR',{minFractionDigits:2});
+            html += `<div class="col-md-4"><div class="info-card"><div class="info-label">${campo.replace(/_/g,' ').toUpperCase()}</div><div class="info-value">${valor}</div></div></div>`;
+        });
+        html += '</div>';
+        document.getElementById('modalExecucaoBody').innerHTML = html;
+        new bootstrap.Modal(document.getElementById('modalExecucao')).show();
+    };
+
+    // EXPORTAÇÕES
+    function exportarVGCSV() { exportarTabelaCSV('tabelaVisaoGeral', 'visao_geral_orgaos'); }
+    function exportarVGPDF() { exportarTabelaPDF('tabelaVisaoGeral', 'visao_geral_orgaos'); }
+    function exportarCICSV() { exportarTabelaCSV('tabelaConsulta', 'consulta_convenios'); }
+    function exportarCIPDF() { exportarTabelaPDF('tabelaConsulta', 'consulta_convenios'); }
+    function exportarPagCSV() { exportarTabelaCSV('tabelaPagamentos', 'pagamentos_convenios'); }
+    function exportarPagPDF() { exportarTabelaPDF('tabelaPagamentos', 'pagamentos_convenios'); }
+
+    function exportarTabelaCSV(tableId, fileName) {
+        const table = document.getElementById(tableId);
+        let csv = [];
+        const rows = table.querySelectorAll('tr');
+        rows.forEach(row => {
+            const cols = row.querySelectorAll('th, td');
+            const rowData = Array.from(cols).map(col => `"${col.innerText.replace(/"/g, '""')}"`).join(';');
+            csv.push(rowData);
+        });
+        const blob = new Blob(['\uFEFF' + csv.join('\n')], {type: 'text/csv;charset=utf-8;'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${fileName}_${new Date().toISOString().slice(0,10)}.csv`;
+        link.click();
+    }
+
+    function exportarTabelaPDF(tableId, fileName) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'landscape' });
+        const table = document.getElementById(tableId);
+        const rows = [];
+        table.querySelectorAll('tr').forEach(tr => {
+            const row = [];
+            tr.querySelectorAll('th, td').forEach(cell => row.push(cell.innerText));
+            if (row.some(c => c.trim())) rows.push(row);
+        });
+        doc.autoTable({ head: [rows[0]], body: rows.slice(1), styles: { fontSize: 8 }, headStyles: { fillColor: [26,58,92] } });
+        doc.save(`${fileName}_${new Date().toISOString().slice(0,10)}.pdf`);
+    }
+
+    window.aplicarFiltrosVG = aplicarFiltrosVG;
+    window.aplicarFiltrosCI = aplicarFiltrosCI;
+    window.limparFiltrosCI = function() {
+        ['filtroSiafiCI','filtroAnoCI','filtroSituacaoCI','filtroUOCI','filtroProponenteCI','filtroConcedenteCI','filtroObjetoCI'].forEach(id => document.getElementById(id).value = '');
+        paginaAtualCI = 1;
+        aplicarFiltrosCI();
+    };
+
+    carregarDados();
+</script>
+</body>
+</html>
