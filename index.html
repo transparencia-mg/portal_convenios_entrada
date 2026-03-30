@@ -175,18 +175,15 @@ function formatarData(dataStr) {
 }
 
 function getLinkInteiroTeor(item) {
+    // Primeiro verifica se tem link no SIGCON
     if (item.inteiro_teor_do_instrumento_sigcon && item.inteiro_teor_do_instrumento_sigcon !== '' && item.inteiro_teor_do_instrumento_sigcon !== '#') {
         return item.inteiro_teor_do_instrumento_sigcon;
     }
+    // Depois verifica se tem link no TransfereGov
     if (item.inteiro_teor_do_instrumento_transferegov && item.inteiro_teor_do_instrumento_transferegov !== '' && item.inteiro_teor_do_instrumento_transferegov !== '#') {
         return item.inteiro_teor_do_instrumento_transferegov;
     }
-    if (item.codigo_sigcon && item.codigo_sigcon !== '' && item.codigo_sigcon !== '#') {
-        return `https://www.sigcon.mg.gov.br/${item.codigo_sigcon}`;
-    }
-    if (item.codigo_siafi && item.codigo_siafi !== '' && item.codigo_siafi !== '#') {
-        return `https://www.transferegov.mg.gov.br/convenio/${item.codigo_siafi}`;
-    }
+    // Se não tiver link nas colunas, retorna null
     return null;
 }
 
@@ -243,6 +240,7 @@ async function carregarDados() {
             const texto = await arrecResp.text();
             arrecadacaoData = parseCSV(texto);
             console.log(`Arrecadação: ${arrecadacaoData.length}`);
+            console.log('Colunas arrecadação:', Object.keys(arrecadacaoData[0] || {}));
         }
         renderizarFormalizados();
         renderizarIndividual();
@@ -326,7 +324,7 @@ function renderizarFormalizados() {
             <div class="col-md-3"><div class="metric-card"><div class="metric-header">Valor Total</div><div class="metric-body"><div class="metric-value">${formatarMoeda(totalGeral)}</div></div></div></div>
         </div>
         <div class="table-container"><table class="table"><thead><tr><th class="${ordenacaoFormalizados.coluna === 'proponente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'proponente')">Proponente</th><th class="text-end ${ordenacaoFormalizados.coluna === 'convenios' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'convenios')">Qtd Convênios</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorProponente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorProponente')">Valor Proponente</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorConcedente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorConcedente')">Valor Concedente</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorTotal' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorTotal')">Valor Total</th></tr></thead>
-        <tbody>${dadosPagina.map(item => `<tr><td><a href="#" class="orgao-link" onclick="irParaConsultaIndividual('${item.proponente.replace(/'/g, "\\'")}')">${item.proponente}</a></td><td class="text-end">${item.convenios}</td><td class="text-end">${formatarMoeda(item.valorProponente)}</td><td class="text-end">${formatarMoeda(item.valorConcedente)}</td><td class="text-end">${formatarMoeda(item.valorTotal)}</td></tr>`).join('')}</tbody></table>${renderizarPaginacao('formalizados', totalRegistros)}</div>`;
+        <tbody>${dadosPagina.map(item => `<td><a href="#" class="orgao-link" onclick="irParaConsultaIndividual('${item.proponente.replace(/'/g, "\\'")}')">${item.proponente}</a></td><td class="text-end">${item.convenios}</td><td class="text-end">${formatarMoeda(item.valorProponente)}</td><td class="text-end">${formatarMoeda(item.valorConcedente)}</td><td class="text-end">${formatarMoeda(item.valorTotal)}</td></tr>`).join('')}</tbody></table>${renderizarPaginacao('formalizados', totalRegistros)}</div>`;
     container.innerHTML = html;
 }
 
@@ -429,15 +427,17 @@ function renderizarIndividual() {
             </div>
         </div>
         <div class="table-container"><table class="table" style="min-width: 1200px;"><thead><tr>${colunasExibidas.map(col => `<th class="${ordenacaoIndividual.coluna === col ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th class="text-end ${ordenacaoIndividual.coluna === 'valor_proponente' ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', 'valor_proponente')">VALOR PROPONENTE</th><th class="text-end ${ordenacaoIndividual.coluna === 'valor_concedente' ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', 'valor_concedente')">VALOR CONCEDENTE</th><th class="text-end ${ordenacaoIndividual.coluna === 'valor_total_convenio' ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', 'valor_total_convenio')">VALOR TOTAL</th><th>AÇÕES</th></tr></thead>
-        <tbody>${dadosPagina.map(item => `<tr>${colunasExibidas.map(col => {
-            let valor = item[col] || '-';
-            if (col.includes('data')) valor = formatarData(valor);
-            if (col === 'codigo_siafi' && valor !== '-') {
-                const link = getLinkInteiroTeor(item);
-                return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
-            }
-            return `<td>${valor}</td>`;
-        }).join('')}<td class="text-end">${formatarMoeda(item.valor_proponente)}</td><td class="text-end">${formatarMoeda(item.valor_concedente)}</td><td class="text-end">${formatarMoeda(item.valor_total_convenio)}</td><td class="text-center"><button class="btn-action" onclick='abrirModalDetalhesConvenio(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`).join('')}</tbody></table>${renderizarPaginacao('individual', totalRegistros)}</div>`;
+        <tbody>${dadosPagina.map(item => {
+            const link = getLinkInteiroTeor(item);
+            return `<tr>${colunasExibidas.map(col => {
+                let valor = item[col] || '-';
+                if (col.includes('data')) valor = formatarData(valor);
+                if (col === 'codigo_siafi' && valor !== '-') {
+                    return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
+                }
+                return `<td>${valor}</td>`;
+            }).join('')}<td class="text-end">${formatarMoeda(item.valor_proponente)}</td><td class="text-end">${formatarMoeda(item.valor_concedente)}</td><td class="text-end">${formatarMoeda(item.valor_total_convenio)}</td><td class="text-center"><button class="btn-action" onclick='abrirModalDetalhesConvenio(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
+        }).join('')}</tbody></table>${renderizarPaginacao('individual', totalRegistros)}</div>`;
     container.innerHTML = html;
 }
 
@@ -502,8 +502,8 @@ function renderizarExecucao() {
         <tbody>${dadosPagina.map(item => {
             const convenio = conveniosMap.get(item.no_siafi);
             const link = convenio ? getLinkInteiroTeor(convenio) : null;
-            return `<tr><td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${item.no_siafi || '-'}</a>` : (item.no_siafi || '-')}</td><td>${item.proponente}</td><td>${item.concedente}</td><td>${item.situacao_convenio}</td><td>${item.no_empenho || '-'}/${item.ano_empenho || '-'}</td><td>${item.razao_social_credor || '-'}</td><td>${item.cnpj_cpf_credor || '-'}</td><td class="text-end">${formatarMoeda(item.valor_empenhado)}</td><td class="text-end">${formatarMoeda(item.valor_liquidado)}</td><td class="text-end">${formatarMoeda(item.valor_pago)}</td><td class="text-center"><button class="btn-action" onclick='abrirModalExecucao(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
-        }).join('')}</tbody><tr>${renderizarPaginacao('execucao', totalRegistros)}</div>`;
+            return `<tr><td class="siafi-cell">${link ? `<a href="${link}" target="_blank" class="siafi-link">${item.no_siafi || '-'}</a>` : (item.no_siafi || '-')}</td><td>${item.proponente}</td><td>${item.concedente}</td><td>${item.situacao_convenio}</td><td>${item.no_empenho || '-'}/${item.ano_empenho || '-'}</td><td>${item.razao_social_credor || '-'}</td><td>${item.cnpj_cpf_credor || '-'}</td><td class="text-end">${formatarMoeda(item.valor_empenhado)}</td><td class="text-end">${formatarMoeda(item.valor_liquidado)}</td><td class="text-end">${formatarMoeda(item.valor_pago)}</td><td class="text-center"><button class="btn-action" onclick='abrirModalExecucao(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
+        }).join('')}</tbody></table>${renderizarPaginacao('execucao', totalRegistros)}</div>`;
     container.innerHTML = html;
 }
 
@@ -568,7 +568,7 @@ function renderizarArrecadacao() {
             </div>
             <div class="d-flex gap-3 align-items-center"><span class="badge bg-secondary">Total: ${totalRegistros} registros</span><input type="text" class="form-control search-input-small" placeholder="Buscar na tabela..." id="buscaArrecadacaoInput" value="${buscaArrecadacao}" onkeyup="buscaArrecadacaoChange(this.value)"></div>
         </div>
-        <div class="table-container"><table class="table"><thead><td>${colunasExibidas.map(col => `<th class="${ordenacaoArrecadacao.coluna === col ? ordenacaoArrecadacao.direcao : ''}" onclick="ordenar('arrecadacao', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th class="text-end ${ordenacaoArrecadacao.coluna === 'receita_arrecadada' ? ordenacaoArrecadacao.direcao : ''}" onclick="ordenar('arrecadacao', 'receita_arrecadada')">RECEITA ARRECADADA</th><th>AÇÕES</th></tr></thead>
+        <div class="table-container"><table class="table"><thead><tr>${colunasExibidas.map(col => `<th class="${ordenacaoArrecadacao.coluna === col ? ordenacaoArrecadacao.direcao : ''}" onclick="ordenar('arrecadacao', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th class="text-end ${ordenacaoArrecadacao.coluna === 'receita_arrecadada' ? ordenacaoArrecadacao.direcao : ''}" onclick="ordenar('arrecadacao', 'receita_arrecadada')">RECEITA ARRECADADA</th><th>AÇÕES</th></tr></thead>
         <tbody>${dadosPagina.map(item => {
             const convenio = conveniosMap.get(item.no_siafi);
             const link = convenio ? getLinkInteiroTeor(convenio) : null;
