@@ -69,6 +69,12 @@
         .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
         .btn-link-document { background: #28a745; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
         .btn-link-document:hover { background: #218838; color: white; }
+        .select-with-search { position: relative; }
+        .select-with-search input { width: 100%; padding: 6px 10px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 13px; }
+        .select-options { display: none; position: absolute; top: 100%; left: 0; right: 0; max-height: 200px; overflow-y: auto; background: white; border: 1px solid #dee2e6; border-radius: 6px; z-index: 1000; }
+        .select-options.show { display: block; }
+        .select-option { padding: 6px 10px; cursor: pointer; font-size: 13px; }
+        .select-option:hover { background: #f0f0f0; }
         @media (max-width: 768px) { .dashboard-container { padding: 0 10px; } .toolbar { flex-direction: column; align-items: stretch; } .search-input-small { width: 100%; } }
     </style>
 </head>
@@ -110,6 +116,7 @@
 let conveniosData = [];
 let execucaoData = [];
 let arrecadacaoData = [];
+let siafiValidosSet = new Set();
 
 const CONVENIOS_URL = 'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/convenios.csv';
 const ARRECADACAO_URL = 'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/arrecadacao.csv';
@@ -134,7 +141,6 @@ let buscaIndividual = '';
 let buscaExecucao = '';
 let buscaArrecadacao = '';
 
-// Ordenação
 let ordenacaoFormalizados = { coluna: 'proponente', direcao: 'asc' };
 let ordenacaoIndividual = { coluna: 'proponente', direcao: 'asc' };
 let ordenacaoExecucao = { coluna: 'no_siafi', direcao: 'asc' };
@@ -142,19 +148,27 @@ let ordenacaoArrecadacao = { coluna: 'no_siafi', direcao: 'asc' };
 
 let colunasVisiveisIndividual = {
     codigo_siafi: true, codigo_sigcon: true, sei: true, instrumento: true,
-    proponente: true, concedente: true, esfera_concedente: true, objeto: true,
+    proponente: true, concedente: true, esfera_concedente: true, objeto: false,
     situacao: true, tipo_contrapartida: true, data_assinatura: true, data_publicacao: true,
     inicio_vigencia: true, termino_vigencia: true
 };
 
+let colunasVisiveisExecucao = {
+    no_siafi: true, proponente: true, concedente: true, situacao_convenio: true,
+    no_empenho: true, razao_social_credor: true, cnpj_cpf_credor: true,
+    valor_empenhado: true, valor_liquidado: true, valor_pago: true
+};
+
 let colunasVisiveisArrecadacao = {
-    no_siafi: true, tipo_siafi: true, unidade_orcamentaria: true,
-    ano_exercicio_receita: true, codigo_classificacao_receita: true,
-    tipo_de_receita: true, fonte: true, data_da_arrecadacao: true
+    no_siafi: true, unidade_orcamentaria: true, ano_exercicio_receita: true,
+    codigo_classificacao_receita: true, tipo_de_receita: true, fonte: true,
+    data_da_arrecadacao: true, receita_arrecadada: true, tipo_siafi: true, 
+    classificacao_receita: true, registro_receita: true
 };
 
 const ordemColunasIndividual = ['codigo_siafi', 'codigo_sigcon', 'sei', 'instrumento', 'proponente', 'concedente', 'esfera_concedente', 'objeto', 'situacao', 'tipo_contrapartida', 'data_assinatura', 'data_publicacao', 'inicio_vigencia', 'termino_vigencia'];
-const ordemColunasArrecadacao = ['no_siafi', 'tipo_siafi', 'unidade_orcamentaria', 'ano_exercicio_receita', 'codigo_classificacao_receita', 'tipo_de_receita', 'fonte', 'data_da_arrecadacao'];
+const ordemColunasExecucao = ['no_siafi', 'proponente', 'concedente', 'situacao_convenio', 'no_empenho', 'razao_social_credor', 'cnpj_cpf_credor', 'valor_empenhado', 'valor_liquidado', 'valor_pago'];
+const ordemColunasArrecadacao = ['no_siafi', 'unidade_orcamentaria', 'ano_exercicio_receita', 'codigo_classificacao_receita', 'tipo_de_receita', 'fonte', 'data_da_arrecadacao', 'receita_arrecadada', 'tipo_siafi', 'classificacao_receita', 'registro_receita'];
 
 function mostrarLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
 
@@ -175,21 +189,42 @@ function formatarData(dataStr) {
 }
 
 function getLinkInteiroTeor(item) {
-    // Primeiro verifica se tem link no SIGCON
     if (item.inteiro_teor_do_instrumento_sigcon && item.inteiro_teor_do_instrumento_sigcon !== '' && item.inteiro_teor_do_instrumento_sigcon !== '#') {
         return item.inteiro_teor_do_instrumento_sigcon;
     }
-    // Depois verifica se tem link no TransfereGov
     if (item.inteiro_teor_do_instrumento_transferegov && item.inteiro_teor_do_instrumento_transferegov !== '' && item.inteiro_teor_do_instrumento_transferegov !== '#') {
         return item.inteiro_teor_do_instrumento_transferegov;
     }
-    // Se não tiver link nas colunas, retorna null
+    return null;
+}
+
+function getAnoFromData(dataStr) {
+    if (!dataStr || dataStr === '') return null;
+    let dataLimpa = dataStr.split(' ')[0];
+    if (dataLimpa.includes('/')) {
+        const partes = dataLimpa.split('/');
+        if (partes.length === 3) return partes[2];
+    } else if (dataLimpa.includes('-')) {
+        const partes = dataLimpa.split('-');
+        if (partes.length === 3) return partes[0];
+    }
     return null;
 }
 
 function parseCSV(texto) {
     const linhas = texto.trim().split('\n');
     let cabecalhos = linhas[0].split(';').map(h => h.trim().replace(/^\uFEFF/, '').replace(/^["']|["']$/g, '').toLowerCase().replace(/ /g, '_').replace(/\(|\)/g, '').replace(/_r$/, ''));
+    
+    // CORREÇÃO: Remove o BOM do primeiro cabeçalho se existir
+    if (cabecalhos[0] && cabecalhos[0].charCodeAt(0) === 65279) {
+        cabecalhos[0] = cabecalhos[0].substring(1);
+    }
+    
+    // Se o primeiro cabeçalho ainda estiver vazio ou for 'uo' com problema, força o nome correto
+    if (cabecalhos[0] === '' || cabecalhos[0] === 'ï»¿') {
+        cabecalhos[0] = 'uo';
+    }
+    
     const dados = [];
     for (let i = 1; i < linhas.length; i++) {
         if (!linhas[i].trim()) continue;
@@ -202,6 +237,7 @@ function parseCSV(texto) {
             else campoAtual += char;
         }
         valores.push(campoAtual);
+        
         const linha = {};
         cabecalhos.forEach((cab, idx) => {
             let valor = valores[idx] || '';
@@ -221,27 +257,44 @@ async function carregarDados() {
         if (conveniosResp.ok) {
             const texto = await conveniosResp.text();
             conveniosData = parseCSV(texto);
-            console.log(`Convênios: ${conveniosData.length}`);
+            conveniosData.forEach(c => {
+                if (!c.ano && c.data_assinatura) {
+                    c.ano = getAnoFromData(c.data_assinatura);
+                }
+            });
+            console.log(`Convênios carregados: ${conveniosData.length}`);
+            
+            siafiValidosSet.clear();
+            conveniosData.forEach(c => {
+                if (c.codigo_siafi && c.codigo_siafi.trim() !== '') {
+                    siafiValidosSet.add(c.codigo_siafi.trim());
+                }
+            });
+            console.log(`Total de SIAFIs únicos e válidos encontrados: ${siafiValidosSet.size}`);
         }
+        
         for (const url of EXECUCAO_URLS) {
             try {
                 const resp = await fetch(url);
                 if (resp.ok) {
                     const texto = await resp.text();
                     const dados = parseCSV(texto);
-                    execucaoData = [...execucaoData, ...dados];
-                    console.log(`Carregado: ${url.split('/').pop()} - ${dados.length} registros`);
+                    const dadosFiltrados = dados.filter(d => siafiValidosSet.has(d.no_siafi?.trim()));
+                    execucaoData = [...execucaoData, ...dadosFiltrados];
+                    console.log(`Carregado: ${url.split('/').pop()} - ${dados.length} registros, ${dadosFiltrados.length} mantidos`);
                 }
             } catch(e) { console.log(`Erro: ${url}`); }
         }
-        console.log(`Execução total: ${execucaoData.length}`);
+        console.log(`Execução total após filtro: ${execucaoData.length}`);
+        
         const arrecResp = await fetch(ARRECADACAO_URL);
         if (arrecResp.ok) {
             const texto = await arrecResp.text();
-            arrecadacaoData = parseCSV(texto);
-            console.log(`Arrecadação: ${arrecadacaoData.length}`);
-            console.log('Colunas arrecadação:', Object.keys(arrecadacaoData[0] || {}));
+            const dados = parseCSV(texto);
+            arrecadacaoData = dados.filter(d => siafiValidosSet.has(d.no_siafi?.trim()));
+            console.log(`Arrecadação carregada: ${dados.length} registros, ${arrecadacaoData.length} mantidos`);
         }
+        
         renderizarFormalizados();
         renderizarIndividual();
         renderizarExecucao();
@@ -255,10 +308,7 @@ function ordenarDados(dados, coluna, direcao, tipo) {
     return [...dados].sort((a, b) => {
         let valA = a[coluna] || '';
         let valB = b[coluna] || '';
-        if (tipo === 'numero') {
-            valA = parseFloat(valA) || 0;
-            valB = parseFloat(valB) || 0;
-        } else if (tipo === 'moeda') {
+        if (tipo === 'numero' || tipo === 'moeda') {
             valA = parseFloat(valA) || 0;
             valB = parseFloat(valB) || 0;
         } else {
@@ -267,6 +317,45 @@ function ordenarDados(dados, coluna, direcao, tipo) {
         }
         if (direcao === 'asc') return valA > valB ? 1 : -1;
         return valA < valB ? 1 : -1;
+    });
+}
+
+function criarSelectComBusca(id, opcoes, valorAtual, placeholder) {
+    const opcoesUnicas = [...new Set(opcoes.filter(o => o && o !== ''))].sort();
+    return `
+        <div class="select-with-search">
+            <input type="text" id="${id}_input" class="form-control" placeholder="${placeholder}" value="${valorAtual || ''}" autocomplete="off">
+            <div id="${id}_options" class="select-options">
+                <div class="select-option" data-value="">Todos</div>
+                ${opcoesUnicas.map(o => `<div class="select-option" data-value="${o.replace(/"/g, '&quot;')}">${o}</div>`).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function initSelectComBusca(id, callback) {
+    const input = document.getElementById(`${id}_input`);
+    const optionsDiv = document.getElementById(`${id}_options`);
+    if (!input || !optionsDiv) return;
+    
+    input.addEventListener('focus', () => optionsDiv.classList.add('show'));
+    input.addEventListener('blur', () => setTimeout(() => optionsDiv.classList.remove('show'), 200));
+    input.addEventListener('input', function() {
+        const termo = this.value.toLowerCase();
+        const options = optionsDiv.querySelectorAll('.select-option');
+        options.forEach(opt => {
+            const text = opt.textContent.toLowerCase();
+            opt.style.display = text.includes(termo) ? 'block' : 'none';
+        });
+        optionsDiv.classList.add('show');
+    });
+    
+    optionsDiv.querySelectorAll('.select-option').forEach(opt => {
+        opt.addEventListener('click', function() {
+            input.value = this.getAttribute('data-value');
+            optionsDiv.classList.remove('show');
+            if (callback) callback(this.getAttribute('data-value'));
+        });
     });
 }
 
@@ -312,8 +401,8 @@ function renderizarFormalizados() {
     let html = `
         <div class="filter-container">
             <div class="row g-2">
-                <div class="col-md-5"><label class="filter-label">Ano</label><select class="form-select" id="filtroAnoFormalizados"><option value="">Todos</option>${anos.map(a => `<option value="${a}" ${filtrosFormalizados.ano === a ? 'selected' : ''}>${a}</option>`).join('')}</select></div>
-                <div class="col-md-5"><label class="filter-label">Proponente</label><select class="form-select" id="filtroProponenteFormalizados"><option value="">Todos</option>${proponentes.map(p => `<option value="${p}" ${filtrosFormalizados.proponente === p ? 'selected' : ''}>${p}</option>`).join('')}</select></div>
+                <div class="col-md-5"><label class="filter-label">Ano</label>${criarSelectComBusca('anoFormalizados', anos, filtrosFormalizados.ano, 'Digite ou selecione o ano...')}</div>
+                <div class="col-md-5"><label class="filter-label">Proponente</label>${criarSelectComBusca('proponenteFormalizados', proponentes, filtrosFormalizados.proponente, 'Digite ou selecione o proponente...')}</div>
                 <div class="col-md-2 d-flex align-items-end"><button class="btn-pesquisa me-2" onclick="aplicarFiltrosFormalizados()">Pesquisar</button><button class="btn-secondary-custom" onclick="limparFiltrosFormalizados()">Limpar</button></div>
             </div>
         </div>
@@ -324,8 +413,11 @@ function renderizarFormalizados() {
             <div class="col-md-3"><div class="metric-card"><div class="metric-header">Valor Total</div><div class="metric-body"><div class="metric-value">${formatarMoeda(totalGeral)}</div></div></div></div>
         </div>
         <div class="table-container"><table class="table"><thead><tr><th class="${ordenacaoFormalizados.coluna === 'proponente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'proponente')">Proponente</th><th class="text-end ${ordenacaoFormalizados.coluna === 'convenios' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'convenios')">Qtd Convênios</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorProponente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorProponente')">Valor Proponente</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorConcedente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorConcedente')">Valor Concedente</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorTotal' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorTotal')">Valor Total</th></tr></thead>
-        <tbody>${dadosPagina.map(item => `<td><a href="#" class="orgao-link" onclick="irParaConsultaIndividual('${item.proponente.replace(/'/g, "\\'")}')">${item.proponente}</a></td><td class="text-end">${item.convenios}</td><td class="text-end">${formatarMoeda(item.valorProponente)}</td><td class="text-end">${formatarMoeda(item.valorConcedente)}</td><td class="text-end">${formatarMoeda(item.valorTotal)}</td></tr>`).join('')}</tbody></table>${renderizarPaginacao('formalizados', totalRegistros)}</div>`;
+        <tbody>${dadosPagina.map(item => `<tr><td><a href="#" class="orgao-link" onclick="irParaConsultaIndividual('${item.proponente.replace(/'/g, "\\'")}')">${item.proponente}</a></td><td class="text-end">${item.convenios}</td><td class="text-end">${formatarMoeda(item.valorProponente)}</td><td class="text-end">${formatarMoeda(item.valorConcedente)}</td><td class="text-end">${formatarMoeda(item.valorTotal)}</tr>`).join('')}</tbody></table>${renderizarPaginacao('formalizados', totalRegistros)}</div>`;
     container.innerHTML = html;
+    
+    initSelectComBusca('anoFormalizados', (val) => { filtrosFormalizados.ano = val; renderizarFormalizados(); });
+    initSelectComBusca('proponenteFormalizados', (val) => { filtrosFormalizados.proponente = val; renderizarFormalizados(); });
 }
 
 function ordenar(tipo, coluna) {
@@ -345,8 +437,10 @@ function ordenar(tipo, coluna) {
 }
 
 function aplicarFiltrosFormalizados() {
-    filtrosFormalizados.ano = document.getElementById('filtroAnoFormalizados')?.value || '';
-    filtrosFormalizados.proponente = document.getElementById('filtroProponenteFormalizados')?.value || '';
+    const anoInput = document.getElementById('anoFormalizados_input');
+    const proponenteInput = document.getElementById('proponenteFormalizados_input');
+    filtrosFormalizados.ano = anoInput ? anoInput.value : '';
+    filtrosFormalizados.proponente = proponenteInput ? proponenteInput.value : '';
     paginaAtual.formalizados = 1;
     renderizarFormalizados();
 }
@@ -360,7 +454,7 @@ function limparFiltrosFormalizados() {
 function irParaConsultaIndividual(proponente) {
     document.getElementById('individual-tab').click();
     setTimeout(() => {
-        const input = document.getElementById('filtroProponenteIndividual');
+        const input = document.getElementById('filtroProponenteIndividual_input');
         if (input) { input.value = proponente; filtrosIndividual.proponente = proponente; renderizarIndividual(); }
     }, 300);
 }
@@ -401,15 +495,15 @@ function renderizarIndividual() {
     let html = `
         <div class="filter-container">
             <div class="row g-2">
-                <div class="col-md-3"><label class="filter-label">Ano</label><select class="form-select" id="filtroAnoIndividual"><option value="">Todos</option>${anos.map(a => `<option value="${a}" ${filtrosIndividual.ano === a ? 'selected' : ''}>${a}</option>`).join('')}</select></div>
+                <div class="col-md-3"><label class="filter-label">Ano</label>${criarSelectComBusca('anoIndividual', anos, filtrosIndividual.ano, 'Digite ou selecione o ano...')}</div>
                 <div class="col-md-3"><label class="filter-label">Código SIAFI</label><input type="text" class="form-control" id="filtroSiafiIndividual" placeholder="Digite..." value="${filtrosIndividual.codigoSiafi || ''}"></div>
                 <div class="col-md-3"><label class="filter-label">Código SIGCON</label><input type="text" class="form-control" id="filtroSigconIndividual" placeholder="Digite..." value="${filtrosIndividual.codigoSigcon || ''}"></div>
-                <div class="col-md-3"><label class="filter-label">Instrumento</label><select class="form-select" id="filtroInstrumentoIndividual"><option value="">Todos</option>${instrumentos.map(i => `<option value="${i}" ${filtrosIndividual.instrumento === i ? 'selected' : ''}>${i}</option>`).join('')}</select></div>
+                <div class="col-md-3"><label class="filter-label">Instrumento</label>${criarSelectComBusca('instrumentoIndividual', instrumentos, filtrosIndividual.instrumento, 'Digite ou selecione o instrumento...')}</div>
             </div>
             <div class="row g-2 mt-2">
                 <div class="col-md-3"><label class="filter-label">Proponente</label><input type="text" class="form-control" id="filtroProponenteIndividual" placeholder="Digite..." value="${filtrosIndividual.proponente || ''}"></div>
                 <div class="col-md-3"><label class="filter-label">Concedente</label><input type="text" class="form-control" id="filtroConcedenteIndividual" placeholder="Digite..." value="${filtrosIndividual.concedente || ''}"></div>
-                <div class="col-md-3"><label class="filter-label">Situação</label><select class="form-select" id="filtroSituacaoIndividual"><option value="">Todas</option>${situacoes.map(s => `<option value="${s}" ${filtrosIndividual.situacao === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
+                <div class="col-md-3"><label class="filter-label">Situação</label>${criarSelectComBusca('situacaoIndividual', situacoes, filtrosIndividual.situacao, 'Digite ou selecione a situação...')}</div>
                 <div class="col-md-3 d-flex align-items-end"><button class="btn-pesquisa me-2" onclick="aplicarFiltrosIndividual()">Pesquisar</button><button class="btn-secondary-custom" onclick="limparFiltrosIndividual()">Limpar</button></div>
             </div>
         </div>
@@ -426,7 +520,8 @@ function renderizarIndividual() {
                 <input type="text" class="form-control search-input-small" placeholder="Buscar na tabela..." id="buscaIndividualInput" value="${buscaIndividual}" onkeyup="buscaIndividualChange(this.value)">
             </div>
         </div>
-        <div class="table-container"><table class="table" style="min-width: 1200px;"><thead><tr>${colunasExibidas.map(col => `<th class="${ordenacaoIndividual.coluna === col ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th class="text-end ${ordenacaoIndividual.coluna === 'valor_proponente' ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', 'valor_proponente')">VALOR PROPONENTE</th><th class="text-end ${ordenacaoIndividual.coluna === 'valor_concedente' ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', 'valor_concedente')">VALOR CONCEDENTE</th><th class="text-end ${ordenacaoIndividual.coluna === 'valor_total_convenio' ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', 'valor_total_convenio')">VALOR TOTAL</th><th>AÇÕES</th></tr></thead>
+        <div class="table-container"><table class="table" style="min-width: 1200px;"><thead><tr>${colunasExibidas.map(col => `<th class="${ordenacaoIndividual.coluna === col ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th class="text-end ${ordenacaoIndividual.coluna === 'valor_proponente' ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', 'valor_proponente')">VALOR PROPONENTE</th><th class="text-end ${ordenacaoIndividual.coluna === 'valor_concedente' ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', 'valor_concedente')">VALOR CONCEDENTE</th><th class="text-end ${ordenacaoIndividual.coluna === 'valor_total_convenio' ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', 'valor_total_convenio')">VALOR TOTAL</th><th>AÇÕES</th></tr>
+        </thead>
         <tbody>${dadosPagina.map(item => {
             const link = getLinkInteiroTeor(item);
             return `<tr>${colunasExibidas.map(col => {
@@ -439,24 +534,50 @@ function renderizarIndividual() {
             }).join('')}<td class="text-end">${formatarMoeda(item.valor_proponente)}</td><td class="text-end">${formatarMoeda(item.valor_concedente)}</td><td class="text-end">${formatarMoeda(item.valor_total_convenio)}</td><td class="text-center"><button class="btn-action" onclick='abrirModalDetalhesConvenio(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
         }).join('')}</tbody></table>${renderizarPaginacao('individual', totalRegistros)}</div>`;
     container.innerHTML = html;
+    
+    initSelectComBusca('anoIndividual', (val) => { filtrosIndividual.ano = val; renderizarIndividual(); });
+    initSelectComBusca('instrumentoIndividual', (val) => { filtrosIndividual.instrumento = val; renderizarIndividual(); });
+    initSelectComBusca('situacaoIndividual', (val) => { filtrosIndividual.situacao = val; renderizarIndividual(); });
+    
+    document.getElementById('filtroSiafiIndividual')?.addEventListener('input', (e) => { filtrosIndividual.codigoSiafi = e.target.value; renderizarIndividual(); });
+    document.getElementById('filtroSigconIndividual')?.addEventListener('input', (e) => { filtrosIndividual.codigoSigcon = e.target.value; renderizarIndividual(); });
+    document.getElementById('filtroProponenteIndividual')?.addEventListener('input', (e) => { filtrosIndividual.proponente = e.target.value; renderizarIndividual(); });
+    document.getElementById('filtroConcedenteIndividual')?.addEventListener('input', (e) => { filtrosIndividual.concedente = e.target.value; renderizarIndividual(); });
 }
 
 function toggleColunaIndividual(coluna) { colunasVisiveisIndividual[coluna] = !colunasVisiveisIndividual[coluna]; renderizarIndividual(); }
+function toggleColunaExecucao(coluna) { colunasVisiveisExecucao[coluna] = !colunasVisiveisExecucao[coluna]; renderizarExecucao(); }
 function toggleColunaArrecadacao(coluna) { colunasVisiveisArrecadacao[coluna] = !colunasVisiveisArrecadacao[coluna]; renderizarArrecadacao(); }
-function toggleColumnSelector(event, tipo) { event.stopPropagation(); document.getElementById(`columnSelectorPopup${tipo === 'individual' ? 'Individual' : 'Arrecadacao'}`)?.classList.toggle('show'); }
+function toggleColumnSelector(event, tipo) { 
+    event.stopPropagation(); 
+    let popupId = '';
+    if (tipo === 'individual') popupId = 'columnSelectorPopupIndividual';
+    else if (tipo === 'execucao') popupId = 'columnSelectorPopupExecucao';
+    else popupId = 'columnSelectorPopupArrecadacao';
+    document.getElementById(popupId)?.classList.toggle('show');
+}
 
 function aplicarFiltrosIndividual() {
-    filtrosIndividual.ano = document.getElementById('filtroAnoIndividual')?.value || '';
+    const anoInput = document.getElementById('anoIndividual_input');
+    const instrumentoInput = document.getElementById('instrumentoIndividual_input');
+    const situacaoInput = document.getElementById('situacaoIndividual_input');
+    filtrosIndividual.ano = anoInput ? anoInput.value : '';
+    filtrosIndividual.instrumento = instrumentoInput ? instrumentoInput.value : '';
+    filtrosIndividual.situacao = situacaoInput ? situacaoInput.value : '';
     filtrosIndividual.codigoSiafi = document.getElementById('filtroSiafiIndividual')?.value || '';
     filtrosIndividual.codigoSigcon = document.getElementById('filtroSigconIndividual')?.value || '';
-    filtrosIndividual.instrumento = document.getElementById('filtroInstrumentoIndividual')?.value || '';
     filtrosIndividual.proponente = document.getElementById('filtroProponenteIndividual')?.value || '';
     filtrosIndividual.concedente = document.getElementById('filtroConcedenteIndividual')?.value || '';
-    filtrosIndividual.situacao = document.getElementById('filtroSituacaoIndividual')?.value || '';
     paginaAtual.individual = 1;
     renderizarIndividual();
 }
-function limparFiltrosIndividual() { filtrosIndividual = { ano: '', codigoSiafi: '', codigoSigcon: '', instrumento: '', proponente: '', concedente: '', situacao: '' }; buscaIndividual = ''; if(document.getElementById('buscaIndividualInput')) document.getElementById('buscaIndividualInput').value = ''; paginaAtual.individual = 1; renderizarIndividual(); }
+function limparFiltrosIndividual() { 
+    filtrosIndividual = { ano: '', codigoSiafi: '', codigoSigcon: '', instrumento: '', proponente: '', concedente: '', situacao: '' }; 
+    buscaIndividual = ''; 
+    if(document.getElementById('buscaIndividualInput')) document.getElementById('buscaIndividualInput').value = ''; 
+    paginaAtual.individual = 1; 
+    renderizarIndividual(); 
+}
 function buscaIndividualChange(valor) { buscaIndividual = valor; paginaAtual.individual = 1; renderizarIndividual(); }
 
 function renderizarExecucao() {
@@ -486,29 +607,55 @@ function renderizarExecucao() {
     const inicio = (paginaAtual.execucao - 1) * itensPorPagina;
     const dadosPagina = dadosFiltrados.slice(inicio, inicio + itensPorPagina);
     const anos = [...new Set(execucaoData.map(e => e.ano_exercicio_receita))].filter(Boolean).sort().reverse();
+    const colunasExibidas = ordemColunasExecucao.filter(col => colunasVisiveisExecucao[col]);
     
     let html = `
         <div class="filter-container">
             <div class="row g-2">
-                <div class="col-md-2"><label class="filter-label">Ano</label><select class="form-select" id="filtroAnoExecucao"><option value="">Todos</option>${anos.map(a => `<option value="${a}" ${filtrosExecucao.ano === a ? 'selected' : ''}>${a}</option>`).join('')}</select></div>
+                <div class="col-md-2"><label class="filter-label">Ano</label>${criarSelectComBusca('anoExecucao', anos, filtrosExecucao.ano, 'Digite ou selecione o ano...')}</div>
                 <div class="col-md-2"><label class="filter-label">Nº SIAFI</label><input type="text" class="form-control" id="filtroSiafiExecucao" placeholder="Digite..." value="${filtrosExecucao.numeroSiafi || ''}"></div>
                 <div class="col-md-2"><label class="filter-label">Ano Empenho</label><input type="text" class="form-control" id="filtroAnoEmpenhoExecucao" placeholder="Digite..." value="${filtrosExecucao.anoEmpenho || ''}"></div>
                 <div class="col-md-2"><label class="filter-label">Nº Empenho</label><input type="text" class="form-control" id="filtroNumeroEmpenhoExecucao" placeholder="Digite..." value="${filtrosExecucao.numeroEmpenho || ''}"></div>
                 <div class="col-md-4 d-flex align-items-end gap-2"><button class="btn-pesquisa me-2" onclick="aplicarFiltrosExecucao()">Pesquisar</button><button class="btn-secondary-custom" onclick="limparFiltrosExecucao()">Limpar</button></div>
             </div>
         </div>
-        <div class="toolbar"><div class="d-flex gap-2"><button class="btn-export" onclick="exportarExecucaoCSV()"><i class="material-icons" style="font-size: 14px;">description</i>CSV</button><button class="btn-export" onclick="exportarExecucaoPDF()"><i class="material-icons" style="font-size: 14px;">picture_as_pdf</i>PDF</button></div><div class="d-flex gap-3 align-items-center"><span class="badge bg-secondary">Total: ${totalRegistros} registros</span><input type="text" class="form-control search-input-small" placeholder="Buscar na tabela..." id="buscaExecucaoInput" value="${buscaExecucao}" onkeyup="buscaExecucaoChange(this.value)"></div></div>
-        <div class="table-container"><table class="table" style="min-width: 1300px;"><thead><tr><th class="${ordenacaoExecucao.coluna === 'no_siafi' ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', 'no_siafi')">Código SIAFI</th><th class="${ordenacaoExecucao.coluna === 'proponente' ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', 'proponente')">Proponente</th><th class="${ordenacaoExecucao.coluna === 'concedente' ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', 'concedente')">Concedente</th><th class="${ordenacaoExecucao.coluna === 'situacao_convenio' ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', 'situacao_convenio')">Situação</th><th class="${ordenacaoExecucao.coluna === 'no_empenho' ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', 'no_empenho')">Nº/Ano Empenho</th><th class="${ordenacaoExecucao.coluna === 'razao_social_credor' ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', 'razao_social_credor')">Credor</th><th class="${ordenacaoExecucao.coluna === 'cnpj_cpf_credor' ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', 'cnpj_cpf_credor')">CPF/CNPJ</th><th class="text-end ${ordenacaoExecucao.coluna === 'valor_empenhado' ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', 'valor_empenhado')">Valor Empenhado</th><th class="text-end ${ordenacaoExecucao.coluna === 'valor_liquidado' ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', 'valor_liquidado')">Valor Liquidado</th><th class="text-end ${ordenacaoExecucao.coluna === 'valor_pago' ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', 'valor_pago')">Valor Pago</th><th>Ações</th></tr></thead>
+        <div class="toolbar">
+            <div class="d-flex gap-2">
+                <button class="btn-export" onclick="exportarExecucaoCSV()"><i class="material-icons" style="font-size: 14px;">description</i>CSV</button>
+                <button class="btn-export" onclick="exportarExecucaoPDF()"><i class="material-icons" style="font-size: 14px;">picture_as_pdf</i>PDF</button>
+                <div class="column-selector-icon" onclick="toggleColumnSelector(event, 'execucao')"><i class="material-icons" style="font-size: 16px;">view_column</i> Colunas
+                    <div class="column-selector-popup" id="columnSelectorPopupExecucao"><div class="column-selector-grid">${ordemColunasExecucao.map(col => `<label class="column-selector-item"><input type="checkbox" ${colunasVisiveisExecucao[col] ? 'checked' : ''} onchange="toggleColunaExecucao('${col}')">${col.replace(/_/g, ' ').toUpperCase()}</label>`).join('')}</div></div>
+                </div>
+            </div>
+            <div class="d-flex gap-3 align-items-center"><span class="badge bg-secondary">Total: ${totalRegistros} registros</span><input type="text" class="form-control search-input-small" placeholder="Buscar na tabela..." id="buscaExecucaoInput" value="${buscaExecucao}" onkeyup="buscaExecucaoChange(this.value)"></div>
+        </div>
+        <div class="table-container"><table class="table" style="min-width: 1300px;"><thead><tr>${colunasExibidas.map(col => `<th class="${ordenacaoExecucao.coluna === col ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th>AÇÕES</th></tr>
+        </thead>
         <tbody>${dadosPagina.map(item => {
             const convenio = conveniosMap.get(item.no_siafi);
             const link = convenio ? getLinkInteiroTeor(convenio) : null;
-            return `<tr><td class="siafi-cell">${link ? `<a href="${link}" target="_blank" class="siafi-link">${item.no_siafi || '-'}</a>` : (item.no_siafi || '-')}</td><td>${item.proponente}</td><td>${item.concedente}</td><td>${item.situacao_convenio}</td><td>${item.no_empenho || '-'}/${item.ano_empenho || '-'}</td><td>${item.razao_social_credor || '-'}</td><td>${item.cnpj_cpf_credor || '-'}</td><td class="text-end">${formatarMoeda(item.valor_empenhado)}</td><td class="text-end">${formatarMoeda(item.valor_liquidado)}</td><td class="text-end">${formatarMoeda(item.valor_pago)}</td><td class="text-center"><button class="btn-action" onclick='abrirModalExecucao(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
+            return `<tr>${colunasExibidas.map(col => {
+                let valor = item[col] || '-';
+                if (col === 'valor_empenhado' || col === 'valor_liquidado' || col === 'valor_pago') {
+                    valor = formatarMoeda(valor);
+                }
+                if (col === 'no_siafi' && valor !== '-') {
+                    return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
+                }
+                return `<td>${valor}</td>`;
+            }).join('')}<td class="text-center"><button class="btn-action" onclick='abrirModalExecucao(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
         }).join('')}</tbody></table>${renderizarPaginacao('execucao', totalRegistros)}</div>`;
     container.innerHTML = html;
+    
+    initSelectComBusca('anoExecucao', (val) => { filtrosExecucao.ano = val; renderizarExecucao(); });
+    document.getElementById('filtroSiafiExecucao')?.addEventListener('input', (e) => { filtrosExecucao.numeroSiafi = e.target.value; renderizarExecucao(); });
+    document.getElementById('filtroAnoEmpenhoExecucao')?.addEventListener('input', (e) => { filtrosExecucao.anoEmpenho = e.target.value; renderizarExecucao(); });
+    document.getElementById('filtroNumeroEmpenhoExecucao')?.addEventListener('input', (e) => { filtrosExecucao.numeroEmpenho = e.target.value; renderizarExecucao(); });
 }
 
 function aplicarFiltrosExecucao() {
-    filtrosExecucao.ano = document.getElementById('filtroAnoExecucao')?.value || '';
+    const anoInput = document.getElementById('anoExecucao_input');
+    filtrosExecucao.ano = anoInput ? anoInput.value : '';
     filtrosExecucao.numeroSiafi = document.getElementById('filtroSiafiExecucao')?.value || '';
     filtrosExecucao.anoEmpenho = document.getElementById('filtroAnoEmpenhoExecucao')?.value || '';
     filtrosExecucao.numeroEmpenho = document.getElementById('filtroNumeroEmpenhoExecucao')?.value || '';
@@ -533,6 +680,24 @@ function renderizarArrecadacao() {
         return true;
     });
     
+    dadosFiltrados = dadosFiltrados.map(a => {
+    const convenio = conveniosMap.get(a.no_siafi);
+    const { uo, ...resto } = a;  // Remove a coluna uo que não será usada
+    return {
+        no_siafi: resto.no_siafi,
+        unidade_orcamentaria: convenio?.proponente || '-',
+        ano_exercicio_receita: resto.ano_exercicio_receita,
+        codigo_classificacao_receita: resto.codigo_classificacao_receita,
+        tipo_de_receita: resto.tipo_de_receita,
+        fonte: resto.fonte,
+        data_da_arrecadacao: resto.data_da_arrecadacao,
+        receita_arrecadada: resto.receita_arrecadada  // já vem sem o _r
+    };
+});
+
+console.log('Primeiro registro completo:', dadosFiltrados[0]);
+console.log('Todas as chaves:', Object.keys(dadosFiltrados[0] || {}));
+    
     if (buscaArrecadacao) {
         const termo = buscaArrecadacao.toLowerCase();
         dadosFiltrados = dadosFiltrados.filter(a => a.no_siafi?.toLowerCase().includes(termo) || a.unidade_orcamentaria?.toLowerCase().includes(termo));
@@ -551,10 +716,10 @@ function renderizarArrecadacao() {
     let html = `
         <div class="filter-container">
             <div class="row g-2">
-                <div class="col-md-3"><label class="filter-label">Ano</label><select class="form-select" id="filtroAnoArrecadacao"><option value="">Todos</option>${anos.map(a => `<option value="${a}" ${filtrosArrecadacao.ano === a ? 'selected' : ''}>${a}</option>`).join('')}</select></div>
+                <div class="col-md-3"><label class="filter-label">Ano</label>${criarSelectComBusca('anoArrecadacao', anos, filtrosArrecadacao.ano, 'Digite ou selecione o ano...')}</div>
                 <div class="col-md-3"><label class="filter-label">Nº SIAFI</label><input type="text" class="form-control" id="filtroSiafiArrecadacao" placeholder="Digite..." value="${filtrosArrecadacao.numeroSiafi || ''}"></div>
-                <div class="col-md-3"><label class="filter-label">Tipo Receita</label><select class="form-select" id="filtroTipoArrecadacao"><option value="">Todos</option>${tipos.map(t => `<option value="${t}" ${filtrosArrecadacao.tipoReceita === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
-                <div class="col-md-3"><label class="filter-label">Fonte</label><select class="form-select" id="filtroFonteArrecadacao"><option value="">Todas</option>${fontes.map(f => `<option value="${f}" ${filtrosArrecadacao.fonte === f ? 'selected' : ''}>${f}</option>`).join('')}</select></div>
+                <div class="col-md-3"><label class="filter-label">Tipo Receita</label>${criarSelectComBusca('tipoArrecadacao', tipos, filtrosArrecadacao.tipoReceita, 'Digite ou selecione o tipo...')}</div>
+                <div class="col-md-3"><label class="filter-label">Fonte</label>${criarSelectComBusca('fonteArrecadacao', fontes, filtrosArrecadacao.fonte, 'Digite ou selecione a fonte...')}</div>
             </div>
             <div class="row mt-2"><div class="col-12 d-flex justify-content-end gap-2"><button class="btn-pesquisa me-2" onclick="aplicarFiltrosArrecadacao()">Pesquisar</button><button class="btn-secondary-custom" onclick="limparFiltrosArrecadacao()">Limpar</button></div></div>
         </div>
@@ -568,27 +733,37 @@ function renderizarArrecadacao() {
             </div>
             <div class="d-flex gap-3 align-items-center"><span class="badge bg-secondary">Total: ${totalRegistros} registros</span><input type="text" class="form-control search-input-small" placeholder="Buscar na tabela..." id="buscaArrecadacaoInput" value="${buscaArrecadacao}" onkeyup="buscaArrecadacaoChange(this.value)"></div>
         </div>
-        <div class="table-container"><table class="table"><thead><tr>${colunasExibidas.map(col => `<th class="${ordenacaoArrecadacao.coluna === col ? ordenacaoArrecadacao.direcao : ''}" onclick="ordenar('arrecadacao', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th class="text-end ${ordenacaoArrecadacao.coluna === 'receita_arrecadada' ? ordenacaoArrecadacao.direcao : ''}" onclick="ordenar('arrecadacao', 'receita_arrecadada')">RECEITA ARRECADADA</th><th>AÇÕES</th></tr></thead>
+        <div class="table-container"><table class="table"><thead><tr>${colunasExibidas.map(col => `<th class="${ordenacaoArrecadacao.coluna === col ? ordenacaoArrecadacao.direcao : ''}" onclick="ordenar('arrecadacao', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th>AÇÕES</th></tr>
+        </thead>
         <tbody>${dadosPagina.map(item => {
             const convenio = conveniosMap.get(item.no_siafi);
             const link = convenio ? getLinkInteiroTeor(convenio) : null;
-            return `<tr>${colunasExibidas.map(col => {
+            return `<td>${colunasExibidas.map(col => {
                 let valor = item[col] || '-';
                 if (col === 'data_da_arrecadacao') valor = formatarData(valor);
+                if (col === 'receita_arrecadada') valor = formatarMoeda(valor);
                 if (col === 'no_siafi' && valor !== '-') {
                     return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
                 }
                 return `<td>${valor}</td>`;
-            }).join('')}<td class="text-end">${formatarMoeda(item.receita_arrecadada)}</td><td class="text-center"><button class="btn-action" onclick='abrirModalArrecadacao(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
+            }).join('')}<td class="text-center"><button class="btn-action" onclick='abrirModalArrecadacao(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
         }).join('')}</tbody></table>${renderizarPaginacao('arrecadacao', totalRegistros)}</div>`;
     container.innerHTML = html;
+    
+    initSelectComBusca('anoArrecadacao', (val) => { filtrosArrecadacao.ano = val; renderizarArrecadacao(); });
+    initSelectComBusca('tipoArrecadacao', (val) => { filtrosArrecadacao.tipoReceita = val; renderizarArrecadacao(); });
+    initSelectComBusca('fonteArrecadacao', (val) => { filtrosArrecadacao.fonte = val; renderizarArrecadacao(); });
+    document.getElementById('filtroSiafiArrecadacao')?.addEventListener('input', (e) => { filtrosArrecadacao.numeroSiafi = e.target.value; renderizarArrecadacao(); });
 }
 
 function aplicarFiltrosArrecadacao() {
-    filtrosArrecadacao.ano = document.getElementById('filtroAnoArrecadacao')?.value || '';
+    const anoInput = document.getElementById('anoArrecadacao_input');
+    const tipoInput = document.getElementById('tipoArrecadacao_input');
+    const fonteInput = document.getElementById('fonteArrecadacao_input');
+    filtrosArrecadacao.ano = anoInput ? anoInput.value : '';
+    filtrosArrecadacao.tipoReceita = tipoInput ? tipoInput.value : '';
+    filtrosArrecadacao.fonte = fonteInput ? fonteInput.value : '';
     filtrosArrecadacao.numeroSiafi = document.getElementById('filtroSiafiArrecadacao')?.value || '';
-    filtrosArrecadacao.tipoReceita = document.getElementById('filtroTipoArrecadacao')?.value || '';
-    filtrosArrecadacao.fonte = document.getElementById('filtroFonteArrecadacao')?.value || '';
     paginaAtual.arrecadacao = 1;
     renderizarArrecadacao();
 }
@@ -602,8 +777,7 @@ function abrirModalDetalhesConvenio(item) {
         '🏢 PARTES': ['proponente', 'concedente', 'esfera_concedente'],
         '💰 FINANCEIRO': ['valor_proponente', 'valor_concedente', 'valor_total_convenio', 'tipo_contrapartida'],
         '📅 DATAS': ['data_assinatura', 'data_publicacao', 'inicio_vigencia', 'termino_vigencia'],
-        '📄 INFORMAÇÕES': ['objeto', 'situacao'],
-        '🔗 LINKS': ['inteiro_teor_do_instrumento_transferegov', 'inteiro_teor_do_instrumento_sigcon']
+        '📄 INFORMAÇÕES': ['objeto', 'situacao']
     };
     let html = '';
     if (link) {
@@ -615,7 +789,6 @@ function abrirModalDetalhesConvenio(item) {
             const valor = item[campo];
             if (valor && valor !== '' && valor !== '-') {
                 let valorDisplay = campo.includes('valor') ? formatarMoeda(valor) : (campo.includes('data') ? formatarData(valor) : valor);
-                if (campo.includes('link') && valorDisplay !== '-') valorDisplay = `<a href="${valor}" target="_blank">${valor}</a>`;
                 conteudo += `<div class="row mb-2"><div class="col-4 fw-bold">${campo.replace(/_/g, ' ').toUpperCase()}:</div><div class="col-8">${valorDisplay}</div></div>`;
             }
         }
