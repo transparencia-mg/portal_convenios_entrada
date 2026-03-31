@@ -133,7 +133,7 @@
 <div class="dashboard-container">
     <div class="nav-tabs-container">
         <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
-            <li class="nav-item"><button class="nav-link active" id="formalizados-tab" data-bs-toggle="tab" data-bs-target="#formalizados"><i class="material-icons">assignment</i>Convênios Formalizados</button></li>
+            <li class="nav-item"><button class="nav-link active" id="formalizados-tab" data-bs-toggle="tab" data-bs-target="#formalizados"><i class="material-icons">assignment</i>Visão Geral</button></li>
             <li class="nav-item"><button class="nav-link" id="individual-tab" data-bs-toggle="tab" data-bs-target="#individual"><i class="material-icons">search</i>Consulta Individual</button></li>
             <li class="nav-item"><button class="nav-link" id="execucao-tab" data-bs-toggle="tab" data-bs-target="#execucao"><i class="material-icons">timeline</i>Execução</button></li>
             <li class="nav-item"><button class="nav-link" id="arrecadacao-tab" data-bs-toggle="tab" data-bs-target="#arrecadacao"><i class="material-icons">attach_money</i>Arrecadação</button></li>
@@ -451,7 +451,7 @@ function renderizarFormalizados() {
             <div class="col-md-3"><div class="metric-card"><div class="metric-header">Valor Total</div><div class="metric-body"><div class="metric-value">${formatarMoeda(totalGeral)}</div></div></div></div>
         </div>
         <div class="table-container"><table class="table"><thead><tr><th class="${ordenacaoFormalizados.coluna === 'proponente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'proponente')">Proponente</th><th class="text-center ${ordenacaoFormalizados.coluna === 'convenios' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'convenios')">Qtd Convênios</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorProponente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorProponente')">Valor Proponente</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorConcedente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorConcedente')">Valor Concedente</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorTotal' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorTotal')">Valor Total</th></tr></thead>
-        <tbody>${dadosPagina.map(item => `<tr><td><a href="#" class="orgao-link" onclick="irParaConsultaIndividual('${item.proponente.replace(/'/g, "\\'")}'); return false;">${item.proponente}</a></td><td class="text-center">${item.convenios}</td><td class="text-end">${formatarMoeda(item.valorProponente)}</td><td class="text-end">${formatarMoeda(item.valorConcedente)}</td><td class="text-end">${formatarMoeda(item.valorTotal)}</td></tr>`).join('')}</tbody></table>${renderizarPaginacao('formalizados', totalRegistros)}</div>`;
+        <tbody>${dadosPagina.map(item => `<tr><td><a href="#" class="orgao-link" onclick="irParaConsultaIndividual('${item.proponente.replace(/'/g, "\\'")}'); return false;">${item.proponente}</a></td><td class="text-center">${item.convenios}</td><td class="text-end">${formatarMoeda(item.valorProponente)}</td><td class="text-end">${formatarMoeda(item.valorConcedente)}</td><td class="text-end">${formatarMoeda(item.valorTotal)}</td></tr>`).join('')}</tbody></table></div>${renderizarPaginacao('formalizados', totalRegistros)}</div>`;
     container.innerHTML = html;
     
     initSelectComBusca('anoFormalizados', (val) => { filtrosFormalizados.ano = val; renderizarFormalizados(); });
@@ -584,7 +584,7 @@ function renderizarIndividual() {
                 return `<td>${valor}</td>`;
             }).join('')}<td class="text-end">${formatarMoeda(item.valor_proponente)}</td><td class="text-end">${formatarMoeda(item.valor_concedente)}</td><td class="text-end">${formatarMoeda(item.valor_total_convenio)}</td><td class="text-center"><button class="btn-action" onclick='abrirModalDetalhesConvenio(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
         }).join('')}</tbody>
-        <tfoot class="table-footer-total"><tr><td colspan="${colunasExibidas.length}" class="text-end fw-bold">TOTAIS:</td><td class="text-end fw-bold">${formatarMoeda(totalValorProponente)}</td><td class="text-end fw-bold">${formatarMoeda(totalValorConcedente)}</td><td class="text-end fw-bold">${formatarMoeda(totalValorGeral)}</td><td></td></tr></tfoot>
+        <tfoot class="table-footer-total"><tr><td colspan="${colunasExibidas.length}" class="text-end fw-bold">TOTAIS:</td><td class="text-end fw-bold">${formatarMoeda(totalValorProponente)}</td><td class="text-end fw-bold">${formatarMoeda(totalValorConcedente)}</td><td class="text-end fw-bold">${formatarMoeda(totalValorGeral)}</td><td></td></tr></tfoot></div>
         ${renderizarPaginacao('individual', totalRegistros)}</div>`;
     container.innerHTML = html;
     
@@ -675,7 +675,7 @@ function renderizarExecucao() {
                 return `<td>${valor}</td>`;
             }).join('')}<td class="text-center"><button class="btn-action" onclick='abrirModalExecucao(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
         }).join('')}</tbody>
-        <tfoot class="table-footer-total"><tr><td colspan="${colunasExibidas.length - 3}" class="text-end fw-bold">TOTAIS:</td><td class="text-end fw-bold">${formatarMoeda(totalEmpenhado)}</td><td class="text-end fw-bold">${formatarMoeda(totalLiquidado)}</td><td class="text-end fw-bold">${formatarMoeda(totalPago)}</td><td></td></tr></tfoot>
+        <tfoot class="table-footer-total"><tr><td colspan="${colunasExibidas.length - 3}" class="text-end fw-bold">TOTAIS:</td><td class="text-end fw-bold">${formatarMoeda(totalEmpenhado)}</td><td class="text-end fw-bold">${formatarMoeda(totalLiquidado)}</td><td class="text-end fw-bold">${formatarMoeda(totalPago)}</td><td></td></tr></tfoot></div>
         ${renderizarPaginacao('execucao', totalRegistros)}</div>`;
     container.innerHTML = html;
     
@@ -774,7 +774,7 @@ function renderizarArrecadacao() {
                 return `<td>${valor}</td>`;
             }).join('')}<td class="text-center"><button class="btn-action" onclick='abrirModalArrecadacao(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
         }).join('')}</tbody>
-        <tfoot class="table-footer-total"><tr><td colspan="${colunasExibidas.length - 1}" class="text-end fw-bold">TOTAL ARRECADADO:</td><td class="text-end fw-bold">${formatarMoeda(totalArrecadado)}</td><td></td></tr></tfoot>
+        <tfoot class="table-footer-total"><tr><td colspan="${colunasExibidas.length - 1}" class="text-end fw-bold">TOTAL ARRECADADO:</td><td class="text-end fw-bold">${formatarMoeda(totalArrecadado)}</td><td></td></tr></tfoot></div>
         ${renderizarPaginacao('arrecadacao', totalRegistros)}</div>`;
     container.innerHTML = html;
     
