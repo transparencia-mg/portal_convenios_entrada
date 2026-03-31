@@ -830,10 +830,20 @@ function renderizarFormalizados() {
         <div class="filter-container">
             <div class="row g-2 align-items-end">
                 <div class="col-md-5"><label class="filter-label">Ano</label>${criarSelectComBusca('anoFormalizados', anos, filtrosFormalizados.ano, 'Digite ou selecione o ano...', true)}</div>
-                <div class="col-md-5"><label class="filter-label">Proponente</label>${criarSelectComBusca('proponenteFormalizados', proponentes, filtrosFormalizados.proponente, 'Digite ou selecione o proponente...', true)}</div>
-                <div class="col-md-2 d-flex gap-2"><button class="btn-pesquisa" onclick="aplicarFiltrosFormalizados()"><i class="material-icons" style="font-size: 16px;">search</i>Pesquisar</button><button class="btn-limpar" onclick="limparFiltrosFormalizados()"><i class="material-icons" style="font-size: 16px;">clear</i>Limpar Filtros</button></div>
+                <div class="col-md-5"><label class="filter-label">Proponente</label>${criarSelectComBusca('proponenteFormalizados', proponentes, filtrosFormalizados.proponente, 'Digite ou selecione o proponente...', true)}
             </div>
-        </div>
+                        <div class="col-12">
+                            <div class="d-flex gap-3 flex-wrap">
+                                <button class="btn-pesquisa" id="aplicarFiltros">
+                                    <i class="fas fa-search me-2"></i>Pesquisar
+                                </button>
+                                <button class="btn-limpar" id="limparFiltros">
+                                    <i class="fas fa-redo me-2"></i>Limpar Filtros
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+            </div>
         <div class="row g-3 mb-4">
             <div class="col-md-3"><div class="metric-card"><div class="metric-header">Total de Convênios</div><div class="metric-body"><div class="metric-value">${totalConvenios.toLocaleString()}</div></div></div></div>
             <div class="col-md-3"><div class="metric-card"><div class="metric-header">Valor Proponente</div><div class="metric-body"><div class="metric-value">${formatarMoeda(totalProponente)}</div></div></div></div>
@@ -947,10 +957,20 @@ function renderizarIndividual() {
             <div class="row g-2 mt-2">
                 <div class="col-md-3"><label class="filter-label">Proponente</label><input type="text" class="form-control" id="filtroProponenteIndividual" placeholder="Digite..." value="${filtrosIndividual.proponente || ''}"></div>
                 <div class="col-md-3"><label class="filter-label">Concedente</label><input type="text" class="form-control" id="filtroConcedenteIndividual" placeholder="Digite..." value="${filtrosIndividual.concedente || ''}"></div>
-                <div class="col-md-3"><label class="filter-label">Situação</label>${criarSelectComBusca('situacaoIndividual', situacoes, filtrosIndividual.situacao, 'Digite ou selecione a situação...', true)}</div>
-                <div class="col-md-3 d-flex gap-2"><button class="btn-pesquisa" onclick="aplicarFiltrosIndividual()"><i class="material-icons" style="font-size: 16px;">search</i>Pesquisar</button><button class="btn-limpar" onclick="limparFiltrosIndividual()"><i class="material-icons" style="font-size: 16px;">clear</i>Limpar Filtros</button></div>
+                <div class="col-md-3"><label class="filter-label">Situação</label>${criarSelectComBusca('situacaoIndividual', situacoes, filtrosIndividual.situacao, 'Digite ou selecione a situação...', true)}
             </div>
-        </div>
+                        <div class="col-12">
+                            <div class="d-flex gap-3 flex-wrap">
+                                <button class="btn-pesquisa" id="aplicarFiltros">
+                                    <i class="fas fa-search me-2"></i>Pesquisar
+                                </button>
+                                <button class="btn-limpar" id="limparFiltros">
+                                    <i class="fas fa-redo me-2"></i>Limpar Filtros
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+            </div>
         <div class="toolbar">
             <div class="d-flex gap-2">
                 <button class="btn-export" onclick="exportarIndividualCSV()"><i class="material-icons" style="font-size: 14px;">description</i>CSV</button>
@@ -1063,8 +1083,20 @@ function renderizarExecucao() {
                 <div class="col-md-2"><label class="filter-label">Ano</label>${criarSelectComBusca('anoExecucao', anos, filtrosExecucao.ano, 'Digite ou selecione o ano...', true)}</div>
                 <div class="col-md-2"><label class="filter-label">Nº SIAFI</label><input type="text" class="form-control" id="filtroSiafiExecucao" placeholder="Digite..." value="${filtrosExecucao.numeroSiafi || ''}"></div>
                 <div class="col-md-2"><label class="filter-label">Ano Empenho</label><input type="text" class="form-control" id="filtroAnoEmpenhoExecucao" placeholder="Digite..." value="${filtrosExecucao.anoEmpenho || ''}"></div>
-                <div class="col-md-2"><label class="filter-label">Nº Empenho</label><input type="text" class="form-control" id="filtroNumeroEmpenhoExecucao" placeholder="Digite..." value="${filtrosExecucao.numeroEmpenho || ''}"></div>
-                <div class="col-md-4 d-flex gap-2"><button class="btn-pesquisa" onclick="aplicarFiltrosExecucao()"><i class="material-icons" style="font-size: 16px;">search</i>Pesquisar</button><button class="btn-limpar" onclick="limparFiltrosExecucao()"><i class="material-icons" style="font-size: 16px;">clear</i>Limpar Filtros</button></div>
+                <div class="col-md-2"><label class="filter-label">Nº Empenho</label><input type="text" class="form-control" id="filtroNumeroEmpenhoExecucao" placeholder="Digite..." value="${filtrosExecucao.numeroEmpenho || ''}">
+                
+            </div>
+                        <div class="col-12">
+                            <div class="d-flex gap-3 flex-wrap">
+                                <button class="btn-pesquisa" id="aplicarFiltros">
+                                    <i class="fas fa-search me-2"></i>Pesquisar
+                                </button>
+                                <button class="btn-limpar" id="limparFiltros">
+                                    <i class="fas fa-redo me-2"></i>Limpar Filtros
+                                </button>
+                            </div>
+                        </div>
+                    </div>
             </div>
         </div>
         <div class="toolbar">
@@ -1183,10 +1215,20 @@ function renderizarArrecadacao() {
                 <div class="col-md-3"><label class="filter-label">Ano</label>${criarSelectComBusca('anoArrecadacao', anos, filtrosArrecadacao.ano, 'Digite ou selecione o ano...', true)}</div>
                 <div class="col-md-3"><label class="filter-label">Nº SIAFI</label><input type="text" class="form-control" id="filtroSiafiArrecadacao" placeholder="Digite..." value="${filtrosArrecadacao.numeroSiafi || ''}"></div>
                 <div class="col-md-3"><label class="filter-label">Tipo Receita</label>${criarSelectComBusca('tipoArrecadacao', tipos, filtrosArrecadacao.tipoReceita, 'Digite ou selecione o tipo...', true)}</div>
-                <div class="col-md-3"><label class="filter-label">Fonte</label>${criarSelectComBusca('fonteArrecadacao', fontes, filtrosArrecadacao.fonte, 'Digite ou selecione a fonte...', true)}</div>
+                <div class="col-md-3"><label class="filter-label">Fonte</label>${criarSelectComBusca('fonteArrecadacao', fontes, filtrosArrecadacao.fonte, 'Digite ou selecione a fonte...', true)}
             </div>
-            <div class="row mt-2"><div class="col-12 d-flex justify-content-end gap-2"><button class="btn-pesquisa" onclick="aplicarFiltrosArrecadacao()"><i class="material-icons" style="font-size: 16px;">search</i>Pesquisar</button><button class="btn-limpar" onclick="limparFiltrosArrecadacao()"><i class="material-icons" style="font-size: 16px;">clear</i>Limpar Filtros</button></div></div>
-        </div>
+                        <div class="col-12">
+                            <div class="d-flex gap-3 flex-wrap">
+                                <button class="btn-pesquisa" id="aplicarFiltros">
+                                    <i class="fas fa-search me-2"></i>Pesquisar
+                                </button>
+                                <button class="btn-limpar" id="limparFiltros">
+                                    <i class="fas fa-redo me-2"></i>Limpar Filtros
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+            </div>
         <div class="toolbar">
             <div class="d-flex gap-2">
                 <button class="btn-export" onclick="exportarArrecadacaoCSV()"><i class="material-icons" style="font-size: 14px;">description</i>CSV</button>
