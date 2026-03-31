@@ -24,7 +24,21 @@
             --background-light: #f5f7fa;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Montserrat', sans-serif; background-color: var(--background-light); overflow-x: hidden; }
+        body { 
+            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--background-light); 
+            padding-bottom: 15px; 
+            overflow-y: auto !important; 
+            overflow-x: auto !important; 
+            min-height: auto !important; 
+            height: auto !important; 
+            position: relative; 
+        }
+        html { 
+            overflow-y: auto !important; 
+            overflow-x: auto !important; 
+            height: auto !important; 
+        }
         .dashboard-container { width: 100%; max-width: 95% !important; padding: 0 20px; margin: 0 auto; }
         .nav-tabs-container { background: transparent; padding: 10px 0; margin: 15px 0; }
         .nav-tabs { border: none !important; gap: 10px; flex-wrap: wrap; }
@@ -38,10 +52,22 @@
         .metric-header { background: #20445d; color: white; font-size: 13px; font-weight: 600; padding: 8px 15px; }
         .metric-body { padding: 10px 15px; }
         .metric-value { font-size: 18px; font-weight: 700; color: #1a3a5c; }
-        .btn-pesquisa { background: #20445d; border: none; padding: 6px 16px; font-weight: 600; border-radius: 6px; font-size: 13px; color: white; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+        .btn-pesquisa, .btn-limpar { 
+            border: none; 
+            padding: 8px 20px; 
+            font-weight: 600; 
+            border-radius: 6px; 
+            font-size: 13px; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            cursor: pointer;
+            height: 38px;
+        }
+        .btn-pesquisa { background: #20445d; color: white; }
         .btn-pesquisa:hover { background: var(--accent-red); }
-        .btn-secondary-custom { background: white; border: 2px solid var(--primary-darker); color: var(--primary-darker); padding: 6px 16px; font-weight: 600; font-size: 13px; border-radius: 6px; cursor: pointer; }
-        .btn-secondary-custom:hover { background-color: #132837; color: white; }
+        .btn-limpar { background: white; border: 2px solid var(--primary-darker); color: var(--primary-darker); }
+        .btn-limpar:hover { background-color: #132837; color: white; border-color: #132837; }
         .btn-export { background: #eeeff5; border: 1px solid #d6dee6; color: #1a3a5c; padding: 5px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
         .btn-export:hover { background-color: #1a3a5c; color: white; }
         .btn-action { padding: 5px; border-radius: 6px; border: 1.5px solid #1a3a5c; background: white; color: #1a3a5c; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -58,8 +84,8 @@
         .table td.text-center { text-align: center; }
         .table td.text-end { text-align: right; }
         .table tbody tr:hover { background-color: rgba(41,67,90,0.04); }
-        .pagination-container { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: white; border-top: 1px solid #dee2e6; flex-wrap: wrap; gap: 10px; }
-        .items-per-page { height: 32px; min-width: 70px; border-radius: 6px; border: 1px solid #d6dee6; padding: 4px 25px 4px 8px; font-size: 12px; }
+        .pagination-container { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: white; border-top: 1px solid #dee2e6; flex-wrap: wrap; gap: 10px; margin-top: 0; }
+        .items-per-page { height: 32px; min-width: 70px; border-radius: 6px; border: 1px solid #d6dee6; padding: 4px 8px; font-size: 12px; }
         .modal-creative .modal-header { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%); color: white; }
         .column-selector-icon { position: relative; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; background: #eeeff5; border: 1px solid #d6dee6; border-radius: 20px; padding: 4px 10px; height: 32px; font-size: 12px; }
         .column-selector-popup { display: none; position: absolute; right: 0; top: 35px; background: white; border: 1px solid #dee2e6; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); width: 260px; z-index: 1000; padding: 12px; }
@@ -67,8 +93,9 @@
         .column-selector-grid { display: flex; flex-wrap: wrap; gap: 8px; max-height: 200px; overflow-y: auto; }
         .column-selector-item { display: flex; align-items: center; gap: 5px; font-size: 11px; min-width: calc(50% - 8px); }
         .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; }
-        .search-input-small { width: 200px; font-size: 12px; padding: 4px 8px; }
+        .search-input-small { width: 250px; font-size: 12px; padding: 6px 12px; border-radius: 6px; border: 1px solid #d6dee6; }
         .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .toolbar-right { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
         .btn-link-document { background: #28a745; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
         .btn-link-document:hover { background: #218838; color: white; }
         .select-with-search { position: relative; }
@@ -81,15 +108,24 @@
         .table-footer-total td { background-color: #f8f9fa; font-weight: 700; }
         .metadata-table th { background-color: #20445d; color: white; font-size: 12px; }
         .metadata-table td { font-size: 12px; }
-        @media (max-width: 768px) { .dashboard-container { padding: 0 10px; } .toolbar { flex-direction: column; align-items: stretch; } .search-input-small { width: 100%; } }
+        .modal-body .info-section { background: #f8f9fa; border-radius: 8px; padding: 12px; margin-bottom: 15px; border-left: 4px solid #1a3a5c; }
+        .modal-body .info-section h6 { color: #1a3a5c; font-weight: 700; margin-bottom: 12px; }
+        .modal-body .info-row { display: flex; padding: 6px 0; border-bottom: 1px solid #e9ecef; }
+        .modal-body .info-label { width: 40%; font-weight: 600; color: #495057; }
+        .modal-body .info-value { width: 60%; color: #212529; }
+        @media (max-width: 768px) { 
+            .dashboard-container { padding: 0 10px; } 
+            .toolbar { flex-direction: column; align-items: stretch; } 
+            .toolbar-right { justify-content: space-between; }
+            .search-input-small { width: 100%; } 
+            .modal-body .info-label { width: 45%; } 
+            .modal-body .info-value { width: 55%; } 
+        }
         
-        /* IFRAME ESTYLES */
-        body { font-family: 'Montserrat', Segoe UI, Tahoma, Geneva, Verdana, sans-serif; background-color: var(--background-light); padding-bottom: 15px; overflow-y: hidden !important; overflow-x: hidden !important; min-height: auto !important; height: auto !important; position: relative; }
-        html { overflow-y: hidden !important; height: auto !important; }
         .main-container { height: auto !important; min-height: auto !important; overflow: visible !important; position: relative; }
         .container.dashboard-spacing { overflow: visible !important; height: auto !important; min-height: auto !important; position: relative; }
         .tab-content { overflow: visible !important; height: auto !important; min-height: auto !important; position: relative; }
-        .table-container { height: auto !important; min-height: auto !important; overflow: visible !important; position: relative; }
+        .table-container { height: auto !important; min-height: auto !important; overflow-x: auto !important; position: relative; }
     </style>
 </head>
 <body>
@@ -119,7 +155,7 @@
         <div class="modal-content modal-creative">
             <div class="modal-header"><h5 class="modal-title"><i class="material-icons me-2">info</i>Detalhes do Convênio</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
             <div class="modal-body" id="modalContent"></div>
-            <div class="modal-footer"><button type="button" class="btn-secondary-custom" data-bs-dismiss="modal">Fechar</button></div>
+            <div class="modal-footer"><button type="button" class="btn-limpar" data-bs-dismiss="modal">Fechar</button></div>
         </div>
     </div>
 </div>
@@ -402,10 +438,10 @@ function renderizarFormalizados() {
     
     let html = `
         <div class="filter-container">
-            <div class="row g-2">
+            <div class="row g-2 align-items-end">
                 <div class="col-md-5"><label class="filter-label">Ano</label>${criarSelectComBusca('anoFormalizados', anos, filtrosFormalizados.ano, 'Digite ou selecione o ano...', true)}</div>
                 <div class="col-md-5"><label class="filter-label">Proponente</label>${criarSelectComBusca('proponenteFormalizados', proponentes, filtrosFormalizados.proponente, 'Digite ou selecione o proponente...', true)}</div>
-                <div class="col-md-2 d-flex align-items-end"><button class="btn-pesquisa me-2" onclick="aplicarFiltrosFormalizados()">Pesquisar</button><button class="btn-secondary-custom" onclick="limparFiltrosFormalizados()">Limpar</button></div>
+                <div class="col-md-2 d-flex gap-2"><button class="btn-pesquisa" onclick="aplicarFiltrosFormalizados()"><i class="material-icons" style="font-size: 16px;">search</i>Pesquisar</button><button class="btn-limpar" onclick="limparFiltrosFormalizados()"><i class="material-icons" style="font-size: 16px;">clear</i>Limpar Filtros</button></div>
             </div>
         </div>
         <div class="row g-3 mb-4">
@@ -415,7 +451,7 @@ function renderizarFormalizados() {
             <div class="col-md-3"><div class="metric-card"><div class="metric-header">Valor Total</div><div class="metric-body"><div class="metric-value">${formatarMoeda(totalGeral)}</div></div></div></div>
         </div>
         <div class="table-container"><table class="table"><thead><tr><th class="${ordenacaoFormalizados.coluna === 'proponente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'proponente')">Proponente</th><th class="text-center ${ordenacaoFormalizados.coluna === 'convenios' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'convenios')">Qtd Convênios</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorProponente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorProponente')">Valor Proponente</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorConcedente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorConcedente')">Valor Concedente</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorTotal' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorTotal')">Valor Total</th></tr></thead>
-        <tbody>${dadosPagina.map(item => `<tr><td><a href="#" class="orgao-link" onclick="irParaConsultaIndividual('${item.proponente.replace(/'/g, "\\'")}'); return false;">${item.proponente}</a></td><td class="text-center">${item.convenios}</td><td class="text-end">${formatarMoeda(item.valorProponente)}</td><td class="text-end">${formatarMoeda(item.valorConcedente)}</td><td class="text-end">${formatarMoeda(item.valorTotal)}</td>`).join('')}</tbody>${renderizarPaginacao('formalizados', totalRegistros)}</div>`;
+        <tbody>${dadosPagina.map(item => `<tr><td><a href="#" class="orgao-link" onclick="irParaConsultaIndividual('${item.proponente.replace(/'/g, "\\'")}'); return false;">${item.proponente}</a></td><td class="text-center">${item.convenios}</td><td class="text-end">${formatarMoeda(item.valorProponente)}</td><td class="text-end">${formatarMoeda(item.valorConcedente)}</td><td class="text-end">${formatarMoeda(item.valorTotal)}</td></tr>`).join('')}</tbody></table>${renderizarPaginacao('formalizados', totalRegistros)}</div>`;
     container.innerHTML = html;
     
     initSelectComBusca('anoFormalizados', (val) => { filtrosFormalizados.ano = val; renderizarFormalizados(); });
@@ -449,6 +485,8 @@ function aplicarFiltrosFormalizados() {
 
 function limparFiltrosFormalizados() {
     filtrosFormalizados = { ano: '', proponente: '' };
+    if(document.getElementById('anoFormalizados_input')) document.getElementById('anoFormalizados_input').value = '';
+    if(document.getElementById('proponenteFormalizados_input')) document.getElementById('proponenteFormalizados_input').value = '';
     paginaAtual.formalizados = 1;
     renderizarFormalizados();
 }
@@ -496,7 +534,6 @@ function renderizarIndividual() {
     const dadosPagina = dadosFiltrados.slice(inicio, inicio + itensPorPagina);
     const colunasExibidas = ordemColunasIndividual.filter(col => colunasVisiveisIndividual[col]);
     
-    // Calculate totals
     const totalValorProponente = dadosFiltrados.reduce((sum, item) => sum + (parseFloat(item.valor_proponente) || 0), 0);
     const totalValorConcedente = dadosFiltrados.reduce((sum, item) => sum + (parseFloat(item.valor_concedente) || 0), 0);
     const totalValorGeral = dadosFiltrados.reduce((sum, item) => sum + (parseFloat(item.valor_total_convenio) || 0), 0);
@@ -513,7 +550,7 @@ function renderizarIndividual() {
                 <div class="col-md-3"><label class="filter-label">Proponente</label><input type="text" class="form-control" id="filtroProponenteIndividual" placeholder="Digite..." value="${filtrosIndividual.proponente || ''}"></div>
                 <div class="col-md-3"><label class="filter-label">Concedente</label><input type="text" class="form-control" id="filtroConcedenteIndividual" placeholder="Digite..." value="${filtrosIndividual.concedente || ''}"></div>
                 <div class="col-md-3"><label class="filter-label">Situação</label>${criarSelectComBusca('situacaoIndividual', situacoes, filtrosIndividual.situacao, 'Digite ou selecione a situação...', true)}</div>
-                <div class="col-md-3 d-flex align-items-end"><button class="btn-pesquisa me-2" onclick="aplicarFiltrosIndividual()">Pesquisar</button><button class="btn-secondary-custom" onclick="limparFiltrosIndividual()">Limpar</button></div>
+                <div class="col-md-3 d-flex gap-2"><button class="btn-pesquisa" onclick="aplicarFiltrosIndividual()"><i class="material-icons" style="font-size: 16px;">search</i>Pesquisar</button><button class="btn-limpar" onclick="limparFiltrosIndividual()"><i class="material-icons" style="font-size: 16px;">clear</i>Limpar Filtros</button></div>
             </div>
         </div>
         <div class="toolbar">
@@ -524,12 +561,17 @@ function renderizarIndividual() {
                     <div class="column-selector-popup" id="columnSelectorPopupIndividual"><div class="column-selector-grid">${ordemColunasIndividual.map(col => `<label class="column-selector-item"><input type="checkbox" ${colunasVisiveisIndividual[col] ? 'checked' : ''} onchange="toggleColunaIndividual('${col}')">${col.replace(/_/g, ' ').toUpperCase()}</label>`).join('')}</div></div>
                 </div>
             </div>
-            <div class="d-flex gap-3 align-items-center">
+            <div class="toolbar-right">
                 <span class="badge bg-secondary">Total: ${totalRegistros} registros</span>
-                <input type="text" class="form-control search-input-small" placeholder="Buscar na tabela..." id="buscaIndividualInput" value="${buscaIndividual}" onkeyup="buscaIndividualChange(this.value)">
+                <select class="items-per-page" onchange="alterarItensPorPagina('individual', this.value)">
+                    <option value="25" ${itensPorPagina==25?'selected':''}>25 por página</option>
+                    <option value="50" ${itensPorPagina==50?'selected':''}>50 por página</option>
+                    <option value="100" ${itensPorPagina==100?'selected':''}>100 por página</option>
+                </select>
+                <input type="text" class="search-input-small" placeholder="Buscar na tabela..." id="buscaIndividualInput" value="${buscaIndividual}" onkeyup="buscaIndividualChange(this.value)">
             </div>
         </div>
-        <div class="table-container"><table class="table" style="min-width: 1200px;"><thead> <tr>${colunasExibidas.map(col => `<th class="${ordenacaoIndividual.coluna === col ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th class="text-end">VALOR PROPONENTE</th><th class="text-end">VALOR CONCEDENTE</th><th class="text-end">VALOR TOTAL</th><th>AÇÕES</th></tr>
+        <div class="table-container"><table class="table" style="min-width: 1200px;"><thead><tr>${colunasExibidas.map(col => `<th class="${ordenacaoIndividual.coluna === col ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th class="text-end">VALOR PROPONENTE</th><th class="text-end">VALOR CONCEDENTE</th><th class="text-end">VALOR TOTAL</th><th>AÇÕES</th></tr>
         </thead>
         <tbody>${dadosPagina.map(item => {
             const link = getLinkInteiroTeor(item);
@@ -554,6 +596,93 @@ function renderizarIndividual() {
     document.getElementById('filtroSigconIndividual')?.addEventListener('input', (e) => { filtrosIndividual.codigoSigcon = e.target.value; renderizarIndividual(); });
     document.getElementById('filtroProponenteIndividual')?.addEventListener('input', (e) => { filtrosIndividual.proponente = e.target.value; renderizarIndividual(); });
     document.getElementById('filtroConcedenteIndividual')?.addEventListener('input', (e) => { filtrosIndividual.concedente = e.target.value; renderizarIndividual(); });
+}
+
+function renderizarExecucao() {
+    const container = document.getElementById('execucao-content');
+    if (!container) return;
+    
+    const conveniosMap = new Map();
+    conveniosData.forEach(c => { if (c.codigo_siafi) conveniosMap.set(c.codigo_siafi, c); });
+    
+    let dadosFiltrados = execucaoData.filter(e => {
+        if (filtrosExecucao.ano && e.ano_exercicio_receita != filtrosExecucao.ano) return false;
+        if (filtrosExecucao.numeroSiafi && !e.no_siafi?.toLowerCase().includes(filtrosExecucao.numeroSiafi.toLowerCase())) return false;
+        if (filtrosExecucao.anoEmpenho && e.ano_empenho != filtrosExecucao.anoEmpenho) return false;
+        if (filtrosExecucao.numeroEmpenho && !e.no_empenho?.toLowerCase().includes(filtrosExecucao.numeroEmpenho.toLowerCase())) return false;
+        return true;
+    });
+    
+    if (buscaExecucao) {
+        const termo = buscaExecucao.toLowerCase();
+        dadosFiltrados = dadosFiltrados.filter(e => e.razao_social_credor?.toLowerCase().includes(termo) || e.no_siafi?.toLowerCase().includes(termo));
+    }
+    
+    dadosFiltrados = dadosFiltrados.map(e => ({ ...e, proponente: conveniosMap.get(e.no_siafi)?.proponente || '-', concedente: conveniosMap.get(e.no_siafi)?.concedente || '-', situacao_convenio: conveniosMap.get(e.no_siafi)?.situacao || '-' }));
+    dadosFiltrados = ordenarDados(dadosFiltrados, ordenacaoExecucao.coluna, ordenacaoExecucao.direcao, 'texto');
+    
+    const totalRegistros = dadosFiltrados.length;
+    const inicio = (paginaAtual.execucao - 1) * itensPorPagina;
+    const dadosPagina = dadosFiltrados.slice(inicio, inicio + itensPorPagina);
+    const anos = [...new Set(execucaoData.map(e => e.ano_exercicio_receita))].filter(Boolean).sort().reverse();
+    const colunasExibidas = ordemColunasExecucao.filter(col => colunasVisiveisExecucao[col]);
+    
+    const totalEmpenhado = dadosFiltrados.reduce((sum, item) => sum + (parseFloat(item.valor_empenhado) || 0), 0);
+    const totalLiquidado = dadosFiltrados.reduce((sum, item) => sum + (parseFloat(item.valor_liquidado) || 0), 0);
+    const totalPago = dadosFiltrados.reduce((sum, item) => sum + (parseFloat(item.valor_pago) || 0), 0);
+    
+    let html = `
+        <div class="filter-container">
+            <div class="row g-2">
+                <div class="col-md-2"><label class="filter-label">Ano</label>${criarSelectComBusca('anoExecucao', anos, filtrosExecucao.ano, 'Digite ou selecione o ano...', true)}</div>
+                <div class="col-md-2"><label class="filter-label">Nº SIAFI</label><input type="text" class="form-control" id="filtroSiafiExecucao" placeholder="Digite..." value="${filtrosExecucao.numeroSiafi || ''}"></div>
+                <div class="col-md-2"><label class="filter-label">Ano Empenho</label><input type="text" class="form-control" id="filtroAnoEmpenhoExecucao" placeholder="Digite..." value="${filtrosExecucao.anoEmpenho || ''}"></div>
+                <div class="col-md-2"><label class="filter-label">Nº Empenho</label><input type="text" class="form-control" id="filtroNumeroEmpenhoExecucao" placeholder="Digite..." value="${filtrosExecucao.numeroEmpenho || ''}"></div>
+                <div class="col-md-4 d-flex gap-2"><button class="btn-pesquisa" onclick="aplicarFiltrosExecucao()"><i class="material-icons" style="font-size: 16px;">search</i>Pesquisar</button><button class="btn-limpar" onclick="limparFiltrosExecucao()"><i class="material-icons" style="font-size: 16px;">clear</i>Limpar Filtros</button></div>
+            </div>
+        </div>
+        <div class="toolbar">
+            <div class="d-flex gap-2">
+                <button class="btn-export" onclick="exportarExecucaoCSV()"><i class="material-icons" style="font-size: 14px;">description</i>CSV</button>
+                <button class="btn-export" onclick="exportarExecucaoPDF()"><i class="material-icons" style="font-size: 14px;">picture_as_pdf</i>PDF</button>
+                <div class="column-selector-icon" onclick="toggleColumnSelector(event, 'execucao')"><i class="material-icons" style="font-size: 16px;">view_column</i> Colunas
+                    <div class="column-selector-popup" id="columnSelectorPopupExecucao"><div class="column-selector-grid">${ordemColunasExecucao.map(col => `<label class="column-selector-item"><input type="checkbox" ${colunasVisiveisExecucao[col] ? 'checked' : ''} onchange="toggleColunaExecucao('${col}')">${col.replace(/_/g, ' ').toUpperCase()}</label>`).join('')}</div></div>
+                </div>
+            </div>
+            <div class="toolbar-right">
+                <span class="badge bg-secondary">Total: ${totalRegistros} registros</span>
+                <select class="items-per-page" onchange="alterarItensPorPagina('execucao', this.value)">
+                    <option value="25" ${itensPorPagina==25?'selected':''}>25 por página</option>
+                    <option value="50" ${itensPorPagina==50?'selected':''}>50 por página</option>
+                    <option value="100" ${itensPorPagina==100?'selected':''}>100 por página</option>
+                </select>
+                <input type="text" class="search-input-small" placeholder="Buscar na tabela..." id="buscaExecucaoInput" value="${buscaExecucao}" onkeyup="buscaExecucaoChange(this.value)">
+            </div>
+        </div>
+        <div class="table-container"><table class="table" style="min-width: 1300px;"><thead><tr>${colunasExibidas.map(col => `<th class="${ordenacaoExecucao.coluna === col ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th>AÇÕES</th></tr>
+        </thead>
+        <tbody>${dadosPagina.map(item => {
+            const convenio = conveniosMap.get(item.no_siafi);
+            const link = convenio ? getLinkInteiroTeor(convenio) : null;
+            return `<tr>${colunasExibidas.map(col => {
+                let valor = item[col] || '-';
+                if (col === 'valor_empenhado' || col === 'valor_liquidado' || col === 'valor_pago') {
+                    valor = formatarMoeda(valor);
+                }
+                if (col === 'no_siafi' && valor !== '-') {
+                    return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
+                }
+                return `<td>${valor}</td>`;
+            }).join('')}<td class="text-center"><button class="btn-action" onclick='abrirModalExecucao(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
+        }).join('')}</tbody>
+        <tfoot class="table-footer-total"><tr><td colspan="${colunasExibidas.length - 3}" class="text-end fw-bold">TOTAIS:</td><td class="text-end fw-bold">${formatarMoeda(totalEmpenhado)}</td><td class="text-end fw-bold">${formatarMoeda(totalLiquidado)}</td><td class="text-end fw-bold">${formatarMoeda(totalPago)}</td><td></td></tr></tfoot>
+        ${renderizarPaginacao('execucao', totalRegistros)}</div>`;
+    container.innerHTML = html;
+    
+    initSelectComBusca('anoExecucao', (val) => { filtrosExecucao.ano = val; renderizarExecucao(); });
+    document.getElementById('filtroSiafiExecucao')?.addEventListener('input', (e) => { filtrosExecucao.numeroSiafi = e.target.value; renderizarExecucao(); });
+    document.getElementById('filtroAnoEmpenhoExecucao')?.addEventListener('input', (e) => { filtrosExecucao.anoEmpenho = e.target.value; renderizarExecucao(); });
+    document.getElementById('filtroNumeroEmpenhoExecucao')?.addEventListener('input', (e) => { filtrosExecucao.numeroEmpenho = e.target.value; renderizarExecucao(); });
 }
 
 function renderizarArrecadacao() {
@@ -610,7 +739,7 @@ function renderizarArrecadacao() {
                 <div class="col-md-3"><label class="filter-label">Tipo Receita</label>${criarSelectComBusca('tipoArrecadacao', tipos, filtrosArrecadacao.tipoReceita, 'Digite ou selecione o tipo...', true)}</div>
                 <div class="col-md-3"><label class="filter-label">Fonte</label>${criarSelectComBusca('fonteArrecadacao', fontes, filtrosArrecadacao.fonte, 'Digite ou selecione a fonte...', true)}</div>
             </div>
-            <div class="row mt-2"><div class="col-12 d-flex justify-content-end gap-2"><button class="btn-pesquisa me-2" onclick="aplicarFiltrosArrecadacao()">Pesquisar</button><button class="btn-secondary-custom" onclick="limparFiltrosArrecadacao()">Limpar</button></div></div>
+            <div class="row mt-2"><div class="col-12 d-flex justify-content-end gap-2"><button class="btn-pesquisa" onclick="aplicarFiltrosArrecadacao()"><i class="material-icons" style="font-size: 16px;">search</i>Pesquisar</button><button class="btn-limpar" onclick="limparFiltrosArrecadacao()"><i class="material-icons" style="font-size: 16px;">clear</i>Limpar Filtros</button></div></div>
         </div>
         <div class="toolbar">
             <div class="d-flex gap-2">
@@ -620,9 +749,17 @@ function renderizarArrecadacao() {
                     <div class="column-selector-popup" id="columnSelectorPopupArrecadacao"><div class="column-selector-grid">${ordemColunasArrecadacao.map(col => `<label class="column-selector-item"><input type="checkbox" ${colunasVisiveisArrecadacao[col] ? 'checked' : ''} onchange="toggleColunaArrecadacao('${col}')">${col.replace(/_/g, ' ').toUpperCase()}</label>`).join('')}</div></div>
                 </div>
             </div>
-            <div class="d-flex gap-3 align-items-center"><span class="badge bg-secondary">Total: ${totalRegistros} registros</span><input type="text" class="form-control search-input-small" placeholder="Buscar na tabela..." id="buscaArrecadacaoInput" value="${buscaArrecadacao}" onkeyup="buscaArrecadacaoChange(this.value)"></div>
+            <div class="toolbar-right">
+                <span class="badge bg-secondary">Total: ${totalRegistros} registros</span>
+                <select class="items-per-page" onchange="alterarItensPorPagina('arrecadacao', this.value)">
+                    <option value="25" ${itensPorPagina==25?'selected':''}>25 por página</option>
+                    <option value="50" ${itensPorPagina==50?'selected':''}>50 por página</option>
+                    <option value="100" ${itensPorPagina==100?'selected':''}>100 por página</option>
+                </select>
+                <input type="text" class="search-input-small" placeholder="Buscar na tabela..." id="buscaArrecadacaoInput" value="${buscaArrecadacao}" onkeyup="buscaArrecadacaoChange(this.value)">
+            </div>
         </div>
-        <div class="table-container"><table class="table"><thead> <tr>${colunasExibidas.map(col => `<th class="${ordenacaoArrecadacao.coluna === col ? ordenacaoArrecadacao.direcao : ''}" onclick="ordenar('arrecadacao', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th>AÇÕES</th></tr>
+        <div class="table-container"><table class="table"><thead><tr>${colunasExibidas.map(col => `<th class="${ordenacaoArrecadacao.coluna === col ? ordenacaoArrecadacao.direcao : ''}" onclick="ordenar('arrecadacao', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th>AÇÕES</th></tr>
         </thead>
         <tbody>${dadosPagina.map(item => {
             const convenio = conveniosMap.get(item.no_siafi);
@@ -647,99 +784,134 @@ function renderizarArrecadacao() {
     document.getElementById('filtroSiafiArrecadacao')?.addEventListener('input', (e) => { filtrosArrecadacao.numeroSiafi = e.target.value; renderizarArrecadacao(); });
 }
 
-function renderizarExecucao() {
-    const container = document.getElementById('execucao-content');
-    if (!container) return;
-    
-    const conveniosMap = new Map();
-    conveniosData.forEach(c => { if (c.codigo_siafi) conveniosMap.set(c.codigo_siafi, c); });
-    
-    let dadosFiltrados = execucaoData.filter(e => {
-        if (filtrosExecucao.ano && e.ano_exercicio_receita != filtrosExecucao.ano) return false;
-        if (filtrosExecucao.numeroSiafi && !e.no_siafi?.toLowerCase().includes(filtrosExecucao.numeroSiafi.toLowerCase())) return false;
-        if (filtrosExecucao.anoEmpenho && e.ano_empenho != filtrosExecucao.anoEmpenho) return false;
-        if (filtrosExecucao.numeroEmpenho && !e.no_empenho?.toLowerCase().includes(filtrosExecucao.numeroEmpenho.toLowerCase())) return false;
-        return true;
-    });
-    
-    if (buscaExecucao) {
-        const termo = buscaExecucao.toLowerCase();
-        dadosFiltrados = dadosFiltrados.filter(e => e.razao_social_credor?.toLowerCase().includes(termo) || e.no_siafi?.toLowerCase().includes(termo));
+function abrirModalDetalhesConvenio(item) {
+    const link = getLinkInteiroTeor(item);
+    const grupos = {
+        '📋 IDENTIFICAÇÃO': ['codigo_siafi', 'codigo_sigcon', 'sei', 'instrumento', 'ano'],
+        '🏢 PARTES': ['proponente', 'concedente', 'esfera_concedente'],
+        '💰 FINANCEIRO': ['valor_proponente', 'valor_concedente', 'valor_total_convenio', 'tipo_contrapartida'],
+        '📅 DATAS': ['data_assinatura', 'data_publicacao', 'inicio_vigencia', 'termino_vigencia'],
+        '📄 INFORMAÇÕES': ['objeto', 'situacao']
+    };
+    let html = '';
+    if (link) {
+        html += `<div class="alert alert-info mb-3"><i class="material-icons">link</i> <strong>Documento do Convênio:</strong> <a href="${link}" target="_blank" class="btn-link-document"><i class="material-icons">open_in_new</i> Visualizar Instrumento</a></div>`;
+    }
+    for (const [titulo, campos] of Object.entries(grupos)) {
+        let conteudo = '';
+        for (const campo of campos) {
+            const valor = item[campo];
+            if (valor && valor !== '' && valor !== '-') {
+                let valorDisplay = campo.includes('valor') ? formatarMoeda(valor) : (campo.includes('data') ? formatarData(valor) : valor);
+                conteudo += `<div class="info-row"><div class="info-label">${campo.replace(/_/g, ' ').toUpperCase()}:</div><div class="info-value">${valorDisplay}</div></div>`;
+            }
+        }
+        if (conteudo) html += `<div class="info-section"><h6>${titulo}</h6>${conteudo}</div>`;
+    }
+    document.getElementById('modalContent').innerHTML = html;
+    new bootstrap.Modal(document.getElementById('detailModal')).show();
+}
+
+function abrirModalExecucao(item) {
+    const convenio = conveniosData.find(c => c.codigo_siafi === item.no_siafi);
+    const link = convenio ? getLinkInteiroTeor(convenio) : null;
+    let html = '';
+    if (link) {
+        html += `<div class="alert alert-info mb-3"><i class="material-icons">link</i> <strong>Documento do Convênio:</strong> <a href="${link}" target="_blank" class="btn-link-document"><i class="material-icons">open_in_new</i> Visualizar Instrumento</a></div>`;
     }
     
-    dadosFiltrados = dadosFiltrados.map(e => ({ ...e, proponente: conveniosMap.get(e.no_siafi)?.proponente || '-', concedente: conveniosMap.get(e.no_siafi)?.concedente || '-', situacao_convenio: conveniosMap.get(e.no_siafi)?.situacao || '-' }));
-    dadosFiltrados = ordenarDados(dadosFiltrados, ordenacaoExecucao.coluna, ordenacaoExecucao.direcao, 'texto');
+    html += `<div class="info-section"><h6>📊 DADOS DA EXECUÇÃO</h6>`;
+    html += `<div class="info-row"><div class="info-label">Código SIAFI:</div><div class="info-value">${item.no_siafi || '-'}</div></div>`;
+    html += `<div class="info-row"><div class="info-label">Empenho:</div><div class="info-value">${item.no_empenho || '-'} / ${item.ano_empenho || '-'}</div></div>`;
+    html += `<div class="info-row"><div class="info-label">Credor:</div><div class="info-value">${item.razao_social_credor || '-'}</div></div>`;
+    html += `<div class="info-row"><div class="info-label">CNPJ/CPF Credor:</div><div class="info-value">${item.cnpj_cpf_credor || '-'}</div></div>`;
+    html += `<div class="info-row"><div class="info-label">Valor Empenhado:</div><div class="info-value">${formatarMoeda(item.valor_empenhado)}</div></div>`;
+    html += `<div class="info-row"><div class="info-label">Valor Liquidado:</div><div class="info-value">${formatarMoeda(item.valor_liquidado)}</div></div>`;
+    html += `<div class="info-row"><div class="info-label">Valor Pago:</div><div class="info-value">${formatarMoeda(item.valor_pago)}</div></div>`;
+    html += `<div class="info-row"><div class="info-label">Ano Exercício:</div><div class="info-value">${item.ano_exercicio_receita || '-'}</div></div>`;
+    html += `</div>`;
     
-    const totalRegistros = dadosFiltrados.length;
-    const inicio = (paginaAtual.execucao - 1) * itensPorPagina;
-    const dadosPagina = dadosFiltrados.slice(inicio, inicio + itensPorPagina);
-    const anos = [...new Set(execucaoData.map(e => e.ano_exercicio_receita))].filter(Boolean).sort().reverse();
-    const colunasExibidas = ordemColunasExecucao.filter(col => colunasVisiveisExecucao[col]);
+    if (convenio) {
+        html += `<div class="info-section"><h6>📋 DADOS DO CONVÊNIO</h6>`;
+        html += `<div class="info-row"><div class="info-label">Proponente:</div><div class="info-value">${convenio.proponente || '-'}</div></div>`;
+        html += `<div class="info-row"><div class="info-label">Concedente:</div><div class="info-value">${convenio.concedente || '-'}</div></div>`;
+        html += `<div class="info-row"><div class="info-label">Situação:</div><div class="info-value">${convenio.situacao || '-'}</div></div>`;
+        html += `<div class="info-row"><div class="info-label">Valor Total:</div><div class="info-value">${formatarMoeda(convenio.valor_total_convenio)}</div></div>`;
+        html += `<div class="info-row"><div class="info-label">Objeto:</div><div class="info-value">${convenio.objeto || '-'}</div></div>`;
+        html += `<div class="info-row"><div class="info-label">Data Assinatura:</div><div class="info-value">${formatarData(convenio.data_assinatura)}</div></div>`;
+        html += `<div class="info-row"><div class="info-label">Vigência:</div><div class="info-value">${formatarData(convenio.inicio_vigencia)} até ${formatarData(convenio.termino_vigencia)}</div></div>`;
+        html += `</div>`;
+    }
     
-    const totalEmpenhado = dadosFiltrados.reduce((sum, item) => sum + (parseFloat(item.valor_empenhado) || 0), 0);
-    const totalLiquidado = dadosFiltrados.reduce((sum, item) => sum + (parseFloat(item.valor_liquidado) || 0), 0);
-    const totalPago = dadosFiltrados.reduce((sum, item) => sum + (parseFloat(item.valor_pago) || 0), 0);
+    document.getElementById('modalContent').innerHTML = html;
+    new bootstrap.Modal(document.getElementById('detailModal')).show();
+}
+
+function abrirModalArrecadacao(item) {
+    const convenio = conveniosData.find(c => c.codigo_siafi === item.no_siafi);
+    const link = convenio ? getLinkInteiroTeor(convenio) : null;
+    let html = '';
+    if (link) {
+        html += `<div class="alert alert-info mb-3"><i class="material-icons">link</i> <strong>Documento do Convênio:</strong> <a href="${link}" target="_blank" class="btn-link-document"><i class="material-icons">open_in_new</i> Visualizar Instrumento</a></div>`;
+    }
     
-    let html = `
-        <div class="filter-container">
-            <div class="row g-2">
-                <div class="col-md-2"><label class="filter-label">Ano</label>${criarSelectComBusca('anoExecucao', anos, filtrosExecucao.ano, 'Digite ou selecione o ano...', true)}</div>
-                <div class="col-md-2"><label class="filter-label">Nº SIAFI</label><input type="text" class="form-control" id="filtroSiafiExecucao" placeholder="Digite..." value="${filtrosExecucao.numeroSiafi || ''}"></div>
-                <div class="col-md-2"><label class="filter-label">Ano Empenho</label><input type="text" class="form-control" id="filtroAnoEmpenhoExecucao" placeholder="Digite..." value="${filtrosExecucao.anoEmpenho || ''}"></div>
-                <div class="col-md-2"><label class="filter-label">Nº Empenho</label><input type="text" class="form-control" id="filtroNumeroEmpenhoExecucao" placeholder="Digite..." value="${filtrosExecucao.numeroEmpenho || ''}"></div>
-                <div class="col-md-4 d-flex align-items-end gap-2"><button class="btn-pesquisa me-2" onclick="aplicarFiltrosExecucao()">Pesquisar</button><button class="btn-secondary-custom" onclick="limparFiltrosExecucao()">Limpar</button></div>
-            </div>
-        </div>
-        <div class="toolbar">
-            <div class="d-flex gap-2">
-                <button class="btn-export" onclick="exportarExecucaoCSV()"><i class="material-icons" style="font-size: 14px;">description</i>CSV</button>
-                <button class="btn-export" onclick="exportarExecucaoPDF()"><i class="material-icons" style="font-size: 14px;">picture_as_pdf</i>PDF</button>
-                <div class="column-selector-icon" onclick="toggleColumnSelector(event, 'execucao')"><i class="material-icons" style="font-size: 16px;">view_column</i> Colunas
-                    <div class="column-selector-popup" id="columnSelectorPopupExecucao"><div class="column-selector-grid">${ordemColunasExecucao.map(col => `<label class="column-selector-item"><input type="checkbox" ${colunasVisiveisExecucao[col] ? 'checked' : ''} onchange="toggleColunaExecucao('${col}')">${col.replace(/_/g, ' ').toUpperCase()}</label>`).join('')}</div></div>
-                </div>
-            </div>
-            <div class="d-flex gap-3 align-items-center"><span class="badge bg-secondary">Total: ${totalRegistros} registros</span><input type="text" class="form-control search-input-small" placeholder="Buscar na tabela..." id="buscaExecucaoInput" value="${buscaExecucao}" onkeyup="buscaExecucaoChange(this.value)"></div>
-        </div>
-        <div class="table-container"><table class="table" style="min-width: 1300px;"><thead> <tr>${colunasExibidas.map(col => `<th class="${ordenacaoExecucao.coluna === col ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th>AÇÕES</th></tr>
-        </thead>
-        <tbody>${dadosPagina.map(item => {
-            const convenio = conveniosMap.get(item.no_siafi);
-            const link = convenio ? getLinkInteiroTeor(convenio) : null;
-            return `<tr>${colunasExibidas.map(col => {
-                let valor = item[col] || '-';
-                if (col === 'valor_empenhado' || col === 'valor_liquidado' || col === 'valor_pago') {
-                    valor = formatarMoeda(valor);
-                }
-                if (col === 'no_siafi' && valor !== '-') {
-                    return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
-                }
-                return `<td>${valor}</td>`;
-            }).join('')}<td class="text-center"><button class="btn-action" onclick='abrirModalExecucao(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
-        }).join('')}</tbody>
-        <tfoot class="table-footer-total"><tr><td colspan="${colunasExibidas.length - 3}" class="text-end fw-bold">TOTAIS:</td><td class="text-end fw-bold">${formatarMoeda(totalEmpenhado)}</td><td class="text-end fw-bold">${formatarMoeda(totalLiquidado)}</td><td class="text-end fw-bold">${formatarMoeda(totalPago)}</td><td></td></tr></tfoot>
-        ${renderizarPaginacao('execucao', totalRegistros)}</div>`;
-    container.innerHTML = html;
+    html += `<div class="info-section"><h6>💰 DADOS DA ARRECADAÇÃO</h6>`;
+    html += `<div class="info-row"><div class="info-label">Nº SIAFI:</div><div class="info-value">${item.no_siafi || '-'}</div></div>`;
+    html += `<div class="info-row"><div class="info-label">Unidade Orçamentária:</div><div class="info-value">${item.unidade_orcamentaria || '-'}</div></div>`;
+    html += `<div class="info-row"><div class="info-label">Ano Exercício:</div><div class="info-value">${item.ano_exercicio_receita || '-'}</div></div>`;
+    html += `<div class="info-row"><div class="info-label">Código Classificação:</div><div class="info-value">${item.codigo_classificacao_receita || '-'}</div></div>`;
+    html += `<div class="info-row"><div class="info-label">Tipo de Receita:</div><div class="info-value">${item.tipo_de_receita || '-'}</div></div>`;
+    html += `<div class="info-row"><div class="info-label">Fonte:</div><div class="info-value">${item.fonte || '-'}</div></div>`;
+    html += `<div class="info-row"><div class="info-label">Valor Arrecadado:</div><div class="info-value">${formatarMoeda(item.receita_arrecadada)}</div></div>`;
+    html += `<div class="info-row"><div class="info-label">Data da Arrecadação:</div><div class="info-value">${formatarData(item.data_da_arrecadacao)}</div></div>`;
+    html += `</div>`;
     
-    initSelectComBusca('anoExecucao', (val) => { filtrosExecucao.ano = val; renderizarExecucao(); });
-    document.getElementById('filtroSiafiExecucao')?.addEventListener('input', (e) => { filtrosExecucao.numeroSiafi = e.target.value; renderizarExecucao(); });
-    document.getElementById('filtroAnoEmpenhoExecucao')?.addEventListener('input', (e) => { filtrosExecucao.anoEmpenho = e.target.value; renderizarExecucao(); });
-    document.getElementById('filtroNumeroEmpenhoExecucao')?.addEventListener('input', (e) => { filtrosExecucao.numeroEmpenho = e.target.value; renderizarExecucao(); });
+    if (convenio) {
+        html += `<div class="info-section"><h6>📋 DADOS DO CONVÊNIO</h6>`;
+        html += `<div class="info-row"><div class="info-label">Proponente:</div><div class="info-value">${convenio.proponente || '-'}</div></div>`;
+        html += `<div class="info-row"><div class="info-label">Concedente:</div><div class="info-value">${convenio.concedente || '-'}</div></div>`;
+        html += `<div class="info-row"><div class="info-label">Situação:</div><div class="info-value">${convenio.situacao || '-'}</div></div>`;
+        html += `<div class="info-row"><div class="info-label">Valor Total:</div><div class="info-value">${formatarMoeda(convenio.valor_total_convenio)}</div></div>`;
+        html += `<div class="info-row"><div class="info-label">Objeto:</div><div class="info-value">${convenio.objeto || '-'}</div></div>`;
+        html += `</div>`;
+    }
+    
+    document.getElementById('modalContent').innerHTML = html;
+    new bootstrap.Modal(document.getElementById('detailModal')).show();
 }
 
 function renderizarDownloads() {
     const metadata = [
-        { campo: "codigo_siafi", descricao: "Código identificador do convênio no sistema SIAFI", tipo: "Texto" },
-        { campo: "codigo_sigcon", descricao: "Código identificador do convênio no sistema SIGCON", tipo: "Texto" },
-        { campo: "sei", descricao: "Número do processo no sistema SEI", tipo: "Texto" },
-        { campo: "instrumento", descricao: "Tipo de instrumento formalizado (convênio, termo de parceria, etc.)", tipo: "Texto" },
-        { campo: "proponente", descricao: "Nome do órgão ou entidade proponente", tipo: "Texto" },
-        { campo: "concedente", descricao: "Nome do órgão ou entidade concedente", tipo: "Texto" },
-        { campo: "valor_proponente", descricao: "Valor financeiro aportado pelo proponente", tipo: "Numérico (moeda)" },
-        { campo: "valor_concedente", descricao: "Valor financeiro aportado pelo concedente", tipo: "Numérico (moeda)" },
-        { campo: "valor_total_convenio", descricao: "Valor total do convênio", tipo: "Numérico (moeda)" },
-        { campo: "objeto", descricao: "Descrição do objeto do convênio", tipo: "Texto" },
-        { campo: "situacao", descricao: "Situação atual do convênio", tipo: "Texto" },
-        { campo: "data_assinatura", descricao: "Data de assinatura do instrumento", tipo: "Data" }
+        { planilha: "CONVÊNIOS", campo: "codigo_siafi", descricao: "Código identificador do convênio no sistema SIAFI", tipo: "Texto" },
+        { planilha: "CONVÊNIOS", campo: "codigo_sigcon", descricao: "Código identificador do convênio no sistema SIGCON", tipo: "Texto" },
+        { planilha: "CONVÊNIOS", campo: "sei", descricao: "Número do processo no sistema SEI", tipo: "Texto" },
+        { planilha: "CONVÊNIOS", campo: "instrumento", descricao: "Tipo de instrumento formalizado (convênio, termo de parceria, etc.)", tipo: "Texto" },
+        { planilha: "CONVÊNIOS", campo: "proponente", descricao: "Nome do órgão ou entidade proponente", tipo: "Texto" },
+        { planilha: "CONVÊNIOS", campo: "concedente", descricao: "Nome do órgão ou entidade concedente", tipo: "Texto" },
+        { planilha: "CONVÊNIOS", campo: "valor_proponente", descricao: "Valor financeiro aportado pelo proponente", tipo: "Numérico (moeda)" },
+        { planilha: "CONVÊNIOS", campo: "valor_concedente", descricao: "Valor financeiro aportado pelo concedente", tipo: "Numérico (moeda)" },
+        { planilha: "CONVÊNIOS", campo: "valor_total_convenio", descricao: "Valor total do convênio", tipo: "Numérico (moeda)" },
+        { planilha: "CONVÊNIOS", campo: "objeto", descricao: "Descrição do objeto do convênio", tipo: "Texto" },
+        { planilha: "CONVÊNIOS", campo: "situacao", descricao: "Situação atual do convênio", tipo: "Texto" },
+        { planilha: "CONVÊNIOS", campo: "data_assinatura", descricao: "Data de assinatura do instrumento", tipo: "Data" },
+        { planilha: "CONVÊNIOS", campo: "data_publicacao", descricao: "Data de publicação no diário oficial", tipo: "Data" },
+        { planilha: "CONVÊNIOS", campo: "inicio_vigencia", descricao: "Data de início da vigência do convênio", tipo: "Data" },
+        { planilha: "CONVÊNIOS", campo: "termino_vigencia", descricao: "Data de término da vigência do convênio", tipo: "Data" },
+        { planilha: "EXECUÇÃO", campo: "no_siafi", descricao: "Número SIAFI do convênio", tipo: "Texto" },
+        { planilha: "EXECUÇÃO", campo: "no_empenho", descricao: "Número do empenho", tipo: "Texto" },
+        { planilha: "EXECUÇÃO", campo: "ano_empenho", descricao: "Ano do empenho", tipo: "Numérico" },
+        { planilha: "EXECUÇÃO", campo: "razao_social_credor", descricao: "Razão social do credor", tipo: "Texto" },
+        { planilha: "EXECUÇÃO", campo: "cnpj_cpf_credor", descricao: "CNPJ/CPF do credor", tipo: "Texto" },
+        { planilha: "EXECUÇÃO", campo: "valor_empenhado", descricao: "Valor empenhado", tipo: "Numérico (moeda)" },
+        { planilha: "EXECUÇÃO", campo: "valor_liquidado", descricao: "Valor liquidado", tipo: "Numérico (moeda)" },
+        { planilha: "EXECUÇÃO", campo: "valor_pago", descricao: "Valor pago", tipo: "Numérico (moeda)" },
+        { planilha: "ARRECADAÇÃO", campo: "no_siafi", descricao: "Número SIAFI do convênio", tipo: "Texto" },
+        { planilha: "ARRECADAÇÃO", campo: "ano_exercicio_receita", descricao: "Ano de exercício da receita", tipo: "Numérico" },
+        { planilha: "ARRECADAÇÃO", campo: "codigo_classificacao_receita", descricao: "Código de classificação da receita", tipo: "Texto" },
+        { planilha: "ARRECADAÇÃO", campo: "tipo_de_receita", descricao: "Tipo de receita arrecadada", tipo: "Texto" },
+        { planilha: "ARRECADAÇÃO", campo: "fonte", descricao: "Fonte de recurso", tipo: "Texto" },
+        { planilha: "ARRECADAÇÃO", campo: "data_da_arrecadacao", descricao: "Data da arrecadação", tipo: "Data" },
+        { planilha: "ARRECADAÇÃO", campo: "receita_arrecadada", descricao: "Valor arrecadado", tipo: "Numérico (moeda)" }
     ];
     
     let html = `
@@ -754,10 +926,10 @@ function renderizarDownloads() {
             <div class="table-container">
                 <table class="table metadata-table">
                     <thead>
-                        <tr><th>Campo</th><th>Descrição</th><th>Tipo</th></tr>
+                        <tr><th>Planilha</th><th>Campo</th><th>Descrição</th><th>Tipo</th></tr>
                     </thead>
                     <tbody>
-                        ${metadata.map(m => `<tr><td><code>${m.campo}</code></td><td>${m.descricao}</td><td>${m.tipo}</td></tr>`).join('')}
+                        ${metadata.map(m => `<tr><td><span class="badge bg-secondary">${m.planilha}</span></td><td><code>${m.campo}</code></td><td>${m.descricao}</td><td>${m.tipo}</td></tr>`).join('')}
                     </tbody>
                 </table>
             </div>
@@ -785,7 +957,20 @@ function aplicarFiltrosIndividual() {
     paginaAtual.individual = 1;
     renderizarIndividual();
 }
-function limparFiltrosIndividual() { filtrosIndividual = { ano: '', codigoSiafi: '', codigoSigcon: '', instrumento: '', proponente: '', concedente: '', situacao: '' }; buscaIndividual = ''; if(document.getElementById('buscaIndividualInput')) document.getElementById('buscaIndividualInput').value = ''; paginaAtual.individual = 1; renderizarIndividual(); }
+function limparFiltrosIndividual() { 
+    filtrosIndividual = { ano: '', codigoSiafi: '', codigoSigcon: '', instrumento: '', proponente: '', concedente: '', situacao: '' }; 
+    buscaIndividual = ''; 
+    if(document.getElementById('buscaIndividualInput')) document.getElementById('buscaIndividualInput').value = ''; 
+    if(document.getElementById('anoIndividual_input')) document.getElementById('anoIndividual_input').value = '';
+    if(document.getElementById('instrumentoIndividual_input')) document.getElementById('instrumentoIndividual_input').value = '';
+    if(document.getElementById('situacaoIndividual_input')) document.getElementById('situacaoIndividual_input').value = '';
+    if(document.getElementById('filtroSiafiIndividual')) document.getElementById('filtroSiafiIndividual').value = '';
+    if(document.getElementById('filtroSigconIndividual')) document.getElementById('filtroSigconIndividual').value = '';
+    if(document.getElementById('filtroProponenteIndividual')) document.getElementById('filtroProponenteIndividual').value = '';
+    if(document.getElementById('filtroConcedenteIndividual')) document.getElementById('filtroConcedenteIndividual').value = '';
+    paginaAtual.individual = 1; 
+    renderizarIndividual(); 
+}
 function buscaIndividualChange(valor) { buscaIndividual = valor; paginaAtual.individual = 1; renderizarIndividual(); }
 
 function aplicarFiltrosExecucao() {
@@ -797,7 +982,17 @@ function aplicarFiltrosExecucao() {
     paginaAtual.execucao = 1;
     renderizarExecucao();
 }
-function limparFiltrosExecucao() { filtrosExecucao = { ano: '', numeroSiafi: '', anoEmpenho: '', numeroEmpenho: '' }; buscaExecucao = ''; if(document.getElementById('buscaExecucaoInput')) document.getElementById('buscaExecucaoInput').value = ''; paginaAtual.execucao = 1; renderizarExecucao(); }
+function limparFiltrosExecucao() { 
+    filtrosExecucao = { ano: '', numeroSiafi: '', anoEmpenho: '', numeroEmpenho: '' }; 
+    buscaExecucao = ''; 
+    if(document.getElementById('buscaExecucaoInput')) document.getElementById('buscaExecucaoInput').value = ''; 
+    if(document.getElementById('anoExecucao_input')) document.getElementById('anoExecucao_input').value = '';
+    if(document.getElementById('filtroSiafiExecucao')) document.getElementById('filtroSiafiExecucao').value = '';
+    if(document.getElementById('filtroAnoEmpenhoExecucao')) document.getElementById('filtroAnoEmpenhoExecucao').value = '';
+    if(document.getElementById('filtroNumeroEmpenhoExecucao')) document.getElementById('filtroNumeroEmpenhoExecucao').value = '';
+    paginaAtual.execucao = 1; 
+    renderizarExecucao(); 
+}
 function buscaExecucaoChange(valor) { buscaExecucao = valor; paginaAtual.execucao = 1; renderizarExecucao(); }
 
 function aplicarFiltrosArrecadacao() {
@@ -811,12 +1006,18 @@ function aplicarFiltrosArrecadacao() {
     paginaAtual.arrecadacao = 1;
     renderizarArrecadacao();
 }
-function limparFiltrosArrecadacao() { filtrosArrecadacao = { ano: '', numeroSiafi: '', tipoReceita: '', fonte: '' }; buscaArrecadacao = ''; if(document.getElementById('buscaArrecadacaoInput')) document.getElementById('buscaArrecadacaoInput').value = ''; paginaAtual.arrecadacao = 1; renderizarArrecadacao(); }
+function limparFiltrosArrecadacao() { 
+    filtrosArrecadacao = { ano: '', numeroSiafi: '', tipoReceita: '', fonte: '' }; 
+    buscaArrecadacao = ''; 
+    if(document.getElementById('buscaArrecadacaoInput')) document.getElementById('buscaArrecadacaoInput').value = ''; 
+    if(document.getElementById('anoArrecadacao_input')) document.getElementById('anoArrecadacao_input').value = '';
+    if(document.getElementById('tipoArrecadacao_input')) document.getElementById('tipoArrecadacao_input').value = '';
+    if(document.getElementById('fonteArrecadacao_input')) document.getElementById('fonteArrecadacao_input').value = '';
+    if(document.getElementById('filtroSiafiArrecadacao')) document.getElementById('filtroSiafiArrecadacao').value = '';
+    paginaAtual.arrecadacao = 1; 
+    renderizarArrecadacao(); 
+}
 function buscaArrecadacaoChange(valor) { buscaArrecadacao = valor; paginaAtual.arrecadacao = 1; renderizarArrecadacao(); }
-
-function abrirModalDetalhesConvenio(item) { /* modal content same as before */ const link = getLinkInteiroTeor(item); let html = ''; if (link) html += `<div class="alert alert-info mb-3"><i class="material-icons">link</i> <strong>Documento:</strong> <a href="${link}" target="_blank" class="btn-link-document"><i class="material-icons">open_in_new</i> Visualizar</a></div>`; html += `<div class="row"><div class="col-md-6"><strong>Código SIAFI:</strong> ${item.codigo_siafi || '-'}</div><div class="col-md-6"><strong>Proponente:</strong> ${item.proponente || '-'}</div></div><div class="row mt-2"><div class="col-md-6"><strong>Valor Total:</strong> ${formatarMoeda(item.valor_total_convenio)}</div><div class="col-md-6"><strong>Situação:</strong> ${item.situacao || '-'}</div></div>`; document.getElementById('modalContent').innerHTML = html; new bootstrap.Modal(document.getElementById('detailModal')).show(); }
-function abrirModalExecucao(item) { const convenio = conveniosData.find(c => c.codigo_siafi === item.no_siafi); let html = `<div><strong>Código SIAFI:</strong> ${item.no_siafi}<br><strong>Empenho:</strong> ${item.no_empenho}/${item.ano_empenho}<br><strong>Credor:</strong> ${item.razao_social_credor}<br><strong>Valor Empenhado:</strong> ${formatarMoeda(item.valor_empenhado)}<br><strong>Valor Liquidado:</strong> ${formatarMoeda(item.valor_liquidado)}<br><strong>Valor Pago:</strong> ${formatarMoeda(item.valor_pago)}</div>`; document.getElementById('modalContent').innerHTML = html; new bootstrap.Modal(document.getElementById('detailModal')).show(); }
-function abrirModalArrecadacao(item) { let html = `<div><strong>Código SIAFI:</strong> ${item.no_siafi}<br><strong>Tipo Receita:</strong> ${item.tipo_de_receita}<br><strong>Valor Arrecadado:</strong> ${formatarMoeda(item.receita_arrecadada)}<br><strong>Data:</strong> ${formatarData(item.data_da_arrecadacao)}</div>`; document.getElementById('modalContent').innerHTML = html; new bootstrap.Modal(document.getElementById('detailModal')).show(); }
 
 function renderizarPaginacao(tipo, totalRegistros) {
     const totalPaginas = Math.ceil(totalRegistros / itensPorPagina);
@@ -826,7 +1027,7 @@ function renderizarPaginacao(tipo, totalRegistros) {
     if (totalRegistros === 0) return `<div class="pagination-container"><div>Nenhum registro encontrado</div></div>`;
     let botoes = '';
     for (let i = Math.max(1, pagina-2); i <= Math.min(totalPaginas, pagina+2); i++) botoes += `<li class="page-item ${i === pagina ? 'active' : ''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}', ${i}); return false;">${i}</a></li>`;
-    return `<div class="pagination-container"><div>Mostrando ${inicio}-${fim} de ${totalRegistros}</div><nav><ul class="pagination mb-0"><li class="page-item ${pagina === 1 ? 'disabled' : ''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}', ${pagina-1}); return false;">«</a></li>${botoes}<li class="page-item ${pagina === totalPaginas ? 'disabled' : ''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}', ${pagina+1}); return false;">»</a></li></ul></nav><select class="items-per-page" onchange="alterarItensPorPagina('${tipo}', this.value)"><option value="25" ${itensPorPagina==25?'selected':''}>25</option><option value="50" ${itensPorPagina==50?'selected':''}>50</option><option value="100" ${itensPorPagina==100?'selected':''}>100</option></select></div>`;
+    return `<div class="pagination-container"><div>Mostrando ${inicio}-${fim} de ${totalRegistros}</div><nav><ul class="pagination mb-0"><li class="page-item ${pagina === 1 ? 'disabled' : ''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}', ${pagina-1}); return false;">«</a></li>${botoes}<li class="page-item ${pagina === totalPaginas ? 'disabled' : ''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}', ${pagina+1}); return false;">»</a></li></ul></nav></div>`;
 }
 
 function mudarPagina(tipo, pagina) { if (pagina < 1) return; paginaAtual[tipo] = pagina; if (tipo === 'formalizados') renderizarFormalizados(); else if (tipo === 'individual') renderizarIndividual(); else if (tipo === 'execucao') renderizarExecucao(); else if (tipo === 'arrecadacao') renderizarArrecadacao(); }
@@ -842,7 +1043,7 @@ function exportarArrecadacaoPDF() { const { jsPDF } = window.jspdf; const doc = 
 function iframeUpdateHeight() {
     setTimeout(() => {
         const height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
-        try { window.parent.postMessage({ iframeHeight: height + 20 }, '*'); } catch(e) {}
+        try { window.parent.postMessage({ iframeHeight: height + 30 }, '*'); } catch(e) {}
     }, 200);
 }
 
