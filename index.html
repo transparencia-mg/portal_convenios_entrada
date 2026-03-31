@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Dashboard de Convênios - Transparência MG</title>
 
+    <!-- Bibliotecas Externas -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -17,13 +18,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 
     <style>
+        /* ==================== VARIÁVEIS ==================== */
         :root {
             --primary-dark: #1a3a5c;
             --primary-darker: #0f2a44;
             --accent-red: #b93c42;
             --background-light: #f5f7fa;
         }
+
+        /* ==================== RESET E BASE ==================== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body { 
             font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background-color: var(--background-light); 
@@ -34,24 +39,96 @@
             height: auto !important; 
             position: relative; 
         }
+        
         html { 
             overflow-y: auto !important; 
             overflow-x: auto !important; 
             height: auto !important; 
         }
-        .dashboard-container { width: 100%; max-width: 95% !important; padding: 0 20px; margin: 0 auto; }
-        .nav-tabs-container { background: transparent; padding: 10px 0; margin: 15px 0; }
-        .nav-tabs { border: none !important; gap: 10px; flex-wrap: wrap; }
-        .nav-tabs .nav-link { border: none !important; background: #ffffff !important; border-radius: 10px !important; padding: 10px 24px !important; font-weight: 600; font-size: 14px; color: #1a3a5c !important; display: inline-flex !important; align-items: center; gap: 8px; }
-        .nav-tabs .nav-link.active { background: #234c63 !important; color: #fff !important; }
-        .filter-container { background: white; border-radius: 10px; box-shadow: 0 3px 12px rgba(0,0,0,0.08); padding: 20px; margin-bottom: 20px; }
-        .filter-label { font-size: 12px; font-weight: 600; color: #1a3a5c; margin-bottom: 4px; text-transform: uppercase; }
-        .form-control, .form-select { border: 2px solid #e9ecef; border-radius: 6px; padding: 6px 10px; font-size: 13px; }
-        .form-control:focus, .form-select:focus { border-color: var(--accent-red); box-shadow: 0 0 0 2px rgba(185,60,66,0.15); }
-        .metric-card { background: white; border-radius: 8px; border: 1px solid #e5e9ef; box-shadow: 0 3px 12px rgba(0,0,0,0.06); margin-bottom: 20px; }
-        .metric-header { background: #20445d; color: white; font-size: 13px; font-weight: 600; padding: 8px 15px; }
-        .metric-body { padding: 10px 15px; }
-        .metric-value { font-size: 18px; font-weight: 700; color: #1a3a5c; }
+
+        /* ==================== CONTAINERS ==================== */
+        .dashboard-container { 
+            width: 100%; 
+            max-width: 95% !important; 
+            padding: 0 20px; 
+            margin: 0 auto; 
+        }
+        
+        .main-container, .container.dashboard-spacing, .tab-content, .table-container { 
+            height: auto !important; 
+            min-height: auto !important; 
+            overflow: visible !important; 
+            position: relative; 
+        }
+        
+        .table-container { 
+            overflow-x: auto !important; 
+            border-radius: 10px; 
+            background: white; 
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06); 
+        }
+
+        /* ==================== NAVEGAÇÃO ==================== */
+        .nav-tabs-container { 
+            background: transparent; 
+            padding: 10px 0; 
+            margin: 15px 0; 
+        }
+        
+        .nav-tabs { 
+            border: none !important; 
+            gap: 10px; 
+            flex-wrap: wrap; 
+        }
+        
+        .nav-tabs .nav-link { 
+            border: none !important; 
+            background: #ffffff !important; 
+            border-radius: 10px !important; 
+            padding: 10px 24px !important; 
+            font-weight: 600; 
+            font-size: 14px; 
+            color: #1a3a5c !important; 
+            display: inline-flex !important; 
+            align-items: center; 
+            gap: 8px; 
+        }
+        
+        .nav-tabs .nav-link.active { 
+            background: #234c63 !important; 
+            color: #fff !important; 
+        }
+
+        /* ==================== FILTROS ==================== */
+        .filter-container { 
+            background: white; 
+            border-radius: 10px; 
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08); 
+            padding: 20px; 
+            margin-bottom: 20px; 
+        }
+        
+        .filter-label { 
+            font-size: 12px; 
+            font-weight: 600; 
+            color: #1a3a5c; 
+            margin-bottom: 4px; 
+            text-transform: uppercase; 
+        }
+        
+        .form-control, .form-select { 
+            border: 2px solid #e9ecef; 
+            border-radius: 6px; 
+            padding: 6px 10px; 
+            font-size: 13px; 
+        }
+        
+        .form-control:focus, .form-select:focus { 
+            border-color: var(--accent-red); 
+            box-shadow: 0 0 0 2px rgba(185,60,66,0.15); 
+        }
+
+        /* ==================== BOTÕES ==================== */
         .btn-pesquisa, .btn-limpar { 
             border: none; 
             padding: 8px 20px; 
@@ -64,55 +141,309 @@
             cursor: pointer;
             height: 38px;
         }
+        
         .btn-pesquisa { background: #20445d; color: white; }
         .btn-pesquisa:hover { background: var(--accent-red); }
+        
         .btn-limpar { background: white; border: 2px solid var(--primary-darker); color: var(--primary-darker); }
         .btn-limpar:hover { background-color: #132837; color: white; border-color: #132837; }
-        .btn-export { background: #eeeff5; border: 1px solid #d6dee6; color: #1a3a5c; padding: 5px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+        
+        .btn-export { 
+            background: #eeeff5; 
+            border: 1px solid #d6dee6; 
+            color: #1a3a5c; 
+            padding: 5px 12px; 
+            border-radius: 6px; 
+            font-size: 12px; 
+            cursor: pointer; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 4px; 
+        }
+        
         .btn-export:hover { background-color: #1a3a5c; color: white; }
-        .btn-action { padding: 5px; border-radius: 6px; border: 1.5px solid #1a3a5c; background: white; color: #1a3a5c; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+        
+        .btn-action { 
+            padding: 5px; 
+            border-radius: 6px; 
+            border: 1.5px solid #1a3a5c; 
+            background: white; 
+            color: #1a3a5c; 
+            width: 30px; 
+            height: 30px; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+        }
+        
         .btn-action:hover { background-color: #1a3a5c; color: white; }
-        .orgao-link, .siafi-link { color: #006a82; text-decoration: none; font-weight: 500; cursor: pointer; }
-        .orgao-link:hover, .siafi-link:hover { color: var(--accent-red); text-decoration: underline; }
-        .table-container { overflow-x: auto; border-radius: 10px; background: white; box-shadow: 0 3px 12px rgba(0,0,0,0.06); }
+        
+        .btn-link-document { 
+            background: #28a745; 
+            color: white; 
+            border: none; 
+            padding: 4px 10px; 
+            border-radius: 4px; 
+            font-size: 11px; 
+            text-decoration: none; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 4px; 
+        }
+        
+        .btn-link-document:hover { background: #218838; color: white; }
+
+        /* ==================== CARDS MÉTRICAS ==================== */
+        .metric-card { 
+            background: white; 
+            border-radius: 8px; 
+            border: 1px solid #e5e9ef; 
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06); 
+            margin-bottom: 20px; 
+        }
+        
+        .metric-header { 
+            background: #20445d; 
+            color: white; 
+            font-size: 13px; 
+            font-weight: 600; 
+            padding: 8px 15px; 
+        }
+        
+        .metric-body { padding: 10px 15px; }
+        .metric-value { font-size: 18px; font-weight: 700; color: #1a3a5c; }
+
+        /* ==================== TABELAS ==================== */
         .table { width: 100%; font-size: 12px; border-collapse: collapse; }
-        .table th { background-color: #54697b; color: white; padding: 10px 8px; font-weight: 600; white-space: nowrap; border: 1px solid #d6dee6; cursor: pointer; user-select: none; text-align: center; }
+        
+        .table th { 
+            background-color: #54697b; 
+            color: white; 
+            padding: 10px 8px; 
+            font-weight: 600; 
+            white-space: nowrap; 
+            border: 1px solid #d6dee6; 
+            cursor: pointer; 
+            user-select: none; 
+            text-align: center; 
+        }
+        
         .table th:hover { background-color: #6a7f8e; }
         .table th.asc:after { content: ' ↑'; }
         .table th.desc:after { content: ' ↓'; }
-        .table td { padding: 8px; border: 1px solid #d6dee6; vertical-align: middle; }
+        
+        .table td { 
+            padding: 8px; 
+            border: 1px solid #d6dee6; 
+            vertical-align: middle; 
+        }
+        
         .table td.text-center { text-align: center; }
         .table td.text-end { text-align: right; }
         .table tbody tr:hover { background-color: rgba(41,67,90,0.04); }
-        .pagination-container { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: white; border-top: 1px solid #dee2e6; flex-wrap: wrap; gap: 10px; margin-top: 0; }
-        .items-per-page { height: 32px; min-width: 70px; border-radius: 6px; border: 1px solid #d6dee6; padding: 4px 8px; font-size: 12px; }
-        .modal-creative .modal-header { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%); color: white; }
-        .column-selector-icon { position: relative; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; background: #eeeff5; border: 1px solid #d6dee6; border-radius: 20px; padding: 4px 10px; height: 32px; font-size: 12px; }
-        .column-selector-popup { display: none; position: absolute; right: 0; top: 35px; background: white; border: 1px solid #dee2e6; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); width: 260px; z-index: 1000; padding: 12px; }
-        .column-selector-popup.show { display: block; }
-        .column-selector-grid { display: flex; flex-wrap: wrap; gap: 8px; max-height: 200px; overflow-y: auto; }
-        .column-selector-item { display: flex; align-items: center; gap: 5px; font-size: 11px; min-width: calc(50% - 8px); }
-        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; }
-        .search-input-small { width: 250px; font-size: 12px; padding: 6px 12px; border-radius: 6px; border: 1px solid #d6dee6; }
-        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-        .toolbar-right { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-        .btn-link-document { background: #28a745; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
-        .btn-link-document:hover { background: #218838; color: white; }
-        .select-with-search { position: relative; }
-        .select-with-search input { width: 100%; padding: 6px 10px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 13px; }
-        .select-options { display: none; position: absolute; top: 100%; left: 0; right: 0; max-height: 200px; overflow-y: auto; background: white; border: 1px solid #dee2e6; border-radius: 6px; z-index: 1000; }
-        .select-options.show { display: block; }
-        .select-option { padding: 6px 10px; cursor: pointer; font-size: 13px; }
-        .select-option:hover { background: #f0f0f0; }
+        
         .table-footer-total { background-color: #e9ecef; font-weight: 700; border-top: 2px solid #1a3a5c; }
         .table-footer-total td { background-color: #f8f9fa; font-weight: 700; }
+        
         .metadata-table th { background-color: #20445d; color: white; font-size: 12px; }
         .metadata-table td { font-size: 12px; }
-        .modal-body .info-section { background: #f8f9fa; border-radius: 8px; padding: 12px; margin-bottom: 15px; border-left: 4px solid #1a3a5c; }
-        .modal-body .info-section h6 { color: #1a3a5c; font-weight: 700; margin-bottom: 12px; }
-        .modal-body .info-row { display: flex; padding: 6px 0; border-bottom: 1px solid #e9ecef; }
-        .modal-body .info-label { width: 40%; font-weight: 600; color: #495057; }
-        .modal-body .info-value { width: 60%; color: #212529; }
+
+        /* ==================== PAGINAÇÃO ==================== */
+        .pagination-container { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 12px 15px; 
+            background: white; 
+            border: 1px solid #dee2e6; 
+            border-top: none; 
+            border-radius: 0 0 10px 10px; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+        }
+        
+        .items-per-page { 
+            height: 32px; 
+            min-width: 120px; 
+            border-radius: 6px; 
+            border: 1px solid #d6dee6; 
+            padding: 4px 8px; 
+            font-size: 12px; 
+        }
+
+        /* ==================== TOOLBAR ==================== */
+        .toolbar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 15px; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+        }
+        
+        .toolbar-right { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            flex-wrap: wrap; 
+        }
+        
+        .search-input-small { 
+            width: 250px; 
+            font-size: 12px; 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            border: 1px solid #d6dee6; 
+        }
+
+        /* ==================== LINKS ==================== */
+        .orgao-link, .siafi-link { 
+            color: #006a82; 
+            text-decoration: none; 
+            font-weight: 500; 
+            cursor: pointer; 
+        }
+        
+        .orgao-link:hover, .siafi-link:hover { 
+            color: var(--accent-red); 
+            text-decoration: underline; 
+        }
+
+        /* ==================== SELECT COM BUSCA ==================== */
+        .select-with-search { position: relative; }
+        
+        .select-with-search input { 
+            width: 100%; 
+            padding: 6px 10px; 
+            border: 2px solid #e9ecef; 
+            border-radius: 6px; 
+            font-size: 13px; 
+        }
+        
+        .select-options { 
+            display: none; 
+            position: absolute; 
+            top: 100%; 
+            left: 0; 
+            right: 0; 
+            max-height: 200px; 
+            overflow-y: auto; 
+            background: white; 
+            border: 1px solid #dee2e6; 
+            border-radius: 6px; 
+            z-index: 1000; 
+        }
+        
+        .select-options.show { display: block; }
+        
+        .select-option { 
+            padding: 6px 10px; 
+            cursor: pointer; 
+            font-size: 13px; 
+        }
+        
+        .select-option:hover { background: #f0f0f0; }
+
+        /* ==================== COLUMN SELECTOR ==================== */
+        .column-selector-icon { 
+            position: relative; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 5px; 
+            cursor: pointer; 
+            background: #eeeff5; 
+            border: 1px solid #d6dee6; 
+            border-radius: 20px; 
+            padding: 4px 10px; 
+            height: 32px; 
+            font-size: 12px; 
+        }
+        
+        .column-selector-popup { 
+            display: none; 
+            position: absolute; 
+            right: 0; 
+            top: 35px; 
+            background: white; 
+            border: 1px solid #dee2e6; 
+            border-radius: 10px; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15); 
+            width: 260px; 
+            z-index: 1000; 
+            padding: 12px; 
+        }
+        
+        .column-selector-popup.show { display: block; }
+        
+        .column-selector-grid { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 8px; 
+            max-height: 200px; 
+            overflow-y: auto; 
+        }
+        
+        .column-selector-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 5px; 
+            font-size: 11px; 
+            min-width: calc(50% - 8px); 
+        }
+
+        /* ==================== MODAL ==================== */
+        .modal-creative .modal-header { 
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%); 
+            color: white; 
+        }
+        
+        .modal-body .info-section { 
+            background: #f8f9fa; 
+            border-radius: 8px; 
+            padding: 12px; 
+            margin-bottom: 15px; 
+            border-left: 4px solid #1a3a5c; 
+        }
+        
+        .modal-body .info-section h6 { 
+            color: #1a3a5c; 
+            font-weight: 700; 
+            margin-bottom: 12px; 
+        }
+        
+        .modal-body .info-row { 
+            display: flex; 
+            padding: 6px 0; 
+            border-bottom: 1px solid #e9ecef; 
+        }
+        
+        .modal-body .info-label { 
+            width: 40%; 
+            font-weight: 600; 
+            color: #495057; 
+        }
+        
+        .modal-body .info-value { 
+            width: 60%; 
+            color: #212529; 
+        }
+
+        /* ==================== LOADING ==================== */
+        .loading-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(255,255,255,0.9); 
+            z-index: 9999; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+
+        /* ==================== RESPONSIVIDADE ==================== */
         @media (max-width: 768px) { 
             .dashboard-container { padding: 0 10px; } 
             .toolbar { flex-direction: column; align-items: stretch; } 
@@ -120,12 +451,8 @@
             .search-input-small { width: 100%; } 
             .modal-body .info-label { width: 45%; } 
             .modal-body .info-value { width: 55%; } 
+            .items-per-page { min-width: 100px; }
         }
-        
-        .main-container { height: auto !important; min-height: auto !important; overflow: visible !important; position: relative; }
-        .container.dashboard-spacing { overflow: visible !important; height: auto !important; min-height: auto !important; position: relative; }
-        .tab-content { overflow: visible !important; height: auto !important; min-height: auto !important; position: relative; }
-        .table-container { height: auto !important; min-height: auto !important; overflow-x: auto !important; position: relative; }
     </style>
 </head>
 <body>
@@ -163,6 +490,7 @@
 <div class="loading-overlay" id="loadingOverlay" style="display: none;"><div class="spinner-border text-primary" role="status"></div><div class="text-primary fw-bold mt-3">Carregando dados...</div></div>
 
 <script>
+// ==================== VARIÁVEIS GLOBAIS ====================
 let conveniosData = [];
 let execucaoData = [];
 let arrecadacaoData = [];
@@ -219,6 +547,7 @@ const ordemColunasIndividual = ['codigo_siafi', 'codigo_sigcon', 'sei', 'instrum
 const ordemColunasExecucao = ['no_siafi', 'proponente', 'concedente', 'situacao_convenio', 'no_empenho', 'razao_social_credor', 'cnpj_cpf_credor', 'valor_empenhado', 'valor_liquidado', 'valor_pago'];
 const ordemColunasArrecadacao = ['no_siafi', 'unidade_orcamentaria', 'ano_exercicio_receita', 'codigo_classificacao_receita', 'tipo_de_receita', 'fonte', 'data_da_arrecadacao', 'receita_arrecadada'];
 
+// ==================== FUNÇÕES AUXILIARES ====================
 function mostrarLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
 
 function formatarMoeda(valor) {
@@ -264,12 +593,8 @@ function parseCSV(texto) {
     const linhas = texto.trim().split('\n');
     let cabecalhos = linhas[0].split(';').map(h => h.trim().replace(/^\uFEFF/, '').replace(/^["']|["']$/g, '').toLowerCase().replace(/ /g, '_').replace(/\(|\)/g, '').replace(/_r$/, ''));
     
-    if (cabecalhos[0] && cabecalhos[0].charCodeAt(0) === 65279) {
-        cabecalhos[0] = cabecalhos[0].substring(1);
-    }
-    if (cabecalhos[0] === '' || cabecalhos[0] === 'ï»¿') {
-        cabecalhos[0] = 'uo';
-    }
+    if (cabecalhos[0] && cabecalhos[0].charCodeAt(0) === 65279) cabecalhos[0] = cabecalhos[0].substring(1);
+    if (cabecalhos[0] === '' || cabecalhos[0] === 'ï»¿') cabecalhos[0] = 'uo';
     
     const dados = [];
     for (let i = 1; i < linhas.length; i++) {
@@ -294,58 +619,6 @@ function parseCSV(texto) {
         dados.push(linha);
     }
     return dados;
-}
-
-async function carregarDados() {
-    mostrarLoading(true);
-    try {
-        const conveniosResp = await fetch(CONVENIOS_URL);
-        if (conveniosResp.ok) {
-            const texto = await conveniosResp.text();
-            conveniosData = parseCSV(texto);
-            conveniosData.forEach(c => {
-                if (!c.ano && c.data_assinatura) {
-                    c.ano = getAnoFromData(c.data_assinatura);
-                }
-            });
-            console.log(`Convênios carregados: ${conveniosData.length}`);
-            
-            siafiValidosSet.clear();
-            conveniosData.forEach(c => {
-                if (c.codigo_siafi && c.codigo_siafi.trim() !== '') {
-                    siafiValidosSet.add(c.codigo_siafi.trim());
-                }
-            });
-        }
-        
-        for (const url of EXECUCAO_URLS) {
-            try {
-                const resp = await fetch(url);
-                if (resp.ok) {
-                    const texto = await resp.text();
-                    const dados = parseCSV(texto);
-                    const dadosFiltrados = dados.filter(d => siafiValidosSet.has(d.no_siafi?.trim()));
-                    execucaoData = [...execucaoData, ...dadosFiltrados];
-                }
-            } catch(e) { console.log(`Erro: ${url}`); }
-        }
-        
-        const arrecResp = await fetch(ARRECADACAO_URL);
-        if (arrecResp.ok) {
-            const texto = await arrecResp.text();
-            const dados = parseCSV(texto);
-            arrecadacaoData = dados.filter(d => siafiValidosSet.has(d.no_siafi?.trim()));
-        }
-        
-        renderizarFormalizados();
-        renderizarIndividual();
-        renderizarExecucao();
-        renderizarArrecadacao();
-        renderizarDownloads();
-        
-        setTimeout(() => iframeUpdateHeight(), 500);
-    } catch(erro) { console.error(erro); }
-    finally { mostrarLoading(false); }
 }
 
 function ordenarDados(dados, coluna, direcao, tipo) {
@@ -397,6 +670,125 @@ function initSelectComBusca(id, callback) {
     });
 }
 
+function renderizarPaginacao(tipo, totalRegistros) {
+    const totalPaginas = Math.ceil(totalRegistros / itensPorPagina);
+    const pagina = paginaAtual[tipo];
+    const inicio = (pagina - 1) * itensPorPagina + 1;
+    const fim = Math.min(pagina * itensPorPagina, totalRegistros);
+    
+    if (totalRegistros === 0) return `<div class="pagination-container"><div>Nenhum registro encontrado</div></div>`;
+    
+    let botoes = '';
+    for (let i = Math.max(1, pagina-2); i <= Math.min(totalPaginas, pagina+2); i++) {
+        botoes += `<li class="page-item ${i === pagina ? 'active' : ''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}', ${i}); return false;">${i}</a></li>`;
+    }
+    
+    return `<div class="pagination-container">
+        <div>Mostrando ${inicio}-${fim} de ${totalRegistros}</div>
+        <nav><ul class="pagination mb-0">
+            <li class="page-item ${pagina === 1 ? 'disabled' : ''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}', ${pagina-1}); return false;">«</a></li>
+            ${botoes}
+            <li class="page-item ${pagina === totalPaginas ? 'disabled' : ''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}', ${pagina+1}); return false;">»</a></li>
+        </ul></nav>
+    </div>`;
+}
+
+function mudarPagina(tipo, pagina) { 
+    if (pagina < 1) return; 
+    paginaAtual[tipo] = pagina; 
+    if (tipo === 'formalizados') renderizarFormalizados(); 
+    else if (tipo === 'individual') renderizarIndividual(); 
+    else if (tipo === 'execucao') renderizarExecucao(); 
+    else if (tipo === 'arrecadacao') renderizarArrecadacao(); 
+}
+
+function alterarItensPorPagina(tipo, valor) { 
+    itensPorPagina = parseInt(valor); 
+    paginaAtual[tipo] = 1; 
+    mudarPagina(tipo, 1); 
+}
+
+function ordenar(tipo, coluna) {
+    let ordenacao;
+    if (tipo === 'formalizados') ordenacao = ordenacaoFormalizados;
+    else if (tipo === 'individual') ordenacao = ordenacaoIndividual;
+    else if (tipo === 'execucao') ordenacao = ordenacaoExecucao;
+    else ordenacao = ordenacaoArrecadacao;
+    
+    if (ordenacao.coluna === coluna) ordenacao.direcao = ordenacao.direcao === 'asc' ? 'desc' : 'asc';
+    else { ordenacao.coluna = coluna; ordenacao.direcao = 'asc'; }
+    
+    if (tipo === 'formalizados') renderizarFormalizados();
+    else if (tipo === 'individual') renderizarIndividual();
+    else if (tipo === 'execucao') renderizarExecucao();
+    else renderizarArrecadacao();
+}
+
+function toggleColumnSelector(event, tipo) { 
+    event.stopPropagation(); 
+    let popupId = tipo === 'individual' ? 'columnSelectorPopupIndividual' : tipo === 'execucao' ? 'columnSelectorPopupExecucao' : 'columnSelectorPopupArrecadacao'; 
+    document.getElementById(popupId)?.classList.toggle('show'); 
+}
+
+function toggleColunaIndividual(coluna) { colunasVisiveisIndividual[coluna] = !colunasVisiveisIndividual[coluna]; renderizarIndividual(); }
+function toggleColunaExecucao(coluna) { colunasVisiveisExecucao[coluna] = !colunasVisiveisExecucao[coluna]; renderizarExecucao(); }
+function toggleColunaArrecadacao(coluna) { colunasVisiveisArrecadacao[coluna] = !colunasVisiveisArrecadacao[coluna]; renderizarArrecadacao(); }
+
+function iframeUpdateHeight() {
+    setTimeout(() => {
+        const height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+        try { window.parent.postMessage({ iframeHeight: height + 30 }, '*'); } catch(e) {}
+    }, 200);
+}
+
+// ==================== FUNÇÕES DE RENDERIZAÇÃO ====================
+async function carregarDados() {
+    mostrarLoading(true);
+    try {
+        const conveniosResp = await fetch(CONVENIOS_URL);
+        if (conveniosResp.ok) {
+            const texto = await conveniosResp.text();
+            conveniosData = parseCSV(texto);
+            conveniosData.forEach(c => {
+                if (!c.ano && c.data_assinatura) c.ano = getAnoFromData(c.data_assinatura);
+            });
+            
+            siafiValidosSet.clear();
+            conveniosData.forEach(c => {
+                if (c.codigo_siafi && c.codigo_siafi.trim() !== '') siafiValidosSet.add(c.codigo_siafi.trim());
+            });
+        }
+        
+        for (const url of EXECUCAO_URLS) {
+            try {
+                const resp = await fetch(url);
+                if (resp.ok) {
+                    const texto = await resp.text();
+                    const dados = parseCSV(texto);
+                    const dadosFiltrados = dados.filter(d => siafiValidosSet.has(d.no_siafi?.trim()));
+                    execucaoData = [...execucaoData, ...dadosFiltrados];
+                }
+            } catch(e) { console.log(`Erro: ${url}`); }
+        }
+        
+        const arrecResp = await fetch(ARRECADACAO_URL);
+        if (arrecResp.ok) {
+            const texto = await arrecResp.text();
+            const dados = parseCSV(texto);
+            arrecadacaoData = dados.filter(d => siafiValidosSet.has(d.no_siafi?.trim()));
+        }
+        
+        renderizarFormalizados();
+        renderizarIndividual();
+        renderizarExecucao();
+        renderizarArrecadacao();
+        renderizarDownloads();
+        
+        setTimeout(() => iframeUpdateHeight(), 500);
+    } catch(erro) { console.error(erro); }
+    finally { mostrarLoading(false); }
+}
+
 function renderizarFormalizados() {
     const container = document.getElementById('formalizados-content');
     if (!container) return;
@@ -419,9 +811,7 @@ function renderizarFormalizados() {
     dadosFiltrados.forEach(c => {
         const nome = c.proponente;
         if (!nome) return;
-        if (!proponentesMap.has(nome)) {
-            proponentesMap.set(nome, { proponente: nome, convenios: 0, valorProponente: 0, valorConcedente: 0, valorTotal: 0 });
-        }
+        if (!proponentesMap.has(nome)) proponentesMap.set(nome, { proponente: nome, convenios: 0, valorProponente: 0, valorConcedente: 0, valorTotal: 0 });
         const p = proponentesMap.get(nome);
         p.convenios++;
         p.valorProponente += parseFloat(c.valor_proponente) || 0;
@@ -450,28 +840,36 @@ function renderizarFormalizados() {
             <div class="col-md-3"><div class="metric-card"><div class="metric-header">Valor Concedente</div><div class="metric-body"><div class="metric-value">${formatarMoeda(totalConcedente)}</div></div></div></div>
             <div class="col-md-3"><div class="metric-card"><div class="metric-header">Valor Total</div><div class="metric-body"><div class="metric-value">${formatarMoeda(totalGeral)}</div></div></div></div>
         </div>
-        <div class="table-container"><table class="table"><thead><tr><th class="${ordenacaoFormalizados.coluna === 'proponente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'proponente')">Proponente</th><th class="text-center ${ordenacaoFormalizados.coluna === 'convenios' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'convenios')">Qtd Convênios</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorProponente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorProponente')">Valor Proponente</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorConcedente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorConcedente')">Valor Concedente</th><th class="text-end ${ordenacaoFormalizados.coluna === 'valorTotal' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorTotal')">Valor Total</th></tr></thead>
-        <tbody>${dadosPagina.map(item => `<tr><td><a href="#" class="orgao-link" onclick="irParaConsultaIndividual('${item.proponente.replace(/'/g, "\\'")}'); return false;">${item.proponente}</a></td><td class="text-center">${item.convenios}</td><td class="text-end">${formatarMoeda(item.valorProponente)}</td><td class="text-end">${formatarMoeda(item.valorConcedente)}</td><td class="text-end">${formatarMoeda(item.valorTotal)}</td></tr>`).join('')}</tbody></table></div>${renderizarPaginacao('formalizados', totalRegistros)}</div>`;
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="${ordenacaoFormalizados.coluna === 'proponente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'proponente')">Proponente</th>
+                        <th class="text-center ${ordenacaoFormalizados.coluna === 'convenios' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'convenios')">Qtd Convênios</th>
+                        <th class="text-end ${ordenacaoFormalizados.coluna === 'valorProponente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorProponente')">Valor Proponente</th>
+                        <th class="text-end ${ordenacaoFormalizados.coluna === 'valorConcedente' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorConcedente')">Valor Concedente</th>
+                        <th class="text-end ${ordenacaoFormalizados.coluna === 'valorTotal' ? ordenacaoFormalizados.direcao : ''}" onclick="ordenar('formalizados', 'valorTotal')">Valor Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${dadosPagina.map(item => `
+                        <tr>
+                            <td><a href="#" class="orgao-link" onclick="irParaConsultaIndividual('${item.proponente.replace(/'/g, "\\'")}'); return false;">${item.proponente}</a></td>
+                            <td class="text-center">${item.convenios}</td>
+                            <td class="text-end">${formatarMoeda(item.valorProponente)}</td>
+                            <td class="text-end">${formatarMoeda(item.valorConcedente)}</td>
+                            <td class="text-end">${formatarMoeda(item.valorTotal)}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+        ${renderizarPaginacao('formalizados', totalRegistros)}
+    `;
     container.innerHTML = html;
     
     initSelectComBusca('anoFormalizados', (val) => { filtrosFormalizados.ano = val; renderizarFormalizados(); });
     initSelectComBusca('proponenteFormalizados', (val) => { filtrosFormalizados.proponente = val; renderizarFormalizados(); });
-}
-
-function ordenar(tipo, coluna) {
-    let ordenacao;
-    if (tipo === 'formalizados') ordenacao = ordenacaoFormalizados;
-    else if (tipo === 'individual') ordenacao = ordenacaoIndividual;
-    else if (tipo === 'execucao') ordenacao = ordenacaoExecucao;
-    else ordenacao = ordenacaoArrecadacao;
-    
-    if (ordenacao.coluna === coluna) ordenacao.direcao = ordenacao.direcao === 'asc' ? 'desc' : 'asc';
-    else { ordenacao.coluna = coluna; ordenacao.direcao = 'asc'; }
-    
-    if (tipo === 'formalizados') renderizarFormalizados();
-    else if (tipo === 'individual') renderizarIndividual();
-    else if (tipo === 'execucao') renderizarExecucao();
-    else renderizarArrecadacao();
 }
 
 function aplicarFiltrosFormalizados() {
@@ -571,21 +969,49 @@ function renderizarIndividual() {
                 <input type="text" class="search-input-small" placeholder="Buscar na tabela..." id="buscaIndividualInput" value="${buscaIndividual}" onkeyup="buscaIndividualChange(this.value)">
             </div>
         </div>
-        <div class="table-container"><table class="table" style="min-width: 1200px;"><thead><tr>${colunasExibidas.map(col => `<th class="${ordenacaoIndividual.coluna === col ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th class="text-end">VALOR PROPONENTE</th><th class="text-end">VALOR CONCEDENTE</th><th class="text-end">VALOR TOTAL</th><th>AÇÕES</th></tr>
-        </thead>
-        <tbody>${dadosPagina.map(item => {
-            const link = getLinkInteiroTeor(item);
-            return `<tr>${colunasExibidas.map(col => {
-                let valor = item[col] || '-';
-                if (col.includes('data')) valor = formatarData(valor);
-                if (col === 'codigo_siafi' && valor !== '-') {
-                    return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
-                }
-                return `<td>${valor}</td>`;
-            }).join('')}<td class="text-end">${formatarMoeda(item.valor_proponente)}</td><td class="text-end">${formatarMoeda(item.valor_concedente)}</td><td class="text-end">${formatarMoeda(item.valor_total_convenio)}</td><td class="text-center"><button class="btn-action" onclick='abrirModalDetalhesConvenio(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
-        }).join('')}</tbody>
-        <tfoot class="table-footer-total"><tr><td colspan="${colunasExibidas.length}" class="text-end fw-bold">TOTAIS:</td><td class="text-end fw-bold">${formatarMoeda(totalValorProponente)}</td><td class="text-end fw-bold">${formatarMoeda(totalValorConcedente)}</td><td class="text-end fw-bold">${formatarMoeda(totalValorGeral)}</td><td></td></tr></tfoot></div>
-        ${renderizarPaginacao('individual', totalRegistros)}</div>`;
+        <div class="table-container">
+            <table class="table" style="min-width: 1200px;">
+                <thead>
+                    <tr>
+                        ${colunasExibidas.map(col => `<th class="${ordenacaoIndividual.coluna === col ? ordenacaoIndividual.direcao : ''}" onclick="ordenar('individual', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}
+                        <th class="text-end">VALOR PROPONENTE</th>
+                        <th class="text-end">VALOR CONCEDENTE</th>
+                        <th class="text-end">VALOR TOTAL</th>
+                        <th>AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${dadosPagina.map(item => {
+                        const link = getLinkInteiroTeor(item);
+                        return `<tr>
+                            ${colunasExibidas.map(col => {
+                                let valor = item[col] || '-';
+                                if (col.includes('data')) valor = formatarData(valor);
+                                if (col === 'codigo_siafi' && valor !== '-') {
+                                    return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
+                                }
+                                return `<td>${valor}</td>`;
+                            }).join('')}
+                            <td class="text-end">${formatarMoeda(item.valor_proponente)}</td>
+                            <td class="text-end">${formatarMoeda(item.valor_concedente)}</td>
+                            <td class="text-end">${formatarMoeda(item.valor_total_convenio)}</td>
+                            <td class="text-center"><button class="btn-action" onclick='abrirModalDetalhesConvenio(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td>
+                        </tr>`;
+                    }).join('')}
+                </tbody>
+                <tfoot class="table-footer-total">
+                    <tr>
+                        <td colspan="${colunasExibidas.length}" class="text-end fw-bold">TOTAIS:</td>
+                        <td class="text-end fw-bold">${formatarMoeda(totalValorProponente)}</td>
+                        <td class="text-end fw-bold">${formatarMoeda(totalValorConcedente)}</td>
+                        <td class="text-end fw-bold">${formatarMoeda(totalValorGeral)}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        ${renderizarPaginacao('individual', totalRegistros)}
+    `;
     container.innerHTML = html;
     
     initSelectComBusca('anoIndividual', (val) => { filtrosIndividual.ano = val; renderizarIndividual(); });
@@ -659,24 +1085,44 @@ function renderizarExecucao() {
                 <input type="text" class="search-input-small" placeholder="Buscar na tabela..." id="buscaExecucaoInput" value="${buscaExecucao}" onkeyup="buscaExecucaoChange(this.value)">
             </div>
         </div>
-        <div class="table-container"><table class="table" style="min-width: 1300px;"><thead><tr>${colunasExibidas.map(col => `<th class="${ordenacaoExecucao.coluna === col ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th>AÇÕES</th></tr>
-        </thead>
-        <tbody>${dadosPagina.map(item => {
-            const convenio = conveniosMap.get(item.no_siafi);
-            const link = convenio ? getLinkInteiroTeor(convenio) : null;
-            return `<tr>${colunasExibidas.map(col => {
-                let valor = item[col] || '-';
-                if (col === 'valor_empenhado' || col === 'valor_liquidado' || col === 'valor_pago') {
-                    valor = formatarMoeda(valor);
-                }
-                if (col === 'no_siafi' && valor !== '-') {
-                    return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
-                }
-                return `<td>${valor}</td>`;
-            }).join('')}<td class="text-center"><button class="btn-action" onclick='abrirModalExecucao(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
-        }).join('')}</tbody>
-        <tfoot class="table-footer-total"><tr><td colspan="${colunasExibidas.length - 3}" class="text-end fw-bold">TOTAIS:</td><td class="text-end fw-bold">${formatarMoeda(totalEmpenhado)}</td><td class="text-end fw-bold">${formatarMoeda(totalLiquidado)}</td><td class="text-end fw-bold">${formatarMoeda(totalPago)}</td><td></td></tr></tfoot></div>
-        ${renderizarPaginacao('execucao', totalRegistros)}</div>`;
+        <div class="table-container">
+            <table class="table" style="min-width: 1300px;">
+                <thead>
+                    <tr>
+                        ${colunasExibidas.map(col => `<th class="${ordenacaoExecucao.coluna === col ? ordenacaoExecucao.direcao : ''}" onclick="ordenar('execucao', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}
+                        <th>AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${dadosPagina.map(item => {
+                        const convenio = conveniosMap.get(item.no_siafi);
+                        const link = convenio ? getLinkInteiroTeor(convenio) : null;
+                        return `<tr>
+                            ${colunasExibidas.map(col => {
+                                let valor = item[col] || '-';
+                                if (col === 'valor_empenhado' || col === 'valor_liquidado' || col === 'valor_pago') valor = formatarMoeda(valor);
+                                if (col === 'no_siafi' && valor !== '-') {
+                                    return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
+                                }
+                                return `<td>${valor}</td>`;
+                            }).join('')}
+                            <td class="text-center"><button class="btn-action" onclick='abrirModalExecucao(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td>
+                        </tr>`;
+                    }).join('')}
+                </tbody>
+                <tfoot class="table-footer-total">
+                    <tr>
+                        <td colspan="${colunasExibidas.length - 3}" class="text-end fw-bold">TOTAIS:</td>
+                        <td class="text-end fw-bold">${formatarMoeda(totalEmpenhado)}</td>
+                        <td class="text-end fw-bold">${formatarMoeda(totalLiquidado)}</td>
+                        <td class="text-end fw-bold">${formatarMoeda(totalPago)}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        ${renderizarPaginacao('execucao', totalRegistros)}
+    `;
     container.innerHTML = html;
     
     initSelectComBusca('anoExecucao', (val) => { filtrosExecucao.ano = val; renderizarExecucao(); });
@@ -759,23 +1205,43 @@ function renderizarArrecadacao() {
                 <input type="text" class="search-input-small" placeholder="Buscar na tabela..." id="buscaArrecadacaoInput" value="${buscaArrecadacao}" onkeyup="buscaArrecadacaoChange(this.value)">
             </div>
         </div>
-        <div class="table-container"><table class="table"><thead><tr>${colunasExibidas.map(col => `<th class="${ordenacaoArrecadacao.coluna === col ? ordenacaoArrecadacao.direcao : ''}" onclick="ordenar('arrecadacao', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}<th>AÇÕES</th></tr>
-        </thead>
-        <tbody>${dadosPagina.map(item => {
-            const convenio = conveniosMap.get(item.no_siafi);
-            const link = convenio ? getLinkInteiroTeor(convenio) : null;
-            return `<tr>${colunasExibidas.map(col => {
-                let valor = item[col] || '-';
-                if (col === 'data_da_arrecadacao') valor = formatarData(valor);
-                if (col === 'receita_arrecadada') valor = formatarMoeda(valor);
-                if (col === 'no_siafi' && valor !== '-') {
-                    return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
-                }
-                return `<td>${valor}</td>`;
-            }).join('')}<td class="text-center"><button class="btn-action" onclick='abrirModalArrecadacao(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td></tr>`;
-        }).join('')}</tbody>
-        <tfoot class="table-footer-total"><tr><td colspan="${colunasExibidas.length - 1}" class="text-end fw-bold">TOTAL ARRECADADO:</td><td class="text-end fw-bold">${formatarMoeda(totalArrecadado)}</td><td></td></tr></tfoot></div>
-        ${renderizarPaginacao('arrecadacao', totalRegistros)}</div>`;
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        ${colunasExibidas.map(col => `<th class="${ordenacaoArrecadacao.coluna === col ? ordenacaoArrecadacao.direcao : ''}" onclick="ordenar('arrecadacao', '${col}')">${col.replace(/_/g, ' ').toUpperCase()}</th>`).join('')}
+                        <th>AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${dadosPagina.map(item => {
+                        const convenio = conveniosMap.get(item.no_siafi);
+                        const link = convenio ? getLinkInteiroTeor(convenio) : null;
+                        return `<tr>
+                            ${colunasExibidas.map(col => {
+                                let valor = item[col] || '-';
+                                if (col === 'data_da_arrecadacao') valor = formatarData(valor);
+                                if (col === 'receita_arrecadada') valor = formatarMoeda(valor);
+                                if (col === 'no_siafi' && valor !== '-') {
+                                    return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
+                                }
+                                return `<td>${valor}</td>`;
+                            }).join('')}
+                            <td class="text-center"><button class="btn-action" onclick='abrirModalArrecadacao(${JSON.stringify(item).replace(/'/g, "\\'")})'><i class="material-icons" style="font-size: 16px;">visibility</i></button></td>
+                        </tr>`;
+                    }).join('')}
+                </tbody>
+                <tfoot class="table-footer-total">
+                    <tr>
+                        <td colspan="${colunasExibidas.length - 1}" class="text-end fw-bold">TOTAL ARRECADADO:</td>
+                        <td class="text-end fw-bold">${formatarMoeda(totalArrecadado)}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        ${renderizarPaginacao('arrecadacao', totalRegistros)}
+    `;
     container.innerHTML = html;
     
     initSelectComBusca('anoArrecadacao', (val) => { filtrosArrecadacao.ano = val; renderizarArrecadacao(); });
@@ -784,6 +1250,89 @@ function renderizarArrecadacao() {
     document.getElementById('filtroSiafiArrecadacao')?.addEventListener('input', (e) => { filtrosArrecadacao.numeroSiafi = e.target.value; renderizarArrecadacao(); });
 }
 
+function aplicarFiltrosIndividual() {
+    const anoInput = document.getElementById('anoIndividual_input');
+    const instrumentoInput = document.getElementById('instrumentoIndividual_input');
+    const situacaoInput = document.getElementById('situacaoIndividual_input');
+    filtrosIndividual.ano = anoInput ? anoInput.value : '';
+    filtrosIndividual.instrumento = instrumentoInput ? instrumentoInput.value : '';
+    filtrosIndividual.situacao = situacaoInput ? situacaoInput.value : '';
+    filtrosIndividual.codigoSiafi = document.getElementById('filtroSiafiIndividual')?.value || '';
+    filtrosIndividual.codigoSigcon = document.getElementById('filtroSigconIndividual')?.value || '';
+    filtrosIndividual.proponente = document.getElementById('filtroProponenteIndividual')?.value || '';
+    filtrosIndividual.concedente = document.getElementById('filtroConcedenteIndividual')?.value || '';
+    paginaAtual.individual = 1;
+    renderizarIndividual();
+}
+
+function limparFiltrosIndividual() { 
+    filtrosIndividual = { ano: '', codigoSiafi: '', codigoSigcon: '', instrumento: '', proponente: '', concedente: '', situacao: '' }; 
+    buscaIndividual = ''; 
+    if(document.getElementById('buscaIndividualInput')) document.getElementById('buscaIndividualInput').value = ''; 
+    if(document.getElementById('anoIndividual_input')) document.getElementById('anoIndividual_input').value = '';
+    if(document.getElementById('instrumentoIndividual_input')) document.getElementById('instrumentoIndividual_input').value = '';
+    if(document.getElementById('situacaoIndividual_input')) document.getElementById('situacaoIndividual_input').value = '';
+    if(document.getElementById('filtroSiafiIndividual')) document.getElementById('filtroSiafiIndividual').value = '';
+    if(document.getElementById('filtroSigconIndividual')) document.getElementById('filtroSigconIndividual').value = '';
+    if(document.getElementById('filtroProponenteIndividual')) document.getElementById('filtroProponenteIndividual').value = '';
+    if(document.getElementById('filtroConcedenteIndividual')) document.getElementById('filtroConcedenteIndividual').value = '';
+    paginaAtual.individual = 1; 
+    renderizarIndividual(); 
+}
+
+function buscaIndividualChange(valor) { buscaIndividual = valor; paginaAtual.individual = 1; renderizarIndividual(); }
+
+function aplicarFiltrosExecucao() {
+    const anoInput = document.getElementById('anoExecucao_input');
+    filtrosExecucao.ano = anoInput ? anoInput.value : '';
+    filtrosExecucao.numeroSiafi = document.getElementById('filtroSiafiExecucao')?.value || '';
+    filtrosExecucao.anoEmpenho = document.getElementById('filtroAnoEmpenhoExecucao')?.value || '';
+    filtrosExecucao.numeroEmpenho = document.getElementById('filtroNumeroEmpenhoExecucao')?.value || '';
+    paginaAtual.execucao = 1;
+    renderizarExecucao();
+}
+
+function limparFiltrosExecucao() { 
+    filtrosExecucao = { ano: '', numeroSiafi: '', anoEmpenho: '', numeroEmpenho: '' }; 
+    buscaExecucao = ''; 
+    if(document.getElementById('buscaExecucaoInput')) document.getElementById('buscaExecucaoInput').value = ''; 
+    if(document.getElementById('anoExecucao_input')) document.getElementById('anoExecucao_input').value = '';
+    if(document.getElementById('filtroSiafiExecucao')) document.getElementById('filtroSiafiExecucao').value = '';
+    if(document.getElementById('filtroAnoEmpenhoExecucao')) document.getElementById('filtroAnoEmpenhoExecucao').value = '';
+    if(document.getElementById('filtroNumeroEmpenhoExecucao')) document.getElementById('filtroNumeroEmpenhoExecucao').value = '';
+    paginaAtual.execucao = 1; 
+    renderizarExecucao(); 
+}
+
+function buscaExecucaoChange(valor) { buscaExecucao = valor; paginaAtual.execucao = 1; renderizarExecucao(); }
+
+function aplicarFiltrosArrecadacao() {
+    const anoInput = document.getElementById('anoArrecadacao_input');
+    const tipoInput = document.getElementById('tipoArrecadacao_input');
+    const fonteInput = document.getElementById('fonteArrecadacao_input');
+    filtrosArrecadacao.ano = anoInput ? anoInput.value : '';
+    filtrosArrecadacao.tipoReceita = tipoInput ? tipoInput.value : '';
+    filtrosArrecadacao.fonte = fonteInput ? fonteInput.value : '';
+    filtrosArrecadacao.numeroSiafi = document.getElementById('filtroSiafiArrecadacao')?.value || '';
+    paginaAtual.arrecadacao = 1;
+    renderizarArrecadacao();
+}
+
+function limparFiltrosArrecadacao() { 
+    filtrosArrecadacao = { ano: '', numeroSiafi: '', tipoReceita: '', fonte: '' }; 
+    buscaArrecadacao = ''; 
+    if(document.getElementById('buscaArrecadacaoInput')) document.getElementById('buscaArrecadacaoInput').value = ''; 
+    if(document.getElementById('anoArrecadacao_input')) document.getElementById('anoArrecadacao_input').value = '';
+    if(document.getElementById('tipoArrecadacao_input')) document.getElementById('tipoArrecadacao_input').value = '';
+    if(document.getElementById('fonteArrecadacao_input')) document.getElementById('fonteArrecadacao_input').value = '';
+    if(document.getElementById('filtroSiafiArrecadacao')) document.getElementById('filtroSiafiArrecadacao').value = '';
+    paginaAtual.arrecadacao = 1; 
+    renderizarArrecadacao(); 
+}
+
+function buscaArrecadacaoChange(valor) { buscaArrecadacao = valor; paginaAtual.arrecadacao = 1; renderizarArrecadacao(); }
+
+// ==================== MODAIS ====================
 function abrirModalDetalhesConvenio(item) {
     const link = getLinkInteiroTeor(item);
     const grupos = {
@@ -880,12 +1429,13 @@ function abrirModalArrecadacao(item) {
     new bootstrap.Modal(document.getElementById('detailModal')).show();
 }
 
+// ==================== DOWNLOADS ====================
 function renderizarDownloads() {
     const metadata = [
         { planilha: "CONVÊNIOS", campo: "codigo_siafi", descricao: "Código identificador do convênio no sistema SIAFI", tipo: "Texto" },
         { planilha: "CONVÊNIOS", campo: "codigo_sigcon", descricao: "Código identificador do convênio no sistema SIGCON", tipo: "Texto" },
         { planilha: "CONVÊNIOS", campo: "sei", descricao: "Número do processo no sistema SEI", tipo: "Texto" },
-        { planilha: "CONVÊNIOS", campo: "instrumento", descricao: "Tipo de instrumento formalizado (convênio, termo de parceria, etc.)", tipo: "Texto" },
+        { planilha: "CONVÊNIOS", campo: "instrumento", descricao: "Tipo de instrumento formalizado", tipo: "Texto" },
         { planilha: "CONVÊNIOS", campo: "proponente", descricao: "Nome do órgão ou entidade proponente", tipo: "Texto" },
         { planilha: "CONVÊNIOS", campo: "concedente", descricao: "Nome do órgão ou entidade concedente", tipo: "Texto" },
         { planilha: "CONVÊNIOS", campo: "valor_proponente", descricao: "Valor financeiro aportado pelo proponente", tipo: "Numérico (moeda)" },
@@ -895,8 +1445,8 @@ function renderizarDownloads() {
         { planilha: "CONVÊNIOS", campo: "situacao", descricao: "Situação atual do convênio", tipo: "Texto" },
         { planilha: "CONVÊNIOS", campo: "data_assinatura", descricao: "Data de assinatura do instrumento", tipo: "Data" },
         { planilha: "CONVÊNIOS", campo: "data_publicacao", descricao: "Data de publicação no diário oficial", tipo: "Data" },
-        { planilha: "CONVÊNIOS", campo: "inicio_vigencia", descricao: "Data de início da vigência do convênio", tipo: "Data" },
-        { planilha: "CONVÊNIOS", campo: "termino_vigencia", descricao: "Data de término da vigência do convênio", tipo: "Data" },
+        { planilha: "CONVÊNIOS", campo: "inicio_vigencia", descricao: "Data de início da vigência", tipo: "Data" },
+        { planilha: "CONVÊNIOS", campo: "termino_vigencia", descricao: "Data de término da vigência", tipo: "Data" },
         { planilha: "EXECUÇÃO", campo: "no_siafi", descricao: "Número SIAFI do convênio", tipo: "Texto" },
         { planilha: "EXECUÇÃO", campo: "no_empenho", descricao: "Número do empenho", tipo: "Texto" },
         { planilha: "EXECUÇÃO", campo: "ano_empenho", descricao: "Ano do empenho", tipo: "Numérico" },
@@ -938,101 +1488,7 @@ function renderizarDownloads() {
     document.getElementById('downloads-content').innerHTML = html;
 }
 
-function toggleColunaIndividual(coluna) { colunasVisiveisIndividual[coluna] = !colunasVisiveisIndividual[coluna]; renderizarIndividual(); }
-function toggleColunaExecucao(coluna) { colunasVisiveisExecucao[coluna] = !colunasVisiveisExecucao[coluna]; renderizarExecucao(); }
-function toggleColunaArrecadacao(coluna) { colunasVisiveisArrecadacao[coluna] = !colunasVisiveisArrecadacao[coluna]; renderizarArrecadacao(); }
-function toggleColumnSelector(event, tipo) { event.stopPropagation(); let popupId = tipo === 'individual' ? 'columnSelectorPopupIndividual' : tipo === 'execucao' ? 'columnSelectorPopupExecucao' : 'columnSelectorPopupArrecadacao'; document.getElementById(popupId)?.classList.toggle('show'); }
-
-function aplicarFiltrosIndividual() {
-    const anoInput = document.getElementById('anoIndividual_input');
-    const instrumentoInput = document.getElementById('instrumentoIndividual_input');
-    const situacaoInput = document.getElementById('situacaoIndividual_input');
-    filtrosIndividual.ano = anoInput ? anoInput.value : '';
-    filtrosIndividual.instrumento = instrumentoInput ? instrumentoInput.value : '';
-    filtrosIndividual.situacao = situacaoInput ? situacaoInput.value : '';
-    filtrosIndividual.codigoSiafi = document.getElementById('filtroSiafiIndividual')?.value || '';
-    filtrosIndividual.codigoSigcon = document.getElementById('filtroSigconIndividual')?.value || '';
-    filtrosIndividual.proponente = document.getElementById('filtroProponenteIndividual')?.value || '';
-    filtrosIndividual.concedente = document.getElementById('filtroConcedenteIndividual')?.value || '';
-    paginaAtual.individual = 1;
-    renderizarIndividual();
-}
-function limparFiltrosIndividual() { 
-    filtrosIndividual = { ano: '', codigoSiafi: '', codigoSigcon: '', instrumento: '', proponente: '', concedente: '', situacao: '' }; 
-    buscaIndividual = ''; 
-    if(document.getElementById('buscaIndividualInput')) document.getElementById('buscaIndividualInput').value = ''; 
-    if(document.getElementById('anoIndividual_input')) document.getElementById('anoIndividual_input').value = '';
-    if(document.getElementById('instrumentoIndividual_input')) document.getElementById('instrumentoIndividual_input').value = '';
-    if(document.getElementById('situacaoIndividual_input')) document.getElementById('situacaoIndividual_input').value = '';
-    if(document.getElementById('filtroSiafiIndividual')) document.getElementById('filtroSiafiIndividual').value = '';
-    if(document.getElementById('filtroSigconIndividual')) document.getElementById('filtroSigconIndividual').value = '';
-    if(document.getElementById('filtroProponenteIndividual')) document.getElementById('filtroProponenteIndividual').value = '';
-    if(document.getElementById('filtroConcedenteIndividual')) document.getElementById('filtroConcedenteIndividual').value = '';
-    paginaAtual.individual = 1; 
-    renderizarIndividual(); 
-}
-function buscaIndividualChange(valor) { buscaIndividual = valor; paginaAtual.individual = 1; renderizarIndividual(); }
-
-function aplicarFiltrosExecucao() {
-    const anoInput = document.getElementById('anoExecucao_input');
-    filtrosExecucao.ano = anoInput ? anoInput.value : '';
-    filtrosExecucao.numeroSiafi = document.getElementById('filtroSiafiExecucao')?.value || '';
-    filtrosExecucao.anoEmpenho = document.getElementById('filtroAnoEmpenhoExecucao')?.value || '';
-    filtrosExecucao.numeroEmpenho = document.getElementById('filtroNumeroEmpenhoExecucao')?.value || '';
-    paginaAtual.execucao = 1;
-    renderizarExecucao();
-}
-function limparFiltrosExecucao() { 
-    filtrosExecucao = { ano: '', numeroSiafi: '', anoEmpenho: '', numeroEmpenho: '' }; 
-    buscaExecucao = ''; 
-    if(document.getElementById('buscaExecucaoInput')) document.getElementById('buscaExecucaoInput').value = ''; 
-    if(document.getElementById('anoExecucao_input')) document.getElementById('anoExecucao_input').value = '';
-    if(document.getElementById('filtroSiafiExecucao')) document.getElementById('filtroSiafiExecucao').value = '';
-    if(document.getElementById('filtroAnoEmpenhoExecucao')) document.getElementById('filtroAnoEmpenhoExecucao').value = '';
-    if(document.getElementById('filtroNumeroEmpenhoExecucao')) document.getElementById('filtroNumeroEmpenhoExecucao').value = '';
-    paginaAtual.execucao = 1; 
-    renderizarExecucao(); 
-}
-function buscaExecucaoChange(valor) { buscaExecucao = valor; paginaAtual.execucao = 1; renderizarExecucao(); }
-
-function aplicarFiltrosArrecadacao() {
-    const anoInput = document.getElementById('anoArrecadacao_input');
-    const tipoInput = document.getElementById('tipoArrecadacao_input');
-    const fonteInput = document.getElementById('fonteArrecadacao_input');
-    filtrosArrecadacao.ano = anoInput ? anoInput.value : '';
-    filtrosArrecadacao.tipoReceita = tipoInput ? tipoInput.value : '';
-    filtrosArrecadacao.fonte = fonteInput ? fonteInput.value : '';
-    filtrosArrecadacao.numeroSiafi = document.getElementById('filtroSiafiArrecadacao')?.value || '';
-    paginaAtual.arrecadacao = 1;
-    renderizarArrecadacao();
-}
-function limparFiltrosArrecadacao() { 
-    filtrosArrecadacao = { ano: '', numeroSiafi: '', tipoReceita: '', fonte: '' }; 
-    buscaArrecadacao = ''; 
-    if(document.getElementById('buscaArrecadacaoInput')) document.getElementById('buscaArrecadacaoInput').value = ''; 
-    if(document.getElementById('anoArrecadacao_input')) document.getElementById('anoArrecadacao_input').value = '';
-    if(document.getElementById('tipoArrecadacao_input')) document.getElementById('tipoArrecadacao_input').value = '';
-    if(document.getElementById('fonteArrecadacao_input')) document.getElementById('fonteArrecadacao_input').value = '';
-    if(document.getElementById('filtroSiafiArrecadacao')) document.getElementById('filtroSiafiArrecadacao').value = '';
-    paginaAtual.arrecadacao = 1; 
-    renderizarArrecadacao(); 
-}
-function buscaArrecadacaoChange(valor) { buscaArrecadacao = valor; paginaAtual.arrecadacao = 1; renderizarArrecadacao(); }
-
-function renderizarPaginacao(tipo, totalRegistros) {
-    const totalPaginas = Math.ceil(totalRegistros / itensPorPagina);
-    const pagina = paginaAtual[tipo];
-    const inicio = (pagina - 1) * itensPorPagina + 1;
-    const fim = Math.min(pagina * itensPorPagina, totalRegistros);
-    if (totalRegistros === 0) return `<div class="pagination-container"><div>Nenhum registro encontrado</div></div>`;
-    let botoes = '';
-    for (let i = Math.max(1, pagina-2); i <= Math.min(totalPaginas, pagina+2); i++) botoes += `<li class="page-item ${i === pagina ? 'active' : ''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}', ${i}); return false;">${i}</a></li>`;
-    return `<div class="pagination-container"><div>Mostrando ${inicio}-${fim} de ${totalRegistros}</div><nav><ul class="pagination mb-0"><li class="page-item ${pagina === 1 ? 'disabled' : ''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}', ${pagina-1}); return false;">«</a></li>${botoes}<li class="page-item ${pagina === totalPaginas ? 'disabled' : ''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}', ${pagina+1}); return false;">»</a></li></ul></nav></div>`;
-}
-
-function mudarPagina(tipo, pagina) { if (pagina < 1) return; paginaAtual[tipo] = pagina; if (tipo === 'formalizados') renderizarFormalizados(); else if (tipo === 'individual') renderizarIndividual(); else if (tipo === 'execucao') renderizarExecucao(); else if (tipo === 'arrecadacao') renderizarArrecadacao(); }
-function alterarItensPorPagina(tipo, valor) { itensPorPagina = parseInt(valor); paginaAtual[tipo] = 1; mudarPagina(tipo, 1); }
-
+// ==================== EXPORTAÇÕES ====================
 function exportarIndividualCSV() { const csv = Papa.unparse(conveniosData, { delimiter: ';' }); const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'convenios.csv'; link.click(); }
 function exportarIndividualPDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'landscape' }); doc.text('Convênios', 14, 10); doc.autoTable({ html: '#individual .table', startY: 20 }); doc.save('convenios.pdf'); }
 function exportarExecucaoCSV() { const csv = Papa.unparse(execucaoData, { delimiter: ';' }); const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'execucao.csv'; link.click(); }
@@ -1040,14 +1496,12 @@ function exportarExecucaoPDF() { const { jsPDF } = window.jspdf; const doc = new
 function exportarArrecadacaoCSV() { const csv = Papa.unparse(arrecadacaoData, { delimiter: ';' }); const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'arrecadacao.csv'; link.click(); }
 function exportarArrecadacaoPDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF({ orientation: 'landscape' }); doc.text('Arrecadação', 14, 10); doc.autoTable({ html: '#arrecadacao .table', startY: 20 }); doc.save('arrecadacao.pdf'); }
 
-function iframeUpdateHeight() {
-    setTimeout(() => {
-        const height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
-        try { window.parent.postMessage({ iframeHeight: height + 30 }, '*'); } catch(e) {}
-    }, 200);
-}
+// ==================== EVENTOS E INICIALIZAÇÃO ====================
+document.addEventListener('click', function(e) { 
+    if (!e.target.closest('.column-selector-icon')) 
+        document.querySelectorAll('.column-selector-popup').forEach(p => p.classList.remove('show')); 
+});
 
-document.addEventListener('click', function(e) { if (!e.target.closest('.column-selector-icon')) document.querySelectorAll('.column-selector-popup').forEach(p => p.classList.remove('show')); });
 document.addEventListener('DOMContentLoaded', carregarDados);
 window.addEventListener('resize', iframeUpdateHeight);
 setInterval(iframeUpdateHeight, 3000);
