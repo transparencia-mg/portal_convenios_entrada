@@ -17,213 +17,180 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 
     <style>
-        /* ==================== VARIÁVEIS ==================== */
+        /* ============================================================
+           1. VARIÁVEIS DE CORES
+        ============================================================ */
         :root {
-            --primary-dark: #1a3a5c;
-            --primary-darker: #0f2a44;
-            --accent-red: #b93c42;
-            --background-light: #f5f7fa;
+            --primary-dark:      #1a3a5c;
+            --primary-darker:    #0f2a44;
+            --accent-red:        #b93c42;
+            --accent-bright:     #db233f;
+            --background-light:  #f5f7fa;
+            --success-green:     #28a745;
+            --warning-yellow:    #ffc107;
+            --info-blue:         #17a2b8;
         }
 
-        /* ==================== RESET E BASE ==================== */
+        /* ============================================================
+           2. RESET E CONFIGURAÇÕES GLOBAIS
+        ============================================================ */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            font-family: 'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: var(--background-light); 
-            padding-bottom: 15px; 
+        html, body { width: 100%; overflow-x: hidden; margin: 0; padding: 0; height: auto; min-height: auto; overflow: visible !important; }
+        body {
+            font-family: 'Montserrat', Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-light);
+            padding-bottom: 15px;
+            overflow-x: hidden;
         }
-        
-        html { }
+        body, button, input, select, textarea, span, div { font-family: 'Montserrat', sans-serif !important; }
+        .material-icons { font-family: 'Material Icons' !important; font-size: 14px; vertical-align: middle; }
 
-        /* ==================== CONTAINERS ==================== */
-        .dashboard-container { 
-            width: 100%; 
-            max-width: 95% !important; 
-            padding: 0 20px; 
-            margin: 0 auto; 
-        }
-        
-        .main-container, .container.dashboard-spacing, .tab-content, .table-container { 
-            height: auto !important; 
-            min-height: auto !important; 
-            overflow: visible !important; 
-            position: relative; 
-        }
-        
-        .table-container { 
-            overflow-x: auto !important; 
-            border-radius: 10px; 
-            background: white; 
-            box-shadow: 0 3px 12px rgba(0,0,0,0.06); 
+        /* ============================================================
+           3. LAYOUT PRINCIPAL
+        ============================================================ */
+        .main-container { height: auto; min-height: auto; overflow: visible; position: relative; }
+        .dashboard-container { width: 100%; max-width: 95% !important; padding: 0 20px; margin: 0 auto; height: auto; min-height: auto; }
+        .tab-content, .tab-pane { width: 100%; height: auto; min-height: auto; overflow: visible; }
+        .table-container {
+            height: auto; min-height: auto; overflow-x: auto; position: relative;
+            border-radius: 10px; background: white; box-shadow: 0 3px 12px rgba(0,0,0,0.06);
         }
 
-        /* ==================== NAVEGAÇÃO ==================== */
-        .nav-tabs-container { background: transparent; padding: 10px 0; margin-top: 15px; margin-bottom: 15px; width: 100%; }
-        .nav-tabs { border: none !important; gap: 10px; width: 100%; flex-wrap: wrap; }
-        .nav-tabs .nav-link {
-            border: none !important;
-            background: #ffffff !important;
-            border-radius: 10px !important;
-            padding: 8px 18px !important;
-            font-weight: 500;
-            font-size: 14px;
-            color: #1a3a5c !important;
-            display: inline-flex !important;
-            align-items: center;
-            gap: 6px;
-            transition: all .25s ease;
+        /* ============================================================
+           4. DATA DE ATUALIZAÇÃO
+        ============================================================ */
+        .data-atualizacao-container { display: flex; justify-content: left; align-items: center; margin: 10px 0 15px; }
+        .data-atualizacao-box {
+            background: transparent !important;
+            border-radius: 8px; padding: 8px 15px;
+            display: flex; align-items: center; gap: 8px;
+            font-size: 12px; color: var(--primary-dark); font-weight: 600;
+            box-shadow: none;
         }
-        .nav-tabs .nav-link:hover { background: #e6e9ed !important; }
-        .nav-tabs .nav-link.active { background: #234c63 !important; color: #fff !important; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-        .nav-tabs .material-icons { font-size: 14px !important; }
+        .data-atualizacao-box i { font-size: 14px; color: var(--accent-red); }
 
-        /* ==================== FILTROS ==================== */
+        /* ============================================================
+           5. FILTROS
+        ============================================================ */
         .filter-container {
-            background: white;
-            border-radius: 10px;
+            background: white; border-radius: 10px;
             box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: none;
-            width: 100%;
+            padding: 20px; margin-bottom: 20px; border-left: none; width: 100%;
         }
-        .filter-label { font-size: 13px; font-weight: 600; color: #1a3a5c; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .filter-label { font-size: 13px; font-weight: 600; color: #1a3a5c; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: block; }
         .filter-label i { font-size: 14px; color: var(--accent-red); }
         .form-control, .form-select {
-            border: 2px solid #e9ecef;
-            border-radius: 6px;
-            padding: 6px 10px;
-            font-size: 13px;
-            transition: all 0.3s ease;
-            width: 100%;
+            border: 2px solid #e9ecef; border-radius: 6px;
+            padding: 6px 10px; font-size: 13px; transition: all 0.3s ease; width: 100%;
         }
         .form-control:focus, .form-select:focus { border-color: var(--accent-red); box-shadow: 0 0 0 2px rgba(185,60,66,0.15); }
 
-        /* ==================== BOTÕES ==================== */
-        .btn-pesquisa, .btn-limpar { 
-            border: none; 
-            padding: 8px 20px; 
-            font-weight: 600; 
-            border-radius: 6px; 
-            font-size: 13px; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 8px; 
-            cursor: pointer;
-            height: 38px;
+        /* ============================================================
+           6. BOTÕES
+        ============================================================ */
+        .btn-pesquisa {
+            background: #20445d; border: none; padding: 0 16px;
+            font-weight: 600; border-radius: 6px; font-size: 13px; color: white;
+            display: inline-flex; align-items: center; gap: 4px; cursor: pointer;
+            height: 36px; white-space: nowrap; transition: all 0.3s ease;
         }
-        
-        .btn-pesquisa { background: #20445d; color: white; }
-        .btn-pesquisa:hover { background: var(--accent-red); }
-        
-        .btn-limpar { background: white; border: 2px solid var(--primary-darker); color: var(--primary-darker); }
+        .btn-pesquisa:hover { background: var(--accent-red); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(185,60,66,0.2); color: white; }
+        .btn-limpar {
+            background: white; border: 2px solid var(--primary-darker);
+            color: var(--primary-darker); padding: 0 16px; font-weight: 600; font-size: 13px;
+            border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;
+            cursor: pointer; height: 36px; white-space: nowrap; transition: all 0.3s ease;
+        }
         .btn-limpar:hover { background-color: #132837; color: white; border-color: #132837; }
-        
-        .btn-export { 
-            background: #eeeff5; 
-            border: 1px solid #d6dee6; 
-            color: #1a3a5c; 
-            padding: 5px 12px; 
-            border-radius: 6px; 
-            font-size: 12px; 
-            cursor: pointer; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 4px; 
+        .btn-export {
+            appearance: none; -webkit-appearance: none;
+            background: transparent !important; border: 1px solid #d6dee6;
+            color: #1a3a5c; padding: 0 14px; border-radius: 6px; font-size: 13px;
+            font-weight: 500; display: inline-flex; align-items: center; gap: 4px;
+            height: 32px; cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
         }
-        
-        .btn-export:hover { background-color: #1a3a5c; color: white; }
-        
-        .btn-action { 
-            padding: 5px; 
-            border-radius: 6px; 
-            border: 1.5px solid #1a3a5c; 
-            background: white; 
-            color: #1a3a5c; 
-            width: 30px; 
-            height: 30px; 
-            display: inline-flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
+        .btn-export:hover { background-color: #1a3a5c !important; border-color: #1a3a5c !important; color: #ffffff !important; }
+        .btn-action {
+            padding: 4px; border-radius: 7px; border: 1.5px solid #1a3a5c;
+            background-color: #ffffff; color: #1a3a5c; width: 32px; height: 30px;
+            display: inline-flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease; cursor: pointer;
         }
-        
-        .btn-action:hover { background-color: #1a3a5c; color: white; }
-        
-        .btn-link-document { 
-            background: #28a745; 
-            color: white; 
-            border: none; 
-            padding: 4px 10px; 
-            border-radius: 4px; 
-            font-size: 11px; 
-            text-decoration: none; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 4px; 
+        .btn-action:hover { background-color: #1a3a5c; color: #ffffff; }
+        .btn-link-document {
+            background: #28a745; color: white; border: none; padding: 4px 10px;
+            border-radius: 4px; font-size: 11px; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 4px;
         }
-        
         .btn-link-document:hover { background: #218838; color: white; }
+        .btn-topo {
+            background: #eeeff5; color: #1a3a5c; border: 1px solid #d6dee6;
+            border-radius: 12px; padding: 0 16px; font-size: 13px; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 4px; cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.3s ease; height: 32px;
+        }
+        .btn-topo:hover { background-color: #1a3a5c; color: #ffffff; border-color: #1a3a5c; }
 
-        /* ==================== CARDS MÉTRICAS ==================== */
+        /* ============================================================
+           7. CARDS MÉTRICAS
+        ============================================================ */
         .metric-card {
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #e5e9ef;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
-            overflow: hidden;
-            height: 100%;
-            transition: box-shadow 0.25s ease, transform 0.25s ease;
-            margin-bottom: 20px;
+            background: white; border-radius: 8px; border: 1px solid #e5e9ef;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06); overflow: hidden; height: 100%;
+            transition: box-shadow 0.25s ease, transform 0.25s ease; margin-bottom: 20px;
         }
         .metric-card:hover { box-shadow: 0 8px 24px rgba(26,58,92,0.13); transform: translateY(-2px); }
         .metric-header {
-            background: #20445d;
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: #20445d; color: white; font-size: 13px; font-weight: 600;
+            padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
         }
         .metric-body { padding: 12px 15px; }
         .metric-value { font-size: 20px; font-weight: 700; color: #171c21; }
         .metric-sublabel { font-size: 10px; color: #94a3b8; font-weight: 500; margin-top: 2px; }
 
-        /* ==================== TABELAS ==================== */
+        /* ============================================================
+           8. GRÁFICOS
+        ============================================================ */
+        .chart-card {
+            background: white; border-radius: 10px; border: 1px solid #e5e9ef;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 20px;
+        }
+        .chart-card-header { background: #20445d; color: white; padding: 12px 16px; }
+        .chart-card-header h6 { font-weight: 600; color: white; margin: 0; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+        .chart-wrapper { position: relative; height: 280px; padding: 15px; }
+
+        /* ============================================================
+           9. NAVEGAÇÃO (abas)
+        ============================================================ */
+        .nav-tabs-container { background: transparent; padding: 10px 0; margin-top: 15px; margin-bottom: 5px; width: 100%; }
+        .nav-tabs { border: none !important; gap: 10px; width: 100%; flex-wrap: wrap; }
+        .nav-tabs .nav-link {
+            border: none !important; background: #ffffff !important; border-radius: 10px !important;
+            padding: 8px 18px !important; font-weight: 500; font-size: 14px; color: #1a3a5c !important;
+            display: inline-flex !important; align-items: center; gap: 6px; transition: all .25s ease;
+        }
+        .nav-tabs .nav-link:hover { background: #e6e9ed !important; }
+        .nav-tabs .nav-link.active { background: #234c63 !important; color: #fff !important; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+        .nav-tabs .material-icons { font-size: 14px !important; }
+
+        /* ============================================================
+           10. TABELAS
+        ============================================================ */
         .table-fixed-header-container { position: relative; overflow: auto; width: 100%; max-height: 600px; }
         .table-fixed-header-container table thead th {
-            background-color: #54697b !important;
-            color: white !important;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            background-color: #54697b !important; color: white !important;
+            position: sticky; top: 0; z-index: 10;
         }
         .table { width: 100%; font-size: 12px; border-collapse: collapse; }
         .table th {
-            background-color: #54697b;
-            color: white;
-            padding: 10px 8px;
-            font-weight: 600;
-            white-space: nowrap;
-            border: 1px solid #d6dee6;
-            cursor: pointer;
-            user-select: none;
-            text-align: center;
-            font-size: 12px;
-            text-transform: uppercase;
+            background-color: #54697b; color: white; padding: 10px 8px; font-weight: 600;
+            white-space: nowrap; border: 1px solid #d6dee6; cursor: pointer; user-select: none;
+            text-align: left; font-size: 12px; text-transform: uppercase;
         }
         .table th:hover { background-color: #3d5566 !important; }
         .table th.asc:after { content: ' ↑'; font-size: 11px; }
         .table th.desc:after { content: ' ↓'; font-size: 11px; }
-        .table td {
-            padding: 8px;
-            border: 1px solid #d6dee6;
-            vertical-align: middle;
-            font-size: 12px;
-        }
+        .table td { padding: 8px; border: 1px solid #d6dee6; vertical-align: middle; font-size: 12px; }
         .table td.text-center { text-align: center; }
         .table td.text-end { text-align: right; }
         .table tbody tr { background-color: #ffffff; }
@@ -234,76 +201,109 @@
         .table-footer-total td { background-color: #dfe3e8 !important; font-weight: 700; }
         .metadata-table th { background-color: #20445d; color: white; font-size: 12px; }
         .metadata-table td { font-size: 12px; }
+        .table-badge { background: #1a3a5c; color: white; padding: 5px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; }
 
-        /* ==================== PAGINAÇÃO ==================== */
+        /* ============================================================
+           11. PAGINAÇÃO
+        ============================================================ */
         .pagination-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 20px;
-            background: white;
-            border-top: 1px solid #dee2e6;
-            border-radius: 0 0 10px 10px;
-            flex-wrap: wrap;
-            gap: 10px;
+            display: flex; justify-content: center; align-items: center;
+            padding: 12px 20px; background: white; border-top: 1px solid #dee2e6;
+            border-radius: 0 0 10px 10px; flex-wrap: wrap; gap: 12px;
         }
         .pagination-info { font-size: 12px; color: #6c757d; }
         .pagination .page-link { color: var(--primary-dark); border-color: #dee2e6; font-size: 13px; padding: 4px 10px; }
         .pagination .page-link:hover { color: var(--accent-red); background-color: #f8f9fa; }
         .pagination .page-item.active .page-link { background-color: var(--primary-dark); border-color: var(--primary-dark); color: white; }
         .items-per-page {
-            height: 34px;
-            min-width: 130px;
-            border-radius: 8px;
-            border: 1px solid #d6dee6;
-            padding: 4px 8px;
-            font-size: 13px;
-            color: #1a3a5c;
-            background-color: #ffffff;
-            cursor: pointer;
+            height: 34px; min-width: 100px; border-radius: 8px; border: 1px solid #d6dee6;
+            padding: 4px 28px 4px 10px; font-size: 13px; font-weight: 600; color: #1a3a5c;
+            background-color: #ffffff; appearance: none; -webkit-appearance: none; cursor: pointer;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='%231a3a5c' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat; background-position: right 6px center;
         }
 
-        /* ==================== TOOLBAR ==================== */
+        /* ============================================================
+           12. TOOLBAR
+        ============================================================ */
         .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
-        .toolbar-left  { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .toolbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .search-input-small {
-            width: 220px; font-size: 12px; padding: 6px 12px;
-            border-radius: 6px; border: 1px solid #d6dee6;
-            background: #ffffff; color: #1a3a5c;
+        .toolbar-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .toolbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .table-search-container {
+            display: flex; align-items: center; white-space: nowrap;
+            background: #ffffff; border: 1px solid #d6dee6; border-radius: 8px;
+            padding: 5px 10px; height: 34px;
         }
-        .search-input-small:focus { outline: none; border-color: #1a3a5c; }
+        .table-search-container:hover { border-color: #1a3a5c; }
+        .table-search-input { border: none !important; outline: none; background: transparent; font-size: 12px; width: 180px; color: #1a3a5c; }
+        .table-search-input::placeholder { color: #94a3b8; }
 
-        /* ==================== LINKS ==================== */
-        .orgao-link, .siafi-link { color: #006a82; text-decoration: none; font-weight: 500; cursor: pointer; }
-        .orgao-link:hover, .siafi-link:hover { color: var(--accent-red); text-decoration: underline; }
+        /* ============================================================
+           13. COLUMN SELECTOR — corrigido para popup fora do fluxo do botão
+        ============================================================ */
+        .col-sel-wrap { position: relative; display: inline-block; }
+        .col-sel-btn {
+            appearance: none; -webkit-appearance: none;
+            background: transparent !important; border: 1px solid #d6dee6; color: #1a3a5c;
+            padding: 0 14px; border-radius: 6px; font-size: 13px; font-weight: 500;
+            display: inline-flex; align-items: center; gap: 4px; height: 32px; cursor: pointer;
+            transition: all 0.2s ease; white-space: nowrap;
+        }
+        .col-sel-btn:hover { background-color: #1a3a5c !important; border-color: #1a3a5c !important; color: #ffffff !important; }
+        .col-sel-popup {
+            display: none; position: absolute; right: 0; top: calc(100% + 4px);
+            background: white; border: 1px solid #dce4ee; border-radius: 10px;
+            box-shadow: 0 6px 22px rgba(0,0,0,0.14); width: 260px; z-index: 3000;
+            padding: 12px; max-height: 300px; overflow-y: auto;
+        }
+        .col-sel-popup.show { display: block; }
+        .col-sel-popup .col-sel-title {
+            font-size: 11px; font-weight: 700; color: #20445d;
+            padding: 4px 8px 8px; border-bottom: 1px solid #eee; margin-bottom: 4px;
+        }
+        .col-sel-popup label {
+            display: flex; align-items: center; gap: 6px;
+            padding: 5px 8px; cursor: pointer; font-size: 12px; border-radius: 6px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .col-sel-popup label:hover { background: #f0f6fb; }
+        .col-sel-popup label input[type=checkbox] { flex-shrink: 0; }
 
-        /* ==================== SELECT COM BUSCA ==================== */
+        /* ============================================================
+           14. SELECT COM BUSCA / AUTOCOMPLETE
+        ============================================================ */
         .select-with-search { position: relative; }
         .select-with-search input { width: 100%; padding: 6px 10px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 13px; }
-        .select-options { display: none; position: absolute; top: 100%; left: 0; right: 0; max-height: 200px; overflow-y: auto; background: white; border: 1px solid #dee2e6; border-radius: 6px; z-index: 1050; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+        .select-options {
+            display: none; position: absolute; top: 100%; left: 0; right: 0;
+            max-height: 200px; overflow-y: auto; background: white;
+            border: 1px solid #dee2e6; border-radius: 6px; z-index: 1050;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
         .select-options.show { display: block; }
         .select-option { padding: 6px 10px; cursor: pointer; font-size: 13px; }
         .select-option:hover { background: #f0f6fb; }
+        .autocomplete-wrapper { position: relative; }
+        .autocomplete-list {
+            display: none; position: absolute; top: 100%; left: 0; right: 0;
+            max-height: 220px; overflow-y: auto; background: white;
+            border: 1px solid #dee2e6; border-radius: 6px; z-index: 1050;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        .autocomplete-list.show { display: block; }
+        .autocomplete-item { padding: 7px 10px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f0f0f0; }
+        .autocomplete-item:hover { background: #e8f0fe; }
+        .autocomplete-item mark { background: #fff3cd; padding: 0; font-weight: 700; }
 
-        /* ==================== COLUMN SELECTOR ==================== */
-        .column-selector-icon { position: relative; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; background: transparent; border: 1px solid #d6dee6; border-radius: 6px; padding: 0 14px; height: 32px; font-size: 12px; color: #1a3a5c; transition: all 0.2s; }
-        .column-selector-icon:hover { background-color: #1a3a5c; color: white; border-color: #1a3a5c; }
-        .column-selector-popup { display: none; position: absolute; right: 0; top: 35px; background: white; border: 1px solid #dce4ee; border-radius: 10px; box-shadow: 0 6px 22px rgba(0,0,0,0.14); width: 260px; z-index: 2000; padding: 12px; max-height: 280px; overflow-y: auto; }
-        .column-selector-popup.show { display: block; }
-        .column-selector-popup label { display: block; padding: 5px 8px; cursor: pointer; font-size: 12px; border-radius: 6px; }
-        .column-selector-popup label:hover { background: #f0f6fb; }
-        .column-selector-grid { display: flex; flex-wrap: wrap; gap: 8px; max-height: 200px; overflow-y: auto; }
-        .column-selector-item { display: flex; align-items: center; gap: 5px; font-size: 11px; min-width: calc(50% - 8px); }
-
-        /* ==================== MODAL ==================== */
+        /* ============================================================
+           15. MODAL
+        ============================================================ */
+        .modal-full-custom { max-width: 82% !important; width: 82% !important; }
         .modal-creative .modal-header {
             background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
-            color: white !important;
-            padding: 15px 20px;
-            border-bottom: none;
+            color: white !important; padding: 15px 20px; border-bottom: none;
         }
-        .modal-creative .modal-header .modal-title { color: white !important; font-weight: 600; font-size: 14px; }
+        .modal-creative .modal-header .modal-title { color: white !important; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; }
         .modal-creative .modal-header .btn-close { filter: brightness(0) invert(1); opacity: 1; }
         .modal-body .info-section { background: #f8fafd; border-radius: 10px; padding: 13px 16px; margin-bottom: 13px; border: 1px solid #e2e8f0; }
         .modal-body .info-section h6 { font-weight: 700; color: #1a3a5c; margin-bottom: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
@@ -312,7 +312,9 @@
         .modal-body .info-label { width: 40%; font-weight: 600; color: #64748b; font-size: 11px; }
         .modal-body .info-value { width: 60%; color: #1e293b; font-size: 11px; font-weight: 500; word-break: break-word; }
 
-        /* ==================== LOADING ==================== */
+        /* ============================================================
+           16. LOADING
+        ============================================================ */
         .loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(238,241,246,0.95); z-index: 9999;
@@ -321,45 +323,45 @@
         }
         .loading-text { font-size: 13px; color: #20445d; font-weight: 700; }
 
-        /* ==================== GRÁFICOS ==================== */
-        .chart-card {
-            background: white; border-radius: 10px; border: 1px solid #e5e9ef;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 20px;
+        /* ============================================================
+           17. TOAST
+        ============================================================ */
+        .toast-sucesso {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #e6f4ea; color: #1e4620; border-radius: 12px; padding: 14px 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); display: none; align-items: center;
+            justify-content: center; gap: 10px; z-index: 9999; min-width: 280px;
         }
-        .chart-card-header { background: #20445d; color: white; padding: 12px 16px; }
-        .chart-card-header h6 { font-weight: 600; color: white; margin: 0; font-size: 13px; display: flex; align-items: center; gap: 6px; }
-        .chart-wrapper { position: relative; height: 280px; padding: 15px; }
+        .toast-content { display: flex; align-items: center; justify-content: center; width: 100%; text-align: center; gap: 10px; }
+        .toast-content i { color: #28a745; font-size: 14px; }
+        .toast-close { cursor: pointer; font-size: 14px; margin-left: 10px; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ==================== BADGE TOTAL ==================== */
-        .badge-total { background: #1a3a5c; color: white; padding: 5px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+        /* ============================================================
+           18. LINKS
+        ============================================================ */
+        .orgao-link, .siafi-link { color: #006a82; text-decoration: none; font-weight: 500; cursor: pointer; }
+        .orgao-link:hover, .siafi-link:hover { color: var(--accent-red); text-decoration: underline; }
 
-        /* ==================== AUTOCOMPLETE ==================== */
-        .autocomplete-wrapper { position: relative; }
-        .autocomplete-list { display: none; position: absolute; top: 100%; left: 0; right: 0; max-height: 220px; overflow-y: auto; background: white; border: 1px solid #dee2e6; border-radius: 6px; z-index: 1050; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
-        .autocomplete-list.show { display: block; }
-        .autocomplete-item { padding: 7px 10px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f0f0f0; }
-        .autocomplete-item:hover, .autocomplete-item.active { background: #e8f0fe; }
-        .autocomplete-item mark { background: #fff3cd; padding: 0; font-weight: 700; }
-
-        /* ==================== IFRAME FIX ==================== */
-        html, body { overflow: visible !important; height: auto !important; }
-
-        /* ==================== RESPONSIVIDADE ==================== */
-        @media (max-width: 992px) { .dashboard-container { padding: 0 15px !important; } }
+        /* ============================================================
+           19. RESPONSIVIDADE
+        ============================================================ */
+        @media (max-width: 992px) { .dashboard-container { padding: 0 15px !important; } .modal-full-custom { max-width: 95% !important; width: 95% !important; } }
         @media (max-width: 768px) {
             .dashboard-container { padding: 0 10px !important; }
             .toolbar { flex-direction: column; align-items: stretch; }
             .toolbar-right { justify-content: space-between; }
-            .search-input-small { width: 100%; }
+            .table-search-input { width: 100% !important; }
             .modal-body .info-label { width: 45%; }
             .modal-body .info-value { width: 55%; }
-            .items-per-page { min-width: 100px; }
         }
     </style>
 </head>
 <body>
 
 <div class="dashboard-container">
+
+    <!-- Navegação por abas -->
     <div class="nav-tabs-container">
         <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
             <li class="nav-item"><button class="nav-link active" id="formalizados-tab" data-bs-toggle="tab" data-bs-target="#formalizados"><i class="material-icons">assignment</i>Visão Geral</button></li>
@@ -368,6 +370,14 @@
             <li class="nav-item"><button class="nav-link" id="arrecadacao-tab" data-bs-toggle="tab" data-bs-target="#arrecadacao"><i class="material-icons">attach_money</i>Arrecadação</button></li>
             <li class="nav-item"><button class="nav-link" id="downloads-tab" data-bs-toggle="tab" data-bs-target="#downloads"><i class="material-icons">download</i>Downloads</button></li>
         </ul>
+    </div>
+
+    <!-- Data de atualização -->
+    <div class="data-atualizacao-container">
+        <div class="data-atualizacao-box">
+            <i class="material-icons">event</i>
+            Data de atualização: <span id="data-atualizacao-header" style="margin-left:4px;">carregando...</span>
+        </div>
     </div>
 
     <div class="tab-content">
@@ -379,30 +389,48 @@
     </div>
 </div>
 
+<!-- Modal -->
 <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-full-custom modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content modal-creative">
-            <div class="modal-header"><h5 class="modal-title"><i class="material-icons me-2">info</i>Detalhes do Convênio</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="material-icons">info</i>Detalhes do Convênio</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
             <div class="modal-body" id="modalContent"></div>
-            <div class="modal-footer"><button type="button" class="btn-limpar" data-bs-dismiss="modal">Fechar</button></div>
+            <div class="modal-footer" style="gap:8px;">
+                <button type="button" class="btn-export" id="btnModalPDF" onclick="exportarModalPDF()">
+                    <i class="material-icons">print</i> PDF
+                </button>
+                <button type="button" class="btn-export" onclick="copiarLink()">
+                    <i class="material-icons">link</i> Copiar Link
+                </button>
+                <button type="button" class="btn-limpar" data-bs-dismiss="modal"><i class="material-icons">close</i> Fechar</button>
+            </div>
         </div>
     </div>
 </div>
 
+<!-- Toast -->
+<div id="toastSucesso" class="toast-sucesso">
+    <div class="toast-content">
+        <i class="material-icons">check_circle</i>
+        <span>Link copiado para a área de transferência!</span>
+    </div>
+    <span class="toast-close" onclick="fecharToast()">✖</span>
+</div>
+
+<!-- Loading -->
 <div class="loading-overlay" id="loadingOverlay" style="display: none;">
     <div class="spinner-border" role="status" style="color:#20445d;width:2.5rem;height:2.5rem;"></div>
-    <div class="loading-text">Carregando dados...</div>
+    <div class="loading-text" id="loadingText">Carregando dados...</div>
 </div>
 
 <script>
-// ==================== VARIÁVEIS GLOBAIS ====================
-let conveniosData = [];
-let execucaoData = [];
-let arrecadacaoData = [];
-let siafiValidosSet = new Set();
-
-const CONVENIOS_URL = 'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/convenios.csv';
+// ==================== CONSTANTES ====================
+const CONVENIOS_URL  = 'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/convenios.csv';
 const ARRECADACAO_URL = 'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/arrecadacao.csv';
+const GITHUB_API_DATA = 'https://api.github.com/repos/transparencia-mg/portal_convenios_entrada/contents/dataset/data';
 const EXECUCAO_URLS = [
     'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao2026.csv',
     'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao2025.csv',
@@ -413,25 +441,30 @@ const EXECUCAO_URLS = [
     'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao2020.csv'
 ];
 
-// Estado de filtros (fonte de verdade, não dependente do DOM)
+// ==================== ESTADO GLOBAL ====================
+let conveniosData = [];
+let execucaoData  = [];
+let arrecadacaoData = [];
+let siafiValidosSet = new Set();
+
 let filtrosFormalizados = { ano: '', proponente: '' };
-let filtrosIndividual = { ano: '', codigoSiafi: '', codigoSigcon: '', instrumento: '', proponente: '', concedente: '', situacao: '', esferaConcedente: '', tipoContrapartida: '' };
-let filtrosExecucao = { ano: '', numeroSiafi: '', anoEmpenho: '', numeroEmpenho: '', proponente: '', concedente: '', situacaoConvenio: '', razaoSocialCredor: '', cnpjCpfCredor: '' };
-let filtrosArrecadacao = { ano: '', numeroSiafi: '', tipoReceita: '', fonte: '', unidadeOrcamentaria: '', classificacaoOrcamentaria: '' };
+let filtrosIndividual   = { ano: '', codigoSiafi: '', codigoSigcon: '', sei: '', instrumento: '', proponente: '', concedente: '', situacao: '', esferaConcedente: '', tipoContrapartida: '' };
+let filtrosExecucao     = { ano: '', numeroSiafi: '', anoEmpenho: '', numeroEmpenho: '', proponente: '', concedente: '', situacaoConvenio: '', razaoSocialCredor: '', cnpjCpfCredor: '' };
+let filtrosArrecadacao  = { ano: '', numeroSiafi: '', tipoReceita: '', fonte: '', unidadeOrcamentaria: '', classificacaoOrcamentaria: '' };
 
-let chartSituacao = null;
-let chartInstrumento = null;
+let chartSituacao = null, chartInstrumento = null;
 
-let paginaAtual = { formalizados: 1, individual: 1, execucao: 1, arrecadacao: 1 };
-let itensPorPagina = 25;
-let buscaIndividual = '';
-let buscaExecucao = '';
-let buscaArrecadacao = '';
+let paginaAtual    = { formalizados: 1, individual: 1, execucao: 1, arrecadacao: 1 };
+let itensPorPagina = { formalizados: 25, individual: 25, execucao: 25, arrecadacao: 25 };
+
+// Timer debounce de busca por aba
+let timerBusca = {};
+let buscas = { individual: '', execucao: '', arrecadacao: '' };
 
 let ordenacaoFormalizados = { coluna: 'proponente', direcao: 'asc' };
-let ordenacaoIndividual = { coluna: 'proponente', direcao: 'asc' };
-let ordenacaoExecucao = { coluna: 'no_siafi', direcao: 'asc' };
-let ordenacaoArrecadacao = { coluna: 'no_siafi', direcao: 'asc' };
+let ordenacaoIndividual   = { coluna: 'proponente',  direcao: 'asc' };
+let ordenacaoExecucao     = { coluna: 'no_siafi',    direcao: 'asc' };
+let ordenacaoArrecadacao  = { coluna: 'no_siafi',    direcao: 'asc' };
 
 let colunasVisiveisIndividual = {
     codigo_siafi: true, codigo_sigcon: true, sei: true, instrumento: true,
@@ -439,57 +472,280 @@ let colunasVisiveisIndividual = {
     situacao: true, tipo_contrapartida: true, data_assinatura: true, data_publicacao: true,
     inicio_vigencia: true, termino_vigencia: true
 };
-
 let colunasVisiveisExecucao = {
     no_siafi: true, proponente: true, concedente: true, situacao_convenio: true,
     no_empenho: true, ano_empenho: true, razao_social_credor: true, cnpj_cpf_credor: true,
     valor_empenhado: true, valor_liquidado: true, valor_pago: true
 };
-
 let colunasVisiveisArrecadacao = {
     no_siafi: true, unidade_orcamentaria: true, ano_exercicio_receita: true,
     classificacao_orcamentaria: true, tipo_de_receita: true, fonte: true,
     data_da_arrecadacao: true, receita_arrecadada: true
 };
 
-const ordemColunasIndividual = ['codigo_siafi','codigo_sigcon','sei','instrumento','proponente','concedente','esfera_concedente','objeto','situacao','tipo_contrapartida','data_assinatura','data_publicacao','inicio_vigencia','termino_vigencia'];
-const ordemColunasExecucao = ['no_siafi','proponente','concedente','situacao_convenio','no_empenho','ano_empenho','razao_social_credor','cnpj_cpf_credor','valor_empenhado','valor_liquidado','valor_pago'];
-const ordemColunasArrecadacao = ['no_siafi','unidade_orcamentaria','ano_exercicio_receita','classificacao_orcamentaria','tipo_de_receita','fonte','data_da_arrecadacao','receita_arrecadada'];
+const ordemColunasIndividual   = ['codigo_siafi','codigo_sigcon','sei','instrumento','proponente','concedente','esfera_concedente','objeto','situacao','tipo_contrapartida','data_assinatura','data_publicacao','inicio_vigencia','termino_vigencia'];
+const ordemColunasExecucao     = ['no_siafi','proponente','concedente','situacao_convenio','no_empenho','ano_empenho','razao_social_credor','cnpj_cpf_credor','valor_empenhado','valor_liquidado','valor_pago'];
+const ordemColunasArrecadacao  = ['no_siafi','unidade_orcamentaria','ano_exercicio_receita','classificacao_orcamentaria','tipo_de_receita','fonte','data_da_arrecadacao','receita_arrecadada'];
 
-// ==================== FUNÇÕES AUXILIARES ====================
-function mostrarLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
+const colNomesIndividual = {
+    codigo_siafi:'Cód. SIAFI', codigo_sigcon:'Cód. SIGCON', sei:'SEI', instrumento:'Instrumento',
+    proponente:'Proponente', concedente:'Concedente', esfera_concedente:'Esfera Concedente',
+    objeto:'Objeto', situacao:'Situação', tipo_contrapartida:'Tipo Contrapartida',
+    data_assinatura:'Data Assinatura', data_publicacao:'Data Publicação',
+    inicio_vigencia:'Início Vigência', termino_vigencia:'Término Vigência'
+};
+const colNomesExecucao = {
+    no_siafi:'Nº SIAFI', proponente:'Proponente', concedente:'Concedente',
+    situacao_convenio:'Situação', no_empenho:'Nº Empenho', ano_empenho:'Ano Empenho',
+    razao_social_credor:'Razão Social Credor', cnpj_cpf_credor:'CNPJ/CPF Credor',
+    valor_empenhado:'Valor Empenhado', valor_liquidado:'Valor Liquidado', valor_pago:'Valor Pago'
+};
+const colNomesArrecadacao = {
+    no_siafi:'Nº SIAFI', unidade_orcamentaria:'Unidade Orçamentária',
+    ano_exercicio_receita:'Ano Exercício', classificacao_orcamentaria:'Classificação Orçamentária',
+    tipo_de_receita:'Tipo de Receita', fonte:'Fonte',
+    data_da_arrecadacao:'Data Arrecadação', receita_arrecadada:'Valor Arrecadado'
+};
+
+// ==================== AUXILIARES ====================
+function mostrarLoading(show, msg) {
+    document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    if (msg) document.getElementById('loadingText').textContent = msg;
+}
 
 function formatarMoeda(valor) {
     if (!valor && valor !== 0) return 'R$ 0,00';
-    let num = typeof valor === 'string' ? parseFloat(valor.replace(/\./g, '').replace(',', '.')) : valor;
+    let num = typeof valor === 'string' ? parseFloat(valor.replace(/\./g,'').replace(',','.')) : valor;
     if (isNaN(num)) num = 0;
     return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
 function formatarCpfCnpj(valor) {
     if (!valor || valor === '-') return valor || '-';
-    const digits = String(valor).replace(/\D/g, '');
-    if (digits.length === 11) return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-    if (digits.length === 14) return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+    const d = String(valor).replace(/\D/g,'');
+    if (d.length === 11) return d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    if (d.length === 14) return d.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
     return valor;
+}
+
+function formatarData(dataStr) {
+    if (!dataStr || dataStr === '') return '-';
+    let d = dataStr.split(' ')[0];
+    if (d.includes('/')) return d;
+    const p = d.split('-');
+    if (p.length === 3) return `${p[2]}/${p[1]}/${p[0]}`;
+    return d;
+}
+
+function getLinkInteiroTeor(item) {
+    if (item.inteiro_teor_do_instrumento_sigcon && item.inteiro_teor_do_instrumento_sigcon !== '' && item.inteiro_teor_do_instrumento_sigcon !== '#') return item.inteiro_teor_do_instrumento_sigcon;
+    if (item.inteiro_teor_do_instrumento_transferegov && item.inteiro_teor_do_instrumento_transferegov !== '' && item.inteiro_teor_do_instrumento_transferegov !== '#') return item.inteiro_teor_do_instrumento_transferegov;
+    return null;
+}
+
+function getTodosLinks(item) {
+    const links = [];
+    const campos = Object.keys(item).filter(k => k.includes('inteiro_teor') || k.includes('termo_aditivo') || k.includes('aditivo') || k.includes('link') || k.includes('url'));
+    campos.forEach(c => {
+        const v = item[c];
+        if (v && v !== '' && v !== '#' && (v.startsWith('http') || v.startsWith('www')))
+            links.push({ label: c.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase()), url: v });
+    });
+    return links;
+}
+
+function getAnoFromData(d) {
+    if (!d) return null;
+    let clean = d.split(' ')[0];
+    if (clean.includes('/')) { const p=clean.split('/'); return p.length===3?p[2]:null; }
+    if (clean.includes('-')) { const p=clean.split('-'); return p.length===3?p[0]:null; }
+    return null;
+}
+
+function copiarLink() {
+    navigator.clipboard.writeText(window.location.href)
+        .then(() => mostrarToast())
+        .catch(() => alert('Erro ao copiar o link'));
+}
+
+function mostrarToast() {
+    const t = document.getElementById('toastSucesso');
+    t.style.display = 'flex';
+    t.style.animation = 'none'; t.offsetHeight;
+    t.style.animation = 'fadeInUp 0.3s ease';
+    setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+
+function fecharToast() { document.getElementById('toastSucesso').style.display = 'none'; }
+
+function voltarAoTopo() {
+    if (window.parent && window.parent !== window) window.parent.scrollTo({ top:0, behavior:'smooth' });
+    else window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function iframeUpdateHeight() {
+    const h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) + 30;
+    try { window.parent.postMessage({ iframeHeight: h, iframeResize: true, type: 'resize' }, '*'); } catch(e) {}
+}
+
+// ==================== DEBOUNCE BUSCA ====================
+function onBusca(aba, v) {
+    clearTimeout(timerBusca[aba]);
+    timerBusca[aba] = setTimeout(() => {
+        buscas[aba] = v;
+        paginaAtual[aba] = 1;
+        if (aba === 'individual') renderizarTabelaIndividual();
+        else if (aba === 'execucao') renderizarTabelaExecucao();
+        else if (aba === 'arrecadacao') renderizarTabelaArrecadacao();
+    }, 300);
+}
+
+// ==================== PARSE CSV ====================
+function parseCSV(texto) {
+    const linhas = texto.trim().split('\n');
+    let cabecalhos = linhas[0].split(';').map(h => h.trim().replace(/^\uFEFF/, '').replace(/^["']|["']$/g,'').toLowerCase().replace(/ /g,'_').replace(/\(|\)/g,'').replace(/_r$/,''));
+    if (cabecalhos[0] && cabecalhos[0].charCodeAt(0) === 65279) cabecalhos[0] = cabecalhos[0].substring(1);
+    if (cabecalhos[0] === '' || cabecalhos[0] === 'ï»¿') cabecalhos[0] = 'uo';
+    cabecalhos = cabecalhos.map(h => {
+        if (h === 'tipo_de_contrapartida' || h === 'tipo_contrapartida_proponente' || h === 'tipo_contrapartida_do_proponente') return 'tipo_contrapartida';
+        if (h === 'numero_siafi' || h === 'num_siafi') return 'no_siafi';
+        if (h === 'numero_empenho' || h === 'num_empenho') return 'no_empenho';
+        if (h === 'ano_do_empenho' || h === 'ano_exercicio_empenho') return 'ano_empenho';
+        return h;
+    });
+    const dados = [];
+    for (let i = 1; i < linhas.length; i++) {
+        if (!linhas[i].trim()) continue;
+        const valores = []; let campo = ''; let aspas = false;
+        for (let c of linhas[i]) {
+            if (c === '"') aspas = !aspas;
+            else if (c === ';' && !aspas) { valores.push(campo); campo = ''; }
+            else campo += c;
+        }
+        valores.push(campo);
+        const linha = {};
+        cabecalhos.forEach((cab, idx) => {
+            let v = valores[idx] || '';
+            v = v.replace(/^["']|["']$/g,'').trim();
+            if (cab.includes('valor') && v) v = parseFloat(v.replace(/\./g,'').replace(',','.')) || 0;
+            linha[cab] = v;
+        });
+        dados.push(linha);
+    }
+    return dados;
+}
+
+// ==================== ORDENAÇÃO ====================
+function ordenarDados(dados, coluna, direcao) {
+    return [...dados].sort((a, b) => {
+        let va = a[coluna] ?? '', vb = b[coluna] ?? '';
+        const na = parseFloat(va), nb = parseFloat(vb);
+        if (!isNaN(na) && !isNaN(nb)) return direcao === 'asc' ? na - nb : nb - na;
+        va = String(va).toLowerCase(); vb = String(vb).toLowerCase();
+        if (direcao === 'asc') return va > vb ? 1 : va < vb ? -1 : 0;
+        return va < vb ? 1 : va > vb ? -1 : 0;
+    });
+}
+
+// ==================== PAGINAÇÃO ====================
+function renderizarPaginacao(tipo, total) {
+    const ipp = itensPorPagina[tipo];
+    const totalPags = Math.ceil(total / ipp);
+    const pagina = paginaAtual[tipo];
+    const inicio = (pagina-1)*ipp+1, fim = Math.min(pagina*ipp, total);
+    if (total === 0) return `<div class="pagination-container"><div class="pagination-info">Nenhum registro encontrado</div></div>`;
+    let botoes = '';
+    for (let i = Math.max(1, pagina-2); i <= Math.min(totalPags, pagina+2); i++)
+        botoes += `<li class="page-item ${i===pagina?'active':''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}',${i});return false;">${i}</a></li>`;
+    return `<div class="pagination-container">
+        <div class="pagination-info">Mostrando ${inicio}–${fim} de ${total.toLocaleString('pt-BR')}</div>
+        <nav><ul class="pagination mb-0">
+            <li class="page-item ${pagina===1?'disabled':''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}',${pagina-1});return false;">«</a></li>
+            ${botoes}
+            <li class="page-item ${pagina===totalPags?'disabled':''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}',${pagina+1});return false;">»</a></li>
+        </ul></nav>
+        <select class="items-per-page" onchange="alterarItensPorPagina('${tipo}',this.value)">
+            ${[25,50,100,200].map(n=>`<option value="${n}" ${ipp===n?'selected':''}>${n} / pág</option>`).join('')}
+        </select>
+    </div>`;
+}
+
+function mudarPagina(tipo, pagina) {
+    if (pagina < 1) return;
+    paginaAtual[tipo] = pagina;
+    if (tipo==='formalizados') renderizarTabelaFormalizados();
+    else if (tipo==='individual') renderizarTabelaIndividual();
+    else if (tipo==='execucao') renderizarTabelaExecucao();
+    else if (tipo==='arrecadacao') renderizarTabelaArrecadacao();
+}
+
+function alterarItensPorPagina(tipo, valor) {
+    itensPorPagina[tipo] = parseInt(valor);
+    paginaAtual[tipo] = 1;
+    mudarPagina(tipo, 1);
+}
+
+function ordenar(tipo, coluna) {
+    let ord = tipo==='formalizados'?ordenacaoFormalizados:tipo==='individual'?ordenacaoIndividual:tipo==='execucao'?ordenacaoExecucao:ordenacaoArrecadacao;
+    if (ord.coluna === coluna) ord.direcao = ord.direcao==='asc'?'desc':'asc';
+    else { ord.coluna = coluna; ord.direcao = 'asc'; }
+    if (tipo==='formalizados') renderizarTabelaFormalizados();
+    else if (tipo==='individual') renderizarTabelaIndividual();
+    else if (tipo==='execucao') renderizarTabelaExecucao();
+    else renderizarTabelaArrecadacao();
+}
+
+// ==================== SELECT COM BUSCA ====================
+function criarSelectComBusca(id, opcoes, valorAtual, placeholder) {
+    const unicas = [...new Set(opcoes.filter(o => o && o !== ''))].sort();
+    let opts = `<div class="select-option" data-value="">Todos</div>`;
+    opts += unicas.map(o => `<div class="select-option" data-value="${String(o).replace(/"/g,'&quot;')}">${o}</div>`).join('');
+    return `<div class="select-with-search" id="${id}_wrapper">
+        <input type="text" id="${id}_input" class="form-control" placeholder="${placeholder}" value="${valorAtual||''}" autocomplete="off">
+        <div id="${id}_options" class="select-options">${opts}</div>
+    </div>`;
+}
+
+function initSelectComBusca(id, callback) {
+    const input = document.getElementById(`${id}_input`);
+    const optDiv = document.getElementById(`${id}_options`);
+    if (!input || !optDiv) return;
+    input.addEventListener('focus', () => { filtrarOpcoes(optDiv, ''); optDiv.classList.add('show'); });
+    input.addEventListener('input', function() { filtrarOpcoes(optDiv, this.value); optDiv.classList.add('show'); });
+    input.addEventListener('blur', () => setTimeout(() => optDiv.classList.remove('show'), 200));
+    optDiv.querySelectorAll('.select-option').forEach(opt => {
+        opt.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            const val = this.getAttribute('data-value');
+            input.value = val === '' ? '' : this.textContent;
+            optDiv.classList.remove('show');
+            if (callback) callback(val);
+        });
+    });
+}
+
+function filtrarOpcoes(optDiv, termo) {
+    const t = termo.toLowerCase();
+    optDiv.querySelectorAll('.select-option').forEach(o => {
+        o.style.display = o.textContent.toLowerCase().includes(t) ? 'block' : 'none';
+    });
 }
 
 // ==================== AUTOCOMPLETE ====================
 function criarAutocomplete(id, opcoes, valorAtual, placeholder) {
-    const opcoesUnicas = [...new Set(opcoes.filter(o => o && o !== ''))].sort();
+    const unicas = [...new Set(opcoes.filter(o => o && o !== ''))].sort();
     return `<div class="autocomplete-wrapper" id="${id}_acw">
-        <input type="text" id="${id}" class="form-control" placeholder="${placeholder}" value="${valorAtual || ''}" autocomplete="off">
+        <input type="text" id="${id}" class="form-control" placeholder="${placeholder}" value="${valorAtual||''}" autocomplete="off">
         <div class="autocomplete-list" id="${id}_list">
-            ${opcoesUnicas.map(o => `<div class="autocomplete-item" data-value="${String(o).replace(/"/g,'&quot;')}">${o}</div>`).join('')}
+            ${unicas.map(o=>`<div class="autocomplete-item" data-value="${String(o).replace(/"/g,'&quot;')}">${o}</div>`).join('')}
         </div>
     </div>`;
 }
 
 function initAutocomplete(id, callback) {
     const input = document.getElementById(id);
-    const list = document.getElementById(id + '_list');
+    const list  = document.getElementById(id+'_list');
     if (!input || !list) return;
-
     input.addEventListener('input', function() {
         const t = this.value.toLowerCase();
         let any = false;
@@ -497,24 +753,15 @@ function initAutocomplete(id, callback) {
             const txt = item.getAttribute('data-value').toLowerCase();
             const match = txt.includes(t);
             item.style.display = match ? '' : 'none';
-            if (match) {
-                item.innerHTML = item.getAttribute('data-value').replace(new RegExp(`(${t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<mark>$1</mark>');
-                any = true;
-            }
+            if (match) { item.innerHTML = item.getAttribute('data-value').replace(new RegExp(`(${t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<mark>$1</mark>'); any = true; }
         });
         list.classList.toggle('show', any && t.length > 0);
         if (callback) callback(this.value);
     });
-
     input.addEventListener('focus', function() {
-        if (this.value.length > 0) {
-            list.querySelectorAll('.autocomplete-item').forEach(i => { i.style.display = ''; });
-            list.classList.add('show');
-        }
+        if (this.value.length > 0) { list.querySelectorAll('.autocomplete-item').forEach(i=>i.style.display=''); list.classList.add('show'); }
     });
-
     input.addEventListener('blur', () => setTimeout(() => list.classList.remove('show'), 200));
-
     list.querySelectorAll('.autocomplete-item').forEach(item => {
         item.addEventListener('mousedown', function(e) {
             e.preventDefault();
@@ -525,247 +772,79 @@ function initAutocomplete(id, callback) {
     });
 }
 
-
-function formatarData(dataStr) {
-    if (!dataStr || dataStr === '') return '-';
-
-    let dataLimpa = dataStr.split(' ')[0];
-
-    if (dataLimpa.includes('/')) return dataLimpa;
-
-    const partes = dataLimpa.split('-');
-
-    if (partes.length === 3) {
-        return `${partes[2]}/${partes[1]}/${partes[0]}`;
-    }
-
-    return dataLimpa;
+// ==================== COLUMN SELECTOR ====================
+function toggleColSel(aba) {
+    const popup = document.getElementById(`colSelPopup_${aba}`);
+    if (popup) popup.classList.toggle('show');
 }
 
-function getLinkInteiroTeor(item) {
-    if (item.inteiro_teor_do_instrumento_sigcon && item.inteiro_teor_do_instrumento_sigcon !== '' && item.inteiro_teor_do_instrumento_sigcon !== '#') return item.inteiro_teor_do_instrumento_sigcon;
-    if (item.inteiro_teor_do_instrumento_transferegov && item.inteiro_teor_do_instrumento_transferegov !== '' && item.inteiro_teor_do_instrumento_transferegov !== '#') return item.inteiro_teor_do_instrumento_transferegov;
-    return null;
-}
-
-function getTodosLinks(item) {
-    // Coleta todos os campos que parecem ser links/termos aditivos
-    const links = [];
-    const camposLink = Object.keys(item).filter(k =>
-        k.includes('inteiro_teor') || k.includes('termo_aditivo') || k.includes('aditivo') || k.includes('link') || k.includes('url')
-    );
-    camposLink.forEach(campo => {
-        const val = item[campo];
-        if (val && val !== '' && val !== '#' && (val.startsWith('http') || val.startsWith('www'))) {
-            const label = campo.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-            links.push({ label, url: val });
-        }
-    });
-    return links;
-}
-
-function getAnoFromData(dataStr) {
-    if (!dataStr || dataStr === '') return null;
-    let dataLimpa = dataStr.split(' ')[0];
-    if (dataLimpa.includes('/')) { const p = dataLimpa.split('/'); if (p.length === 3) return p[2]; }
-    else if (dataLimpa.includes('-')) { const p = dataLimpa.split('-'); if (p.length === 3) return p[0]; }
-    return null;
-}
-
-function parseCSV(texto) {
-    const linhas = texto.trim().split('\n');
-    let cabecalhos = linhas[0].split(';').map(h => h.trim().replace(/^\uFEFF/, '').replace(/^["']|["']$/g, '').toLowerCase().replace(/ /g, '_').replace(/\(|\)/g, '').replace(/_r$/, ''));
-    if (cabecalhos[0] && cabecalhos[0].charCodeAt(0) === 65279) cabecalhos[0] = cabecalhos[0].substring(1);
-    if (cabecalhos[0] === '' || cabecalhos[0] === 'ï»¿') cabecalhos[0] = 'uo';
-    // Normaliza variantes de nomes de campo
-    cabecalhos = cabecalhos.map(h => {
-        if (h === 'tipo_de_contrapartida' || h === 'tipo_contrapartida_proponente' || h === 'tipo_contrapartida_do_proponente') return 'tipo_contrapartida';
-        if (h === 'no_siafi' || h === 'numero_siafi' || h === 'num_siafi') return 'no_siafi';
-        if (h === 'no_empenho' || h === 'numero_empenho' || h === 'num_empenho') return 'no_empenho';
-        if (h === 'ano_do_empenho' || h === 'ano_exercicio_empenho') return 'ano_empenho';
-        return h;
-    });
-    const dados = [];
-    for (let i = 1; i < linhas.length; i++) {
-        if (!linhas[i].trim()) continue;
-        const valores = [];
-        let campoAtual = '';
-        let dentroAspas = false;
-        for (let char of linhas[i]) {
-            if (char === '"') dentroAspas = !dentroAspas;
-            else if (char === ';' && !dentroAspas) { valores.push(campoAtual); campoAtual = ''; }
-            else campoAtual += char;
-        }
-        valores.push(campoAtual);
-        const linha = {};
-        cabecalhos.forEach((cab, idx) => {
-            let valor = valores[idx] || '';
-            valor = valor.replace(/^["']|["']$/g, '').trim();
-            if (cab.includes('valor') && valor) valor = parseFloat(valor.replace(/\./g, '').replace(',', '.')) || 0;
-            linha[cab] = valor;
-        });
-        dados.push(linha);
-    }
-    return dados;
-}
-
-function ordenarDados(dados, coluna, direcao) {
-    return [...dados].sort((a, b) => {
-        let valA = a[coluna] ?? '';
-        let valB = b[coluna] ?? '';
-        const numA = parseFloat(valA);
-        const numB = parseFloat(valB);
-        if (!isNaN(numA) && !isNaN(numB)) {
-            return direcao === 'asc' ? numA - numB : numB - numA;
-        }
-        valA = String(valA).toLowerCase();
-        valB = String(valB).toLowerCase();
-        if (direcao === 'asc') return valA > valB ? 1 : valA < valB ? -1 : 0;
-        return valA < valB ? 1 : valA > valB ? -1 : 0;
-    });
-}
-
-// ==================== SELECT COM BUSCA (refatorado) ====================
-// Cria apenas o HTML do select; a inicialização é feita separadamente
-function criarSelectComBusca(id, opcoes, valorAtual, placeholder) {
-    const opcoesUnicas = [...new Set(opcoes.filter(o => o && o !== ''))].sort();
-    let optionsHtml = `<div class="select-option" data-value="">Todos</div>`;
-    optionsHtml += opcoesUnicas.map(o => `<div class="select-option" data-value="${String(o).replace(/"/g, '&quot;')}">${o}</div>`).join('');
-    return `<div class="select-with-search" id="${id}_wrapper">
-        <input type="text" id="${id}_input" class="form-control" placeholder="${placeholder}" value="${valorAtual || ''}" autocomplete="off" readonly>
-        <div id="${id}_options" class="select-options">${optionsHtml}</div>
-    </div>`;
-}
-
-// Inicializa um select com busca — seguro para chamar múltiplas vezes
-function initSelectComBusca(id, callback) {
-    const input = document.getElementById(`${id}_input`);
-    const optionsDiv = document.getElementById(`${id}_options`);
-    if (!input || !optionsDiv) return;
-
-    // Remove readonly para permitir digitação de filtro
-    input.removeAttribute('readonly');
-
-    // Abre dropdown ao focar
-    input.addEventListener('focus', () => {
-        optionsDiv.classList.add('show');
-        filtrarOpcoes(optionsDiv, '');
-    });
-
-    // Filtra opções ao digitar (não dispara re-render da tabela)
-    input.addEventListener('input', function() {
-        filtrarOpcoes(optionsDiv, this.value);
-        optionsDiv.classList.add('show');
-    });
-
-    // Fecha ao sair do campo
-    input.addEventListener('blur', () => {
-        setTimeout(() => optionsDiv.classList.remove('show'), 200);
-    });
-
-    // Clique em opção: atualiza valor e dispara callback
-    optionsDiv.querySelectorAll('.select-option').forEach(opt => {
-        opt.addEventListener('mousedown', function(e) {
-            e.preventDefault(); // evita blur antes do clique registrar
-            const val = this.getAttribute('data-value');
-            input.value = val === '' ? '' : this.textContent;
-            optionsDiv.classList.remove('show');
-            if (callback) callback(val);
-        });
-    });
-}
-
-function filtrarOpcoes(optionsDiv, termo) {
-    const t = termo.toLowerCase();
-    optionsDiv.querySelectorAll('.select-option').forEach(opt => {
-        opt.style.display = opt.textContent.toLowerCase().includes(t) ? 'block' : 'none';
-    });
-}
-
-function renderizarPaginacao(tipo, totalRegistros) {
-    const totalPaginas = Math.ceil(totalRegistros / itensPorPagina);
-    const pagina = paginaAtual[tipo];
-    const inicio = (pagina - 1) * itensPorPagina + 1;
-    const fim = Math.min(pagina * itensPorPagina, totalRegistros);
-    if (totalRegistros === 0) return `<div class="pagination-container"><div>Nenhum registro encontrado</div></div>`;
-    let botoes = '';
-    for (let i = Math.max(1, pagina - 2); i <= Math.min(totalPaginas, pagina + 2); i++) {
-        botoes += `<li class="page-item ${i === pagina ? 'active' : ''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}',${i});return false;">${i}</a></li>`;
-    }
-    return `<div class="pagination-container">
-        <div>Mostrando ${inicio}–${fim} de ${totalRegistros}</div>
-        <nav><ul class="pagination mb-0">
-            <li class="page-item ${pagina===1?'disabled':''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}',${pagina-1});return false;">«</a></li>
-            ${botoes}
-            <li class="page-item ${pagina===totalPaginas?'disabled':''}"><a class="page-link" href="#" onclick="mudarPagina('${tipo}',${pagina+1});return false;">»</a></li>
-        </ul></nav>
-    </div>`;
-}
-
-function mudarPagina(tipo, pagina) {
-    if (pagina < 1) return;
-    paginaAtual[tipo] = pagina;
-    if (tipo === 'formalizados') renderizarTabelaFormalizados();
-    else if (tipo === 'individual') renderizarTabelaIndividual();
-    else if (tipo === 'execucao') renderizarTabelaExecucao();
-    else if (tipo === 'arrecadacao') renderizarTabelaArrecadacao();
-}
-
-function alterarItensPorPagina(tipo, valor) {
-    itensPorPagina = parseInt(valor);
-    paginaAtual[tipo] = 1;
-    mudarPagina(tipo, 1);
-}
-
-function ordenar(tipo, coluna) {
-    let ord;
-    if (tipo === 'formalizados') ord = ordenacaoFormalizados;
-    else if (tipo === 'individual') ord = ordenacaoIndividual;
-    else if (tipo === 'execucao') ord = ordenacaoExecucao;
-    else ord = ordenacaoArrecadacao;
-    if (ord.coluna === coluna) ord.direcao = ord.direcao === 'asc' ? 'desc' : 'asc';
-    else { ord.coluna = coluna; ord.direcao = 'asc'; }
-    if (tipo === 'formalizados') renderizarTabelaFormalizados();
-    else if (tipo === 'individual') renderizarTabelaIndividual();
-    else if (tipo === 'execucao') renderizarTabelaExecucao();
-    else renderizarTabelaArrecadacao();
-}
-
-function toggleColumnSelector(event, tipo) {
-    event.stopPropagation();
-    const id = tipo === 'individual' ? 'columnSelectorPopupIndividual' : tipo === 'execucao' ? 'columnSelectorPopupExecucao' : 'columnSelectorPopupArrecadacao';
-    document.getElementById(id)?.classList.toggle('show');
-}
-
-function toggleColunaIndividual(col) { colunasVisiveisIndividual[col] = !colunasVisiveisIndividual[col]; renderizarTabelaIndividual(); }
-function toggleColunaExecucao(col) { colunasVisiveisExecucao[col] = !colunasVisiveisExecucao[col]; renderizarTabelaExecucao(); }
-function toggleColunaArrecadacao(col) { colunasVisiveisArrecadacao[col] = !colunasVisiveisArrecadacao[col]; renderizarTabelaArrecadacao(); }
-
-function iframeUpdateHeight() {
-    const height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
-    try { window.parent.postMessage({ iframeHeight: height + 30 }, '*'); } catch(e) {}
-}
-
-// ==================== CARREGAMENTO DE DADOS ====================
-async function carregarDados() {
-    mostrarLoading(true);
+// ==================== DATA DE ATUALIZAÇÃO ====================
+async function setupAtualizacaoData() {
+    const el = document.getElementById('data-atualizacao-header');
     try {
-        const conveniosResp = await fetch(CONVENIOS_URL);
-        if (conveniosResp.ok) {
-            conveniosData = parseCSV(await conveniosResp.text());
+        // Tenta via GitHub API para achar o arquivo execucao mais recente
+        const resp = await fetch(GITHUB_API_DATA);
+        if (!resp.ok) throw new Error('api erro');
+        const arquivos = await resp.json();
+        const execFiles = arquivos
+            .filter(f => f.name && f.name.match(/^execucao\d{4}\.csv$/))
+            .sort((a,b) => b.name.localeCompare(a.name));
+        if (execFiles.length > 0) {
+            const arqRecente = execFiles[0].name;
+            const commitResp = await fetch(`https://api.github.com/repos/transparencia-mg/portal_convenios_entrada/commits?path=dataset/data/${arqRecente}&per_page=1`);
+            if (commitResp.ok) {
+                const commits = await commitResp.json();
+                if (commits && commits.length > 0) {
+                    el.textContent = new Date(commits[0].commit.committer.date).toLocaleDateString('pt-BR');
+                    return;
+                }
+            }
+            // Fallback: extrai ano do nome
+            const match = arqRecente.match(/execucao(\d{4})\.csv/);
+            if (match) { el.textContent = match[1]; return; }
+        }
+        // Fallback: tenta pegar data do commit do execucao2026.csv diretamente
+        const fb = await fetch('https://api.github.com/repos/transparencia-mg/portal_convenios_entrada/commits?path=dataset/data/execucao2026.csv&per_page=1');
+        if (fb.ok) {
+            const cs = await fb.json();
+            if (cs && cs.length > 0) { el.textContent = new Date(cs[0].commit.committer.date).toLocaleDateString('pt-BR'); return; }
+        }
+        el.textContent = '2026';
+    } catch(e) {
+        // Último fallback: data do commit do execucao2026.csv
+        try {
+            const fb = await fetch('https://api.github.com/repos/transparencia-mg/portal_convenios_entrada/commits?path=dataset/data/execucao2026.csv&per_page=1');
+            if (fb.ok) {
+                const cs = await fb.json();
+                if (cs && cs.length > 0) { document.getElementById('data-atualizacao-header').textContent = new Date(cs[0].commit.committer.date).toLocaleDateString('pt-BR'); return; }
+            }
+        } catch(e2) {}
+        document.getElementById('data-atualizacao-header').textContent = 'Não disponível';
+    }
+}
+
+// ==================== CARREGAMENTO ====================
+async function carregarDados() {
+    mostrarLoading(true, 'Carregando convênios...');
+    try {
+        const convResp = await fetch(CONVENIOS_URL);
+        if (convResp.ok) {
+            conveniosData = parseCSV(await convResp.text());
             conveniosData.forEach(c => { if (!c.ano && c.data_assinatura) c.ano = getAnoFromData(c.data_assinatura); });
             siafiValidosSet.clear();
             conveniosData.forEach(c => { if (c.codigo_siafi?.trim()) siafiValidosSet.add(c.codigo_siafi.trim()); });
         }
+        mostrarLoading(true, 'Carregando execução...');
         for (const url of EXECUCAO_URLS) {
             try {
-                const resp = await fetch(url);
-                if (resp.ok) {
-                    const dados = parseCSV(await resp.text());
+                const r = await fetch(url);
+                if (r.ok) {
+                    const dados = parseCSV(await r.text());
                     execucaoData.push(...dados.filter(d => siafiValidosSet.has(d.no_siafi?.trim())));
                 }
-            } catch(e) { console.log(`Erro ao carregar: ${url}`); }
+            } catch(e) {}
         }
+        mostrarLoading(true, 'Carregando arrecadação...');
         const arrecResp = await fetch(ARRECADACAO_URL);
         if (arrecResp.ok) {
             const dados = parseCSV(await arrecResp.text());
@@ -777,20 +856,18 @@ async function carregarDados() {
         renderizarArrecadacao();
         renderizarDownloads();
         setTimeout(iframeUpdateHeight, 500);
-    } catch(erro) { console.error(erro); }
+    } catch(e) { console.error(e); }
     finally { mostrarLoading(false); }
 }
 
-// ==================== VISÃO GERAL (FORMALIZADOS) ====================
-// Renderiza os filtros (uma vez) + tabela
+// ==================== VISÃO GERAL ====================
 function renderizarFormalizados() {
     const container = document.getElementById('formalizados-content');
     if (!container) return;
-    const anos = [...new Set(conveniosData.map(c => c.ano))].filter(Boolean).sort().reverse();
-    const proponentes = [...new Set(conveniosData.map(c => c.proponente))].filter(Boolean).sort();
-
+    const anos = [...new Set(conveniosData.map(c=>c.ano))].filter(Boolean).sort().reverse();
+    const proponentes = [...new Set(conveniosData.map(c=>c.proponente))].filter(Boolean).sort();
     container.innerHTML = `
-        <div class="filter-container" id="filtros-formalizados">
+        <div class="filter-container">
             <div class="row g-2 align-items-end">
                 <div class="col-md-5">
                     <label class="filter-label">Ano</label>
@@ -800,94 +877,93 @@ function renderizarFormalizados() {
                     <label class="filter-label">Proponente</label>
                     ${criarSelectComBusca('proponenteFormalizados', proponentes, filtrosFormalizados.proponente, 'Selecione o proponente...')}
                 </div>
-                <div class="col-12">
-                    <div class="d-flex gap-3 flex-wrap mt-2">
-                        <button class="btn-pesquisa" onclick="aplicarFiltrosFormalizados()"><i class="fas fa-search"></i>Pesquisar</button>
-                        <button class="btn-limpar" onclick="limparFiltrosFormalizados()"><i class="fas fa-redo"></i>Limpar Filtros</button>
+                <div class="col-12 mt-2">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn-pesquisa" onclick="aplicarFiltrosFormalizados()"><i class="material-icons">search</i>Pesquisar</button>
+                        <button class="btn-limpar" onclick="limparFiltrosFormalizados()"><i class="material-icons">clear</i>Limpar</button>
                     </div>
                 </div>
             </div>
         </div>
         <div id="metricas-formalizados"></div>
-        <div class="row g-3 mb-3" id="graficos-formalizados">
+        <div class="row g-3 mb-3">
             <div class="col-md-6">
                 <div class="chart-card">
-                    <div class="chart-card-header">
-                        <h6><i class="material-icons">donut_large</i> Convênios por Situação</h6>
-                    </div>
+                    <div class="chart-card-header"><h6><i class="material-icons">donut_large</i> Convênios por Situação</h6></div>
                     <div class="chart-wrapper"><canvas id="chartSituacao"></canvas></div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="chart-card">
-                    <div class="chart-card-header">
-                        <h6><i class="material-icons">bar_chart</i> Convênios por Instrumento</h6>
-                    </div>
+                    <div class="chart-card-header"><h6><i class="material-icons">bar_chart</i> Convênios por Instrumento</h6></div>
                     <div class="chart-wrapper"><canvas id="chartInstrumento"></canvas></div>
                 </div>
             </div>
         </div>
         <div id="tabela-formalizados"></div>
     `;
-
-    initSelectComBusca('anoFormalizados', val => { filtrosFormalizados.ano = val; });
-    initSelectComBusca('proponenteFormalizados', val => { filtrosFormalizados.proponente = val; });
-
+    initSelectComBusca('anoFormalizados', v => { filtrosFormalizados.ano = v; });
+    initSelectComBusca('proponenteFormalizados', v => { filtrosFormalizados.proponente = v; });
     renderizarTabelaFormalizados();
 }
 
 function renderizarTabelaFormalizados() {
-    let dadosFiltrados = conveniosData.filter(c => {
+    let df = conveniosData.filter(c => {
         if (filtrosFormalizados.ano && c.ano != filtrosFormalizados.ano) return false;
         if (filtrosFormalizados.proponente && c.proponente !== filtrosFormalizados.proponente) return false;
         return true;
     });
-
-    const totalConvenios = dadosFiltrados.length;
-    const totalProponente = dadosFiltrados.reduce((acc, c) => acc + (parseFloat(c.valor_proponente) || 0), 0);
-    const totalConcedente = dadosFiltrados.reduce((acc, c) => acc + (parseFloat(c.valor_concedente) || 0), 0);
-    const totalGeral = dadosFiltrados.reduce((acc, c) => acc + (parseFloat(c.valor_total_convenio) || 0), 0);
-
-    const proponentesMap = new Map();
-    dadosFiltrados.forEach(c => {
-        const nome = c.proponente; if (!nome) return;
-        if (!proponentesMap.has(nome)) proponentesMap.set(nome, { proponente: nome, convenios: 0, valorProponente: 0, valorConcedente: 0, valorTotal: 0 });
-        const p = proponentesMap.get(nome);
-        p.convenios++;
-        p.valorProponente += parseFloat(c.valor_proponente) || 0;
-        p.valorConcedente += parseFloat(c.valor_concedente) || 0;
-        p.valorTotal += parseFloat(c.valor_total_convenio) || 0;
+    const totalConvenios = df.length;
+    const totalVP = df.reduce((a,c) => a+(parseFloat(c.valor_proponente)||0), 0);
+    const totalVC = df.reduce((a,c) => a+(parseFloat(c.valor_concedente)||0), 0);
+    const totalVT = df.reduce((a,c) => a+(parseFloat(c.valor_total_convenio)||0), 0);
+    const map = new Map();
+    df.forEach(c => {
+        const n = c.proponente; if (!n) return;
+        if (!map.has(n)) map.set(n, { proponente:n, convenios:0, valorProponente:0, valorConcedente:0, valorTotal:0 });
+        const p = map.get(n); p.convenios++;
+        p.valorProponente += parseFloat(c.valor_proponente)||0;
+        p.valorConcedente += parseFloat(c.valor_concedente)||0;
+        p.valorTotal += parseFloat(c.valor_total_convenio)||0;
     });
-
-    let dadosTabela = ordenarDados(Array.from(proponentesMap.values()), ordenacaoFormalizados.coluna, ordenacaoFormalizados.direcao);
-    const totalRegistros = dadosTabela.length;
-    const inicio = (paginaAtual.formalizados - 1) * itensPorPagina;
-    const dadosPagina = dadosTabela.slice(inicio, inicio + itensPorPagina);
-
+    let tabela = ordenarDados(Array.from(map.values()), ordenacaoFormalizados.coluna, ordenacaoFormalizados.direcao);
+    const total = tabela.length;
+    const ipp = itensPorPagina.formalizados;
+    const inicio = (paginaAtual.formalizados-1)*ipp;
+    const pagina = tabela.slice(inicio, inicio+ipp);
     const met = document.getElementById('metricas-formalizados');
     if (met) met.innerHTML = `
         <div class="row g-3 mb-4">
-            <div class="col-md-3"><div class="metric-card"><div class="metric-header">Total de Convênios</div><div class="metric-body"><div class="metric-value">${totalConvenios.toLocaleString()}</div></div></div></div>
-            <div class="col-md-3"><div class="metric-card"><div class="metric-header">Valor Proponente</div><div class="metric-body"><div class="metric-value">${formatarMoeda(totalProponente)}</div></div></div></div>
-            <div class="col-md-3"><div class="metric-card"><div class="metric-header">Valor Concedente</div><div class="metric-body"><div class="metric-value">${formatarMoeda(totalConcedente)}</div></div></div></div>
-            <div class="col-md-3"><div class="metric-card"><div class="metric-header">Valor Total</div><div class="metric-body"><div class="metric-value">${formatarMoeda(totalGeral)}</div></div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-header">Total de Convênios</div><div class="metric-body"><div class="metric-value">${totalConvenios.toLocaleString('pt-BR')}</div></div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-header">Valor Proponente</div><div class="metric-body"><div class="metric-value" style="font-size:15px">${formatarMoeda(totalVP)}</div></div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-header">Valor Concedente</div><div class="metric-body"><div class="metric-value" style="font-size:15px">${formatarMoeda(totalVC)}</div></div></div></div>
+            <div class="col-md-3"><div class="metric-card"><div class="metric-header">Valor Total</div><div class="metric-body"><div class="metric-value" style="font-size:15px">${formatarMoeda(totalVT)}</div></div></div></div>
         </div>`;
-
+    const th = (col, lbl) => `<th class="${ordenacaoFormalizados.coluna===col?ordenacaoFormalizados.direcao:''}" onclick="ordenar('formalizados','${col}')">${lbl}</th>`;
     const tab = document.getElementById('tabela-formalizados');
     if (!tab) return;
-    const th = col => `<th class="${ordenacaoFormalizados.coluna===col?ordenacaoFormalizados.direcao:''}" onclick="ordenar('formalizados','${col}')">`;
     tab.innerHTML = `
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <button class="btn-export" onclick="exportarFormalizadosCSV()"><i class="material-icons">description</i> CSV</button>
+                <button class="btn-export" onclick="exportarFormalizadosPDF()"><i class="material-icons">print</i> PDF</button>
+                <button class="btn-export" onclick="copiarLink()"><i class="material-icons">link</i> Copiar Link</button>
+            </div>
+            <div class="toolbar-right">
+                <span class="table-badge">${total} proponentes</span>
+            </div>
+        </div>
         <div class="table-container">
             <table class="table">
                 <thead><tr>
-                    ${th('proponente')}Proponente</th>
-                    ${th('convenios')}<span style="display:block;text-align:center">Qtd Convênios</span></th>
-                    ${th('valorProponente')}<span style="display:block;text-align:right">Valor Proponente</span></th>
-                    ${th('valorConcedente')}<span style="display:block;text-align:right">Valor Concedente</span></th>
-                    ${th('valorTotal')}<span style="display:block;text-align:right">Valor Total</span></th>
+                    ${th('proponente','Proponente')}
+                    ${th('convenios','Qtd')}
+                    ${th('valorProponente','Valor Proponente')}
+                    ${th('valorConcedente','Valor Concedente')}
+                    ${th('valorTotal','Valor Total')}
                 </tr></thead>
                 <tbody>
-                    ${dadosPagina.map(item => `<tr>
+                    ${pagina.map(item=>`<tr>
                         <td><a href="#" class="orgao-link" onclick="irParaConsultaIndividual('${item.proponente.replace(/'/g,"\\'")}');return false;">${item.proponente}</a></td>
                         <td class="text-center">${item.convenios}</td>
                         <td class="text-end">${formatarMoeda(item.valorProponente)}</td>
@@ -895,100 +971,60 @@ function renderizarTabelaFormalizados() {
                         <td class="text-end">${formatarMoeda(item.valorTotal)}</td>
                     </tr>`).join('')}
                 </tbody>
+                <tfoot class="table-footer-total"><tr>
+                    <td class="fw-bold">TOTAL GERAL</td>
+                    <td class="text-center fw-bold">${tabela.reduce((a,r)=>a+r.convenios,0)}</td>
+                    <td class="text-end fw-bold">${formatarMoeda(tabela.reduce((a,r)=>a+r.valorProponente,0))}</td>
+                    <td class="text-end fw-bold">${formatarMoeda(tabela.reduce((a,r)=>a+r.valorConcedente,0))}</td>
+                    <td class="text-end fw-bold">${formatarMoeda(tabela.reduce((a,r)=>a+r.valorTotal,0))}</td>
+                </tr></tfoot>
             </table>
         </div>
-        ${renderizarPaginacao('formalizados', totalRegistros)}`;
-
-    // Renderizar gráficos
-    renderizarGraficosFormalizados(dadosFiltrados);
+        ${renderizarPaginacao('formalizados', total)}
+        <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+            <button class="btn-topo" onclick="voltarAoTopo()"><i class="material-icons">arrow_upward</i> Topo</button>
+        </div>`;
+    renderizarGraficosFormalizados(df);
+    setTimeout(iframeUpdateHeight, 300);
 }
 
-
 function renderizarGraficosFormalizados(dados) {
-    const PALETTE = ['#1a3a5c','#b93c42','#2e7d32','#f57c00','#6a1b9a','#0277bd','#4e342e','#00695c','#558b2f','#ad1457','#37474f','#ff6f00'];
-
-    // Gráfico por Situação
+    const PAL = ['#1a3a5c','#b93c42','#2e7d32','#f57c00','#6a1b9a','#0277bd','#4e342e','#00695c','#558b2f','#ad1457','#37474f','#ff6f00'];
     const sitMap = {};
-    dados.forEach(c => { const s = c.situacao || 'Não informada'; sitMap[s] = (sitMap[s]||0)+1; });
-    const sitLabels = Object.keys(sitMap).sort((a,b) => sitMap[b]-sitMap[a]);
-    const sitValues = sitLabels.map(k => sitMap[k]);
-
+    dados.forEach(c => { const s=c.situacao||'Não informada'; sitMap[s]=(sitMap[s]||0)+1; });
+    const sitLabels = Object.keys(sitMap).sort((a,b)=>sitMap[b]-sitMap[a]);
     const ctx1 = document.getElementById('chartSituacao');
     if (ctx1) {
         if (chartSituacao) chartSituacao.destroy();
-        chartSituacao = new Chart(ctx1, {
-            type: 'doughnut',
-            data: {
-                labels: sitLabels,
-                datasets: [{ data: sitValues, backgroundColor: PALETTE.slice(0, sitLabels.length), borderWidth: 2, borderColor: '#fff' }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'right', labels: { font: { size: 11 }, boxWidth: 14 } },
-                    tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} (${((ctx.raw/sitValues.reduce((a,b)=>a+b,0))*100).toFixed(1)}%)` } }
-                }
-            }
-        });
+        chartSituacao = new Chart(ctx1, { type:'doughnut', data:{ labels:sitLabels, datasets:[{ data:sitLabels.map(k=>sitMap[k]), backgroundColor:PAL.slice(0,sitLabels.length), borderWidth:2, borderColor:'#fff' }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'right', labels:{ font:{ size:11 }, boxWidth:14 } }, tooltip:{ callbacks:{ label:ctx=>` ${ctx.label}: ${ctx.raw}` } } } } });
     }
-
-    // Gráfico por Instrumento
     const instMap = {};
-    dados.forEach(c => { const i = c.instrumento || 'Não informado'; instMap[i] = (instMap[i]||0)+1; });
-    const instLabels = Object.keys(instMap).sort((a,b) => instMap[b]-instMap[a]).slice(0,12);
-    const instValues = instLabels.map(k => instMap[k]);
-
+    dados.forEach(c => { const i=c.instrumento||'Não informado'; instMap[i]=(instMap[i]||0)+1; });
+    const instLabels = Object.keys(instMap).sort((a,b)=>instMap[b]-instMap[a]).slice(0,12);
     const ctx2 = document.getElementById('chartInstrumento');
     if (ctx2) {
         if (chartInstrumento) chartInstrumento.destroy();
-        chartInstrumento = new Chart(ctx2, {
-            type: 'bar',
-            data: {
-                labels: instLabels,
-                datasets: [{ label: 'Qtd Convênios', data: instValues, backgroundColor: PALETTE.slice(0, instLabels.length), borderRadius: 4, borderSkipped: false }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                indexAxis: 'y',
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { callbacks: { label: ctx => ` ${ctx.raw} convênios` } }
-                },
-                scales: {
-                    x: { beginAtZero: true, ticks: { font: { size: 11 } } },
-                    y: { ticks: { font: { size: 11 } } }
-                }
-            }
-        });
+        chartInstrumento = new Chart(ctx2, { type:'bar', data:{ labels:instLabels, datasets:[{ data:instLabels.map(k=>instMap[k]), backgroundColor:PAL.slice(0,instLabels.length), borderRadius:4 }] }, options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{ legend:{ display:false } }, scales:{ x:{ beginAtZero:true, ticks:{ font:{ size:11 } } }, y:{ ticks:{ font:{ size:11 } } } } } });
     }
 }
-
 
 function aplicarFiltrosFormalizados() {
     filtrosFormalizados.ano = document.getElementById('anoFormalizados_input')?.value || '';
     filtrosFormalizados.proponente = document.getElementById('proponenteFormalizados_input')?.value || '';
-    paginaAtual.formalizados = 1;
-    renderizarTabelaFormalizados();
+    paginaAtual.formalizados = 1; renderizarTabelaFormalizados();
 }
-
 function limparFiltrosFormalizados() {
-    filtrosFormalizados = { ano: '', proponente: '' };
-    const anoInp = document.getElementById('anoFormalizados_input');
-    const propInp = document.getElementById('proponenteFormalizados_input');
-    if (anoInp) anoInp.value = '';
-    if (propInp) propInp.value = '';
-    paginaAtual.formalizados = 1;
-    renderizarTabelaFormalizados();
+    filtrosFormalizados = { ano:'', proponente:'' };
+    ['anoFormalizados_input','proponenteFormalizados_input'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    paginaAtual.formalizados = 1; renderizarTabelaFormalizados();
 }
-
 function irParaConsultaIndividual(proponente) {
     document.getElementById('individual-tab').click();
     setTimeout(() => {
         filtrosIndividual.proponente = proponente;
         const inp = document.getElementById('filtroProponenteIndividual');
         if (inp) inp.value = proponente;
-        paginaAtual.individual = 1;
-        renderizarTabelaIndividual();
+        paginaAtual.individual = 1; renderizarTabelaIndividual();
     }, 300);
 }
 
@@ -996,18 +1032,19 @@ function irParaConsultaIndividual(proponente) {
 function renderizarIndividual() {
     const container = document.getElementById('individual-content');
     if (!container) return;
-    const anos = [...new Set(conveniosData.map(c => c.ano))].filter(Boolean).sort().reverse();
-    const instrumentos = [...new Set(conveniosData.map(c => c.instrumento))].filter(Boolean).sort();
-    const situacoes = [...new Set(conveniosData.map(c => c.situacao))].filter(Boolean).sort();
-    const proponentes = [...new Set(conveniosData.map(c => c.proponente))].filter(Boolean).sort();
-    const concedentes = [...new Set(conveniosData.map(c => c.concedente))].filter(Boolean).sort();
-    const esferas = [...new Set(conveniosData.map(c => c.esfera_concedente))].filter(Boolean).sort();
-    const tipos = [...new Set(conveniosData.map(c => c.tipo_contrapartida))].filter(Boolean).sort();
-    const siafis = [...new Set(conveniosData.map(c => c.codigo_siafi))].filter(Boolean).sort();
-    const sigcons = [...new Set(conveniosData.map(c => c.codigo_sigcon))].filter(Boolean).sort();
+    const anos = [...new Set(conveniosData.map(c=>c.ano))].filter(Boolean).sort().reverse();
+    const instrumentos = [...new Set(conveniosData.map(c=>c.instrumento))].filter(Boolean).sort();
+    const situacoes = [...new Set(conveniosData.map(c=>c.situacao))].filter(Boolean).sort();
+    const proponentes = [...new Set(conveniosData.map(c=>c.proponente))].filter(Boolean).sort();
+    const concedentes = [...new Set(conveniosData.map(c=>c.concedente))].filter(Boolean).sort();
+    const esferas = [...new Set(conveniosData.map(c=>c.esfera_concedente))].filter(Boolean).sort();
+    const tipos = [...new Set(conveniosData.map(c=>c.tipo_contrapartida))].filter(Boolean).sort();
+    const siafis = [...new Set(conveniosData.map(c=>c.codigo_siafi))].filter(Boolean).sort();
+    const sigcons = [...new Set(conveniosData.map(c=>c.codigo_sigcon))].filter(Boolean).sort();
+    const seis = [...new Set(conveniosData.map(c=>c.sei))].filter(Boolean).sort();
 
     container.innerHTML = `
-        <div class="filter-container" id="filtros-individual">
+        <div class="filter-container">
             <div class="row g-2">
                 <div class="col-md-3">
                     <label class="filter-label">Ano</label>
@@ -1022,11 +1059,15 @@ function renderizarIndividual() {
                     ${criarAutocomplete('filtroSigconIndividual', sigcons, filtrosIndividual.codigoSigcon, 'Digite ou selecione...')}
                 </div>
                 <div class="col-md-3">
-                    <label class="filter-label">Instrumento</label>
-                    ${criarSelectComBusca('instrumentoIndividual', instrumentos, filtrosIndividual.instrumento, 'Selecione o instrumento...')}
+                    <label class="filter-label">Número SEI</label>
+                    ${criarAutocomplete('filtroSeiIndividual', seis, filtrosIndividual.sei, 'Digite ou selecione...')}
                 </div>
             </div>
             <div class="row g-2 mt-2">
+                <div class="col-md-3">
+                    <label class="filter-label">Instrumento</label>
+                    ${criarSelectComBusca('instrumentoIndividual', instrumentos, filtrosIndividual.instrumento, 'Selecione...')}
+                </div>
                 <div class="col-md-3">
                     <label class="filter-label">Proponente</label>
                     ${criarAutocomplete('filtroProponenteIndividual', proponentes, filtrosIndividual.proponente, 'Digite ou selecione...')}
@@ -1037,22 +1078,22 @@ function renderizarIndividual() {
                 </div>
                 <div class="col-md-3">
                     <label class="filter-label">Situação</label>
-                    ${criarSelectComBusca('situacaoIndividual', situacoes, filtrosIndividual.situacao, 'Selecione a situação...')}
-                </div>
-                <div class="col-md-3">
-                    <label class="filter-label">Esfera Concedente</label>
-                    ${criarSelectComBusca('esferaIndividual', esferas, filtrosIndividual.esferaConcedente, 'Selecione a esfera...')}
+                    ${criarSelectComBusca('situacaoIndividual', situacoes, filtrosIndividual.situacao, 'Selecione...')}
                 </div>
             </div>
             <div class="row g-2 mt-2">
                 <div class="col-md-3">
-                    <label class="filter-label">Tipo de Contrapartida</label>
-                    ${criarSelectComBusca('tipoContrapartidaIndividual', tipos, filtrosIndividual.tipoContrapartida, 'Selecione o tipo...')}
+                    <label class="filter-label">Esfera Concedente</label>
+                    ${criarSelectComBusca('esferaIndividual', esferas, filtrosIndividual.esferaConcedente, 'Selecione...')}
                 </div>
-                <div class="col-9 d-flex align-items-end">
-                    <div class="d-flex gap-3 flex-wrap">
-                        <button class="btn-pesquisa" onclick="aplicarFiltrosIndividual()"><i class="fas fa-search"></i>Pesquisar</button>
-                        <button class="btn-limpar" onclick="limparFiltrosIndividual()"><i class="fas fa-redo"></i>Limpar Filtros</button>
+                <div class="col-md-3">
+                    <label class="filter-label">Tipo de Contrapartida</label>
+                    ${criarSelectComBusca('tipoContrapartidaIndividual', tipos, filtrosIndividual.tipoContrapartida, 'Selecione...')}
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn-pesquisa" onclick="aplicarFiltrosIndividual()"><i class="material-icons">search</i>Pesquisar</button>
+                        <button class="btn-limpar" onclick="limparFiltrosIndividual()"><i class="material-icons">clear</i>Limpar</button>
                     </div>
                 </div>
             </div>
@@ -1061,13 +1102,14 @@ function renderizarIndividual() {
         <div id="tabela-individual"></div>
     `;
 
-    initSelectComBusca('anoIndividual', val => { filtrosIndividual.ano = val; });
-    initSelectComBusca('instrumentoIndividual', val => { filtrosIndividual.instrumento = val; });
-    initSelectComBusca('situacaoIndividual', val => { filtrosIndividual.situacao = val; });
-    initSelectComBusca('esferaIndividual', val => { filtrosIndividual.esferaConcedente = val; });
-    initSelectComBusca('tipoContrapartidaIndividual', val => { filtrosIndividual.tipoContrapartida = val; });
+    initSelectComBusca('anoIndividual', v => { filtrosIndividual.ano = v; });
+    initSelectComBusca('instrumentoIndividual', v => { filtrosIndividual.instrumento = v; });
+    initSelectComBusca('situacaoIndividual', v => { filtrosIndividual.situacao = v; });
+    initSelectComBusca('esferaIndividual', v => { filtrosIndividual.esferaConcedente = v; });
+    initSelectComBusca('tipoContrapartidaIndividual', v => { filtrosIndividual.tipoContrapartida = v; });
     initAutocomplete('filtroSiafiIndividual');
     initAutocomplete('filtroSigconIndividual');
+    initAutocomplete('filtroSeiIndividual');
     initAutocomplete('filtroProponenteIndividual');
     initAutocomplete('filtroConcedenteIndividual');
 
@@ -1075,10 +1117,11 @@ function renderizarIndividual() {
 }
 
 function renderizarTabelaIndividual() {
-    let dadosFiltrados = conveniosData.filter(c => {
+    let df = conveniosData.filter(c => {
         if (filtrosIndividual.ano && c.ano != filtrosIndividual.ano) return false;
         if (filtrosIndividual.codigoSiafi && !c.codigo_siafi?.toLowerCase().includes(filtrosIndividual.codigoSiafi.toLowerCase())) return false;
         if (filtrosIndividual.codigoSigcon && !c.codigo_sigcon?.toLowerCase().includes(filtrosIndividual.codigoSigcon.toLowerCase())) return false;
+        if (filtrosIndividual.sei && !c.sei?.toLowerCase().includes(filtrosIndividual.sei.toLowerCase())) return false;
         if (filtrosIndividual.instrumento && c.instrumento !== filtrosIndividual.instrumento) return false;
         if (filtrosIndividual.proponente && !c.proponente?.toLowerCase().includes(filtrosIndividual.proponente.toLowerCase())) return false;
         if (filtrosIndividual.concedente && !c.concedente?.toLowerCase().includes(filtrosIndividual.concedente.toLowerCase())) return false;
@@ -1087,45 +1130,41 @@ function renderizarTabelaIndividual() {
         if (filtrosIndividual.tipoContrapartida && c.tipo_contrapartida !== filtrosIndividual.tipoContrapartida) return false;
         return true;
     });
-
-    if (buscaIndividual) {
-        const t = buscaIndividual.toLowerCase();
-        dadosFiltrados = dadosFiltrados.filter(c => c.proponente?.toLowerCase().includes(t) || c.concedente?.toLowerCase().includes(t) || c.codigo_siafi?.toLowerCase().includes(t) || c.objeto?.toLowerCase().includes(t));
+    if (buscas.individual) {
+        const t = buscas.individual.toLowerCase();
+        df = df.filter(c => c.proponente?.toLowerCase().includes(t) || c.concedente?.toLowerCase().includes(t) || c.codigo_siafi?.toLowerCase().includes(t) || c.objeto?.toLowerCase().includes(t) || c.sei?.toLowerCase().includes(t));
     }
-
-    dadosFiltrados = ordenarDados(dadosFiltrados, ordenacaoIndividual.coluna, ordenacaoIndividual.direcao);
-    const totalRegistros = dadosFiltrados.length;
-    const inicio = (paginaAtual.individual - 1) * itensPorPagina;
-    const dadosPagina = dadosFiltrados.slice(inicio, inicio + itensPorPagina);
-    const colunasExibidas = ordemColunasIndividual.filter(col => colunasVisiveisIndividual[col]);
-
-    const totalVP = dadosFiltrados.reduce((s, i) => s + (parseFloat(i.valor_proponente) || 0), 0);
-    const totalVC = dadosFiltrados.reduce((s, i) => s + (parseFloat(i.valor_concedente) || 0), 0);
-    const totalVT = dadosFiltrados.reduce((s, i) => s + (parseFloat(i.valor_total_convenio) || 0), 0);
+    df = ordenarDados(df, ordenacaoIndividual.coluna, ordenacaoIndividual.direcao);
+    const total = df.length;
+    const ipp = itensPorPagina.individual;
+    const inicio = (paginaAtual.individual-1)*ipp;
+    const pagina = df.slice(inicio, inicio+ipp);
+    const colsVis = ordemColunasIndividual.filter(col => colunasVisiveisIndividual[col]);
+    const totalVP = df.reduce((s,i)=>s+(parseFloat(i.valor_proponente)||0),0);
+    const totalVC = df.reduce((s,i)=>s+(parseFloat(i.valor_concedente)||0),0);
+    const totalVT = df.reduce((s,i)=>s+(parseFloat(i.valor_total_convenio)||0),0);
 
     const toolbar = document.getElementById('toolbar-individual');
     if (toolbar) toolbar.innerHTML = `
         <div class="toolbar">
-            <div class="d-flex gap-2">
-                <button class="btn-export" onclick="exportarIndividualCSV()"><i class="material-icons" style="font-size:14px">description</i>CSV</button>
-                <button class="btn-export" onclick="exportarIndividualPDF()"><i class="material-icons" style="font-size:14px">picture_as_pdf</i>PDF</button>
-                <div class="column-selector-icon" onclick="toggleColumnSelector(event,'individual')">
-                    <i class="material-icons" style="font-size:16px">view_column</i> Colunas
-                    <div class="column-selector-popup" id="columnSelectorPopupIndividual">
-                        <div class="column-selector-grid">
-                            ${ordemColunasIndividual.map(col => `<label class="column-selector-item"><input type="checkbox" ${colunasVisiveisIndividual[col]?'checked':''} onchange="toggleColunaIndividual('${col}')">${col.replace(/_/g,' ').toUpperCase()}</label>`).join('')}
-                        </div>
+            <div class="toolbar-left">
+                <button class="btn-export" onclick="exportarIndividualCSV()"><i class="material-icons">description</i> CSV</button>
+                <button class="btn-export" onclick="exportarIndividualPDF()"><i class="material-icons">print</i> PDF</button>
+                <button class="btn-export" onclick="copiarLink()"><i class="material-icons">link</i> Copiar Link</button>
+                <div class="col-sel-wrap">
+                    <button class="col-sel-btn" onclick="toggleColSel('individual')"><i class="material-icons">view_column</i> Colunas</button>
+                    <div class="col-sel-popup" id="colSelPopup_individual">
+                        <div class="col-sel-title">Exibir colunas:</div>
+                        ${ordemColunasIndividual.map(col=>`<label><input type="checkbox" ${colunasVisiveisIndividual[col]?'checked':''} onchange="toggleColunaIndividual('${col}')"> ${colNomesIndividual[col]||col}</label>`).join('')}
                     </div>
                 </div>
             </div>
             <div class="toolbar-right">
-                <span class="badge bg-secondary">Total: ${totalRegistros} registros</span>
-                <select class="items-per-page" onchange="alterarItensPorPagina('individual',this.value)">
-                    <option value="25" ${itensPorPagina==25?'selected':''}>25 por página</option>
-                    <option value="50" ${itensPorPagina==50?'selected':''}>50 por página</option>
-                    <option value="100" ${itensPorPagina==100?'selected':''}>100 por página</option>
-                </select>
-                <input type="text" class="search-input-small" placeholder="Buscar na tabela..." id="buscaIndividualInput" value="${buscaIndividual}" oninput="buscaIndividualChange(this.value)">
+                <span class="table-badge">${total.toLocaleString('pt-BR')} convênios</span>
+                <div class="table-search-container">
+                    <i class="material-icons" style="font-size:14px;color:#94a3b8;">search</i>
+                    <input class="table-search-input" placeholder="Busca rápida..." value="${buscas.individual}" oninput="onBusca('individual',this.value)">
+                </div>
             </div>
         </div>`;
 
@@ -1133,41 +1172,47 @@ function renderizarTabelaIndividual() {
     if (!tab) return;
     tab.innerHTML = `
         <div class="table-container">
-            <table class="table" style="min-width:1200px">
-                <thead><tr>
-                    ${colunasExibidas.map(col => `<th class="${ordenacaoIndividual.coluna===col?ordenacaoIndividual.direcao:''}" onclick="ordenar('individual','${col}')">${col.replace(/_/g,' ').toUpperCase()}</th>`).join('')}
-                    <th class="text-end">VALOR PROPONENTE</th>
-                    <th class="text-end">VALOR CONCEDENTE</th>
-                    <th class="text-end">VALOR TOTAL</th>
-                    <th>AÇÕES</th>
-                </tr></thead>
-                <tbody>
-                    ${dadosPagina.map(item => {
-                        const link = getLinkInteiroTeor(item);
-                        return `<tr>
-                            ${colunasExibidas.map(col => {
-                                let valor = item[col] || '-';
-                                if (col.includes('data')) valor = formatarData(valor);
-                                if (col === 'codigo_siafi' && valor !== '-') return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
-                                return `<td>${valor}</td>`;
-                            }).join('')}
-                            <td class="text-end">${formatarMoeda(item.valor_proponente)}</td>
-                            <td class="text-end">${formatarMoeda(item.valor_concedente)}</td>
-                            <td class="text-end">${formatarMoeda(item.valor_total_convenio)}</td>
-                            <td class="text-center"><button class="btn-action" onclick='abrirModalDetalhesConvenio(${JSON.stringify(item).replace(/'/g,"\\'")})'><i class="material-icons" style="font-size:16px">visibility</i></button></td>
-                        </tr>`;
-                    }).join('')}
-                </tbody>
-                <tfoot class="table-footer-total"><tr>
-                    <td colspan="${colunasExibidas.length}" class="text-end fw-bold">TOTAIS:</td>
-                    <td class="text-end fw-bold">${formatarMoeda(totalVP)}</td>
-                    <td class="text-end fw-bold">${formatarMoeda(totalVC)}</td>
-                    <td class="text-end fw-bold">${formatarMoeda(totalVT)}</td>
-                    <td></td>
-                </tr></tfoot>
-            </table>
+            <div class="table-fixed-header-container">
+                <table class="table" style="min-width:1200px">
+                    <thead><tr>
+                        ${colsVis.map(col=>`<th class="${ordenacaoIndividual.coluna===col?ordenacaoIndividual.direcao:''}" onclick="ordenar('individual','${col}')">${colNomesIndividual[col]||col}</th>`).join('')}
+                        <th>VALOR PROPONENTE</th>
+                        <th>VALOR CONCEDENTE</th>
+                        <th>VALOR TOTAL</th>
+                        <th>AÇÕES</th>
+                    </tr></thead>
+                    <tbody>
+                        ${pagina.map((item,idx)=>{
+                            const link = getLinkInteiroTeor(item);
+                            const iGlobal = inicio+idx;
+                            return `<tr>
+                                ${colsVis.map(col=>{
+                                    let v = item[col]||'-';
+                                    if (col.includes('data')||col.includes('vigencia')||col.includes('publicacao')||col.includes('assinatura')) v = formatarData(String(item[col]||''));
+                                    if (col==='codigo_siafi' && v!=='-') return `<td>${link?`<a href="${link}" target="_blank" class="siafi-link">${v}</a>`:v}</td>`;
+                                    return `<td>${v}</td>`;
+                                }).join('')}
+                                <td class="text-end">${formatarMoeda(item.valor_proponente)}</td>
+                                <td class="text-end">${formatarMoeda(item.valor_concedente)}</td>
+                                <td class="text-end">${formatarMoeda(item.valor_total_convenio)}</td>
+                                <td class="text-center"><button class="btn-action" title="Ver detalhes" onclick="abrirModalDetalhesConvenio(conveniosData.filter(c=>c.codigo_siafi==='${(item.codigo_siafi||'').replace(/'/g,"\\'")}')[0]||{})"><i class="material-icons" style="font-size:15px">visibility</i></button></td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                    <tfoot class="table-footer-total"><tr>
+                        <td colspan="${colsVis.length}" class="text-end fw-bold">TOTAIS:</td>
+                        <td class="text-end fw-bold">${formatarMoeda(totalVP)}</td>
+                        <td class="text-end fw-bold">${formatarMoeda(totalVC)}</td>
+                        <td class="text-end fw-bold">${formatarMoeda(totalVT)}</td>
+                        <td></td>
+                    </tr></tfoot>
+                </table>
+            </div>
         </div>
-        ${renderizarPaginacao('individual', totalRegistros)}`;
+        ${renderizarPaginacao('individual', total)}
+        <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+            <button class="btn-topo" onclick="voltarAoTopo()"><i class="material-icons">arrow_upward</i> Topo</button>
+        </div>`;
 }
 
 function aplicarFiltrosIndividual() {
@@ -1178,52 +1223,54 @@ function aplicarFiltrosIndividual() {
     filtrosIndividual.tipoContrapartida = document.getElementById('tipoContrapartidaIndividual_input')?.value || '';
     filtrosIndividual.codigoSiafi = document.getElementById('filtroSiafiIndividual')?.value || '';
     filtrosIndividual.codigoSigcon = document.getElementById('filtroSigconIndividual')?.value || '';
+    filtrosIndividual.sei = document.getElementById('filtroSeiIndividual')?.value || '';
     filtrosIndividual.proponente = document.getElementById('filtroProponenteIndividual')?.value || '';
     filtrosIndividual.concedente = document.getElementById('filtroConcedenteIndividual')?.value || '';
-    paginaAtual.individual = 1;
-    renderizarTabelaIndividual();
+    paginaAtual.individual = 1; renderizarTabelaIndividual();
 }
-
 function limparFiltrosIndividual() {
-    filtrosIndividual = { ano:'', codigoSiafi:'', codigoSigcon:'', instrumento:'', proponente:'', concedente:'', situacao:'', esferaConcedente:'', tipoContrapartida:'' };
-    buscaIndividual = '';
+    filtrosIndividual = { ano:'', codigoSiafi:'', codigoSigcon:'', sei:'', instrumento:'', proponente:'', concedente:'', situacao:'', esferaConcedente:'', tipoContrapartida:'' };
+    buscas.individual = '';
     ['anoIndividual_input','instrumentoIndividual_input','situacaoIndividual_input','esferaIndividual_input','tipoContrapartidaIndividual_input',
-     'filtroSiafiIndividual','filtroSigconIndividual','filtroProponenteIndividual','filtroConcedenteIndividual','buscaIndividualInput'].forEach(id => {
-        const el = document.getElementById(id); if (el) el.value = '';
+     'filtroSiafiIndividual','filtroSigconIndividual','filtroSeiIndividual','filtroProponenteIndividual','filtroConcedenteIndividual'].forEach(id=>{
+        const el=document.getElementById(id); if(el) el.value='';
     });
-    paginaAtual.individual = 1;
-    renderizarTabelaIndividual();
+    paginaAtual.individual = 1; renderizarTabelaIndividual();
 }
-
-function buscaIndividualChange(valor) { buscaIndividual = valor; paginaAtual.individual = 1; renderizarTabelaIndividual(); }
+function toggleColunaIndividual(col) { colunasVisiveisIndividual[col]=!colunasVisiveisIndividual[col]; renderizarTabelaIndividual(); }
 
 // ==================== EXECUÇÃO ====================
 function renderizarExecucao() {
     const container = document.getElementById('execucao-content');
     if (!container) return;
-    const anos = [...new Set(execucaoData.map(e => e.ano_exercicio_receita))].filter(Boolean).sort().reverse();
-    const situacoes = [...new Set(conveniosData.map(c => c.situacao))].filter(Boolean).sort();
-    const proponentes = [...new Set(conveniosData.map(c => c.proponente))].filter(Boolean).sort();
-    const concedentes = [...new Set(conveniosData.map(c => c.concedente))].filter(Boolean).sort();
+    const anos = [...new Set(execucaoData.map(e=>e.ano_exercicio_receita))].filter(Boolean).sort().reverse();
+    const situacoes = [...new Set(conveniosData.map(c=>c.situacao))].filter(Boolean).sort();
+    const proponentes = [...new Set(conveniosData.map(c=>c.proponente))].filter(Boolean).sort();
+    const concedentes = [...new Set(conveniosData.map(c=>c.concedente))].filter(Boolean).sort();
+    const siafisExec = [...new Set(execucaoData.map(e=>e.no_siafi))].filter(Boolean).sort();
+    const anosEmp = [...new Set(execucaoData.map(e=>e.ano_empenho))].filter(Boolean).sort().reverse();
+    const empenhos = [...new Set(execucaoData.map(e=>e.no_empenho))].filter(Boolean).sort();
+    const credores = [...new Set(execucaoData.map(e=>e.razao_social_credor))].filter(Boolean).sort();
+    const cnpjs = [...new Set(execucaoData.map(e=>e.cnpj_cpf_credor))].filter(Boolean).sort();
 
     container.innerHTML = `
-        <div class="filter-container" id="filtros-execucao">
+        <div class="filter-container">
             <div class="row g-2">
                 <div class="col-md-3">
                     <label class="filter-label">Ano</label>
-                    ${criarSelectComBusca('anoExecucao', anos, filtrosExecucao.ano, 'Selecione o ano...')}
+                    ${criarSelectComBusca('anoExecucao', anos, filtrosExecucao.ano, 'Selecione...')}
                 </div>
                 <div class="col-md-3">
                     <label class="filter-label">Nº SIAFI</label>
-                    <input type="text" class="form-control" id="filtroSiafiExecucao" placeholder="Digite..." value="${filtrosExecucao.numeroSiafi || ''}">
+                    ${criarAutocomplete('filtroSiafiExecucao', siafisExec, filtrosExecucao.numeroSiafi, 'Digite ou selecione...')}
                 </div>
                 <div class="col-md-3">
                     <label class="filter-label">Ano Empenho</label>
-                    <input type="text" class="form-control" id="filtroAnoEmpenhoExecucao" placeholder="Digite..." value="${filtrosExecucao.anoEmpenho || ''}">
+                    ${criarAutocomplete('filtroAnoEmpenhoExecucao', anosEmp, filtrosExecucao.anoEmpenho, 'Digite ou selecione...')}
                 </div>
                 <div class="col-md-3">
                     <label class="filter-label">Nº Empenho</label>
-                    <input type="text" class="form-control" id="filtroNumeroEmpenhoExecucao" placeholder="Digite..." value="${filtrosExecucao.numeroEmpenho || ''}">
+                    ${criarAutocomplete('filtroNumeroEmpenhoExecucao', empenhos, filtrosExecucao.numeroEmpenho, 'Digite ou selecione...')}
                 </div>
             </div>
             <div class="row g-2 mt-2">
@@ -1241,18 +1288,18 @@ function renderizarExecucao() {
                 </div>
                 <div class="col-md-3">
                     <label class="filter-label">Razão Social Credor</label>
-                    <input type="text" class="form-control" id="filtroRazaoCredorExecucao" placeholder="Digite..." value="${filtrosExecucao.razaoSocialCredor || ''}">
+                    ${criarAutocomplete('filtroRazaoCredorExecucao', credores, filtrosExecucao.razaoSocialCredor, 'Digite ou selecione...')}
                 </div>
             </div>
             <div class="row g-2 mt-2">
                 <div class="col-md-3">
                     <label class="filter-label">CNPJ/CPF Credor</label>
-                    <input type="text" class="form-control" id="filtroCnpjCredorExecucao" placeholder="Digite..." value="${filtrosExecucao.cnpjCpfCredor || ''}">
+                    ${criarAutocomplete('filtroCnpjCredorExecucao', cnpjs, filtrosExecucao.cnpjCpfCredor, 'Digite ou selecione...')}
                 </div>
-                <div class="col-9 d-flex align-items-end">
-                    <div class="d-flex gap-3 flex-wrap">
-                        <button class="btn-pesquisa" onclick="aplicarFiltrosExecucao()"><i class="fas fa-search"></i>Pesquisar</button>
-                        <button class="btn-limpar" onclick="limparFiltrosExecucao()"><i class="fas fa-redo"></i>Limpar Filtros</button>
+                <div class="col-md-9 d-flex align-items-end">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn-pesquisa" onclick="aplicarFiltrosExecucao()"><i class="material-icons">search</i>Pesquisar</button>
+                        <button class="btn-limpar" onclick="limparFiltrosExecucao()"><i class="material-icons">clear</i>Limpar</button>
                     </div>
                 </div>
             </div>
@@ -1261,11 +1308,15 @@ function renderizarExecucao() {
         <div id="tabela-execucao"></div>
     `;
 
-    initSelectComBusca('anoExecucao', val => { filtrosExecucao.ano = val; });
-    initSelectComBusca('situacaoExecucao', val => { filtrosExecucao.situacaoConvenio = val; });
+    initSelectComBusca('anoExecucao', v => { filtrosExecucao.ano = v; });
+    initSelectComBusca('situacaoExecucao', v => { filtrosExecucao.situacaoConvenio = v; });
+    initAutocomplete('filtroSiafiExecucao');
+    initAutocomplete('filtroAnoEmpenhoExecucao');
+    initAutocomplete('filtroNumeroEmpenhoExecucao');
     initAutocomplete('filtroProponenteExecucao');
     initAutocomplete('filtroConcedenteExecucao');
-
+    initAutocomplete('filtroRazaoCredorExecucao');
+    initAutocomplete('filtroCnpjCredorExecucao');
     renderizarTabelaExecucao();
 }
 
@@ -1273,74 +1324,63 @@ function renderizarTabelaExecucao() {
     const conveniosMap = new Map();
     conveniosData.forEach(c => { if (c.codigo_siafi) conveniosMap.set(c.codigo_siafi, c); });
 
-    let dadosFiltrados = execucaoData.filter(e => {
+    let df = execucaoData.filter(e => {
         if (filtrosExecucao.ano && e.ano_exercicio_receita != filtrosExecucao.ano) return false;
         if (filtrosExecucao.numeroSiafi && !e.no_siafi?.toLowerCase().includes(filtrosExecucao.numeroSiafi.toLowerCase())) return false;
-        if (filtrosExecucao.anoEmpenho && e.ano_empenho != filtrosExecucao.anoEmpenho) return false;
+        if (filtrosExecucao.anoEmpenho && !String(e.ano_empenho||'').toLowerCase().includes(String(filtrosExecucao.anoEmpenho).toLowerCase())) return false;
         if (filtrosExecucao.numeroEmpenho && !e.no_empenho?.toLowerCase().includes(filtrosExecucao.numeroEmpenho.toLowerCase())) return false;
         if (filtrosExecucao.razaoSocialCredor && !e.razao_social_credor?.toLowerCase().includes(filtrosExecucao.razaoSocialCredor.toLowerCase())) return false;
         if (filtrosExecucao.cnpjCpfCredor && !e.cnpj_cpf_credor?.replace(/\D/g,'').includes(filtrosExecucao.cnpjCpfCredor.replace(/\D/g,''))) return false;
         return true;
     });
 
-    if (buscaExecucao) {
-        const t = buscaExecucao.toLowerCase();
-        dadosFiltrados = dadosFiltrados.filter(e => e.razao_social_credor?.toLowerCase().includes(t) || e.no_siafi?.toLowerCase().includes(t));
+    if (buscas.execucao) {
+        const t = buscas.execucao.toLowerCase();
+        df = df.filter(e => e.razao_social_credor?.toLowerCase().includes(t) || e.no_siafi?.toLowerCase().includes(t) || e.no_empenho?.toLowerCase().includes(t));
     }
 
-    dadosFiltrados = dadosFiltrados.map(e => ({
+    df = df.map(e => ({
         ...e,
         proponente: conveniosMap.get(e.no_siafi)?.proponente || '-',
         concedente: conveniosMap.get(e.no_siafi)?.concedente || '-',
         situacao_convenio: conveniosMap.get(e.no_siafi)?.situacao || '-'
     }));
 
-    // Aplicar filtros que dependem do join com convenios
-    if (filtrosExecucao.proponente) dadosFiltrados = dadosFiltrados.filter(e => e.proponente?.toLowerCase().includes(filtrosExecucao.proponente.toLowerCase()));
-    if (filtrosExecucao.concedente) dadosFiltrados = dadosFiltrados.filter(e => e.concedente?.toLowerCase().includes(filtrosExecucao.concedente.toLowerCase()));
-    if (filtrosExecucao.situacaoConvenio) dadosFiltrados = dadosFiltrados.filter(e => e.situacao_convenio === filtrosExecucao.situacaoConvenio);
+    if (filtrosExecucao.proponente) df = df.filter(e => e.proponente?.toLowerCase().includes(filtrosExecucao.proponente.toLowerCase()));
+    if (filtrosExecucao.concedente) df = df.filter(e => e.concedente?.toLowerCase().includes(filtrosExecucao.concedente.toLowerCase()));
+    if (filtrosExecucao.situacaoConvenio) df = df.filter(e => e.situacao_convenio === filtrosExecucao.situacaoConvenio);
 
-    dadosFiltrados = ordenarDados(dadosFiltrados, ordenacaoExecucao.coluna, ordenacaoExecucao.direcao);
-
-    const totalRegistros = dadosFiltrados.length;
-    const inicio = (paginaAtual.execucao - 1) * itensPorPagina;
-    const dadosPagina = dadosFiltrados.slice(inicio, inicio + itensPorPagina);
-    const colunasExibidas = ordemColunasExecucao.filter(col => colunasVisiveisExecucao[col]);
-
-    const totalEmpenhado = dadosFiltrados.reduce((s, i) => s + (parseFloat(i.valor_empenhado) || 0), 0);
-    const totalLiquidado = dadosFiltrados.reduce((s, i) => s + (parseFloat(i.valor_liquidado) || 0), 0);
-    const totalPago = dadosFiltrados.reduce((s, i) => s + (parseFloat(i.valor_pago) || 0), 0);
-
-    const colNomes = {
-        no_siafi: 'Nº SIAFI', proponente: 'Proponente', concedente: 'Concedente',
-        situacao_convenio: 'Situação', no_empenho: 'Nº Empenho', ano_empenho: 'Ano Empenho',
-        razao_social_credor: 'Razão Social Credor', cnpj_cpf_credor: 'CNPJ/CPF Credor',
-        valor_empenhado: 'Valor Empenhado', valor_liquidado: 'Valor Liquidado', valor_pago: 'Valor Pago'
-    };
+    df = ordenarDados(df, ordenacaoExecucao.coluna, ordenacaoExecucao.direcao);
+    const total = df.length;
+    const ipp = itensPorPagina.execucao;
+    const inicio = (paginaAtual.execucao-1)*ipp;
+    const pagina = df.slice(inicio, inicio+ipp);
+    const colsVis = ordemColunasExecucao.filter(col => colunasVisiveisExecucao[col]);
+    const totalEmp = df.reduce((s,i)=>s+(parseFloat(i.valor_empenhado)||0),0);
+    const totalLiq = df.reduce((s,i)=>s+(parseFloat(i.valor_liquidado)||0),0);
+    const totalPago = df.reduce((s,i)=>s+(parseFloat(i.valor_pago)||0),0);
 
     const toolbar = document.getElementById('toolbar-execucao');
     if (toolbar) toolbar.innerHTML = `
         <div class="toolbar">
-            <div class="d-flex gap-2">
-                <button class="btn-export" onclick="exportarExecucaoCSV()"><i class="material-icons" style="font-size:14px">description</i>CSV</button>
-                <button class="btn-export" onclick="exportarExecucaoPDF()"><i class="material-icons" style="font-size:14px">picture_as_pdf</i>PDF</button>
-                <div class="column-selector-icon" onclick="toggleColumnSelector(event,'execucao')">
-                    <i class="material-icons" style="font-size:16px">view_column</i> Colunas
-                    <div class="column-selector-popup" id="columnSelectorPopupExecucao">
-                        <div class="column-selector-grid">
-                            ${ordemColunasExecucao.map(col => `<label class="column-selector-item"><input type="checkbox" ${colunasVisiveisExecucao[col]?'checked':''} onchange="toggleColunaExecucao('${col}')">${colNomes[col]||col.replace(/_/g,' ').toUpperCase()}</label>`).join('')}
-                        </div>
+            <div class="toolbar-left">
+                <button class="btn-export" onclick="exportarExecucaoCSV()"><i class="material-icons">description</i> CSV</button>
+                <button class="btn-export" onclick="exportarExecucaoPDF()"><i class="material-icons">print</i> PDF</button>
+                <button class="btn-export" onclick="copiarLink()"><i class="material-icons">link</i> Copiar Link</button>
+                <div class="col-sel-wrap">
+                    <button class="col-sel-btn" onclick="toggleColSel('execucao')"><i class="material-icons">view_column</i> Colunas</button>
+                    <div class="col-sel-popup" id="colSelPopup_execucao">
+                        <div class="col-sel-title">Exibir colunas:</div>
+                        ${ordemColunasExecucao.map(col=>`<label><input type="checkbox" ${colunasVisiveisExecucao[col]?'checked':''} onchange="toggleColunaExecucao('${col}')"> ${colNomesExecucao[col]||col}</label>`).join('')}
                     </div>
                 </div>
             </div>
             <div class="toolbar-right">
-                <span class="badge bg-secondary">Total: ${totalRegistros} registros</span>
-                <select class="items-per-page" onchange="alterarItensPorPagina('execucao',this.value)">
-                    <option value="25" ${itensPorPagina==25?'selected':''}>25 por página</option>
-                    <option value="50" ${itensPorPagina==50?'selected':''}>50 por página</option>
-                    <option value="100" ${itensPorPagina==100?'selected':''}>100 por página</option>
-                </select>
-                <input type="text" class="search-input-small" placeholder="Buscar na tabela..." id="buscaExecucaoInput" value="${buscaExecucao}" oninput="buscaExecucaoChange(this.value)">
+                <span class="table-badge">${total.toLocaleString('pt-BR')} registros</span>
+                <div class="table-search-container">
+                    <i class="material-icons" style="font-size:14px;color:#94a3b8;">search</i>
+                    <input class="table-search-input" placeholder="Busca rápida..." value="${buscas.execucao}" oninput="onBusca('execucao',this.value)">
+                </div>
             </div>
         </div>`;
 
@@ -1348,40 +1388,55 @@ function renderizarTabelaExecucao() {
     if (!tab) return;
     tab.innerHTML = `
         <div class="table-container">
-            <table class="table" style="min-width:1400px">
-                <thead><tr>
-                    ${colunasExibidas.map(col => `<th class="${ordenacaoExecucao.coluna===col?ordenacaoExecucao.direcao:''}" onclick="ordenar('execucao','${col}')">${colNomes[col]||col.replace(/_/g,' ').toUpperCase()}</th>`).join('')}
-                    <th>AÇÕES</th>
-                </tr></thead>
-                <tbody>
-                    ${dadosPagina.map(item => {
-                        const convenio = conveniosMap.get(item.no_siafi);
-                        const link = convenio ? getLinkInteiroTeor(convenio) : null;
-                        return `<tr>
-                            ${colunasExibidas.map(col => {
-                                let valor = item[col] ?? '-';
-                                if (valor === '' || valor === null || valor === undefined) valor = '-';
-                                if (['valor_empenhado','valor_liquidado','valor_pago'].includes(col)) valor = formatarMoeda(valor);
-                                if (col === 'cnpj_cpf_credor') valor = formatarCpfCnpj(String(item[col]||''));
-                                if (col === 'no_siafi' && valor !== '-') return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
-                                return `<td>${valor}</td>`;
-                            }).join('')}
-                            <td class="text-center"><button class="btn-action" onclick='abrirModalExecucao(${JSON.stringify(item).replace(/'/g,"\\'")})'><i class="material-icons" style="font-size:16px">visibility</i></button></td>
-                        </tr>`;
-                    }).join('')}
-                </tbody>
-                <tfoot class="table-footer-total"><tr>
-                    <td colspan="${colunasExibidas.length - 3}" class="text-end fw-bold">TOTAIS:</td>
-                    <td class="text-end fw-bold">${formatarMoeda(totalEmpenhado)}</td>
-                    <td class="text-end fw-bold">${formatarMoeda(totalLiquidado)}</td>
-                    <td class="text-end fw-bold">${formatarMoeda(totalPago)}</td>
-                    <td></td>
-                </tr></tfoot>
-            </table>
+            <div class="table-fixed-header-container">
+                <table class="table" style="min-width:1400px">
+                    <thead><tr>
+                        ${colsVis.map(col=>`<th class="${ordenacaoExecucao.coluna===col?ordenacaoExecucao.direcao:''}" onclick="ordenar('execucao','${col}')">${colNomesExecucao[col]||col}</th>`).join('')}
+                        <th>AÇÕES</th>
+                    </tr></thead>
+                    <tbody>
+                        ${pagina.map(item=>{
+                            const convenio = conveniosMap.get(item.no_siafi);
+                            const link = convenio ? getLinkInteiroTeor(convenio) : null;
+                            const itemJSON = JSON.stringify(item).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+                            return `<tr>
+                                ${colsVis.map(col=>{
+                                    let v = item[col]??'-';
+                                    if (v===''||v===null||v===undefined) v='-';
+                                    if (['valor_empenhado','valor_liquidado','valor_pago'].includes(col)) v=formatarMoeda(v);
+                                    if (col==='cnpj_cpf_credor') v=formatarCpfCnpj(String(item[col]||''));
+                                    if (col==='no_siafi'&&v!=='-') return `<td>${link?`<a href="${link}" target="_blank" class="siafi-link">${v}</a>`:v}</td>`;
+                                    return `<td>${v}</td>`;
+                                }).join('')}
+                                <td class="text-center"><button class="btn-action" title="Ver detalhes" onclick='abrirModalExecucaoIdx(${inicio+pagina.indexOf(item)})'><i class="material-icons" style="font-size:15px">visibility</i></button></td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                    <tfoot class="table-footer-total"><tr>
+                        <td colspan="${colsVis.length - 2}" class="text-end fw-bold">TOTAIS:</td>
+                        <td class="text-end fw-bold">${formatarMoeda(totalEmp)}</td>
+                        <td class="text-end fw-bold">${formatarMoeda(totalLiq)}</td>
+                        <td class="text-end fw-bold">${formatarMoeda(totalPago)}</td>
+                        <td></td>
+                    </tr></tfoot>
+                </table>
+            </div>
         </div>
-        ${renderizarPaginacao('execucao', totalRegistros)}`;
+        ${renderizarPaginacao('execucao', total)}
+        <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+            <button class="btn-topo" onclick="voltarAoTopo()"><i class="material-icons">arrow_upward</i> Topo</button>
+        </div>`;
+
+    // Guarda df filtrado para o modal por índice
+    window._dfExecucao = df;
 }
 
+// Modal execução por índice (evita JSON.stringify com aspas problemáticas)
+function abrirModalExecucaoIdx(idx) {
+    const item = (window._dfExecucao || [])[idx];
+    if (!item) return;
+    abrirModalExecucao(item);
+}
 
 function aplicarFiltrosExecucao() {
     filtrosExecucao.ano = document.getElementById('anoExecucao_input')?.value || '';
@@ -1393,55 +1448,50 @@ function aplicarFiltrosExecucao() {
     filtrosExecucao.concedente = document.getElementById('filtroConcedenteExecucao')?.value || '';
     filtrosExecucao.razaoSocialCredor = document.getElementById('filtroRazaoCredorExecucao')?.value || '';
     filtrosExecucao.cnpjCpfCredor = document.getElementById('filtroCnpjCredorExecucao')?.value || '';
-    paginaAtual.execucao = 1;
-    renderizarTabelaExecucao();
+    paginaAtual.execucao = 1; renderizarTabelaExecucao();
 }
-
 function limparFiltrosExecucao() {
     filtrosExecucao = { ano:'', numeroSiafi:'', anoEmpenho:'', numeroEmpenho:'', proponente:'', concedente:'', situacaoConvenio:'', razaoSocialCredor:'', cnpjCpfCredor:'' };
-    buscaExecucao = '';
+    buscas.execucao = '';
     ['anoExecucao_input','situacaoExecucao_input','filtroSiafiExecucao','filtroAnoEmpenhoExecucao','filtroNumeroEmpenhoExecucao',
-     'filtroProponenteExecucao','filtroConcedenteExecucao','filtroRazaoCredorExecucao','filtroCnpjCredorExecucao','buscaExecucaoInput'].forEach(id => {
-        const el = document.getElementById(id); if (el) el.value = '';
+     'filtroProponenteExecucao','filtroConcedenteExecucao','filtroRazaoCredorExecucao','filtroCnpjCredorExecucao'].forEach(id=>{
+        const el=document.getElementById(id); if(el) el.value='';
     });
-    paginaAtual.execucao = 1;
-    renderizarTabelaExecucao();
+    paginaAtual.execucao = 1; renderizarTabelaExecucao();
 }
-
-function buscaExecucaoChange(valor) { buscaExecucao = valor; paginaAtual.execucao = 1; renderizarTabelaExecucao(); }
+function toggleColunaExecucao(col) { colunasVisiveisExecucao[col]=!colunasVisiveisExecucao[col]; renderizarTabelaExecucao(); }
 
 // ==================== ARRECADAÇÃO ====================
 function renderizarArrecadacao() {
     const container = document.getElementById('arrecadacao-content');
     if (!container) return;
-    const anos = [...new Set(arrecadacaoData.map(a => a.ano_exercicio_receita))].filter(Boolean).sort().reverse();
-    const tipos = [...new Set(arrecadacaoData.map(a => a.tipo_de_receita))].filter(Boolean).sort();
-    const fontes = [...new Set(arrecadacaoData.map(a => a.fonte))].filter(Boolean).sort();
-
-    // unidade_orcamentaria vem do join com convenios (proponente), classificacao vem do proprio CSV
+    const anos = [...new Set(arrecadacaoData.map(a=>a.ano_exercicio_receita))].filter(Boolean).sort().reverse();
+    const tipos = [...new Set(arrecadacaoData.map(a=>a.tipo_de_receita))].filter(Boolean).sort();
+    const fontes = [...new Set(arrecadacaoData.map(a=>a.fonte))].filter(Boolean).sort();
     const conveniosMap = new Map();
     conveniosData.forEach(c => { if (c.codigo_siafi) conveniosMap.set(c.codigo_siafi, c); });
-    const unidades = [...new Set(arrecadacaoData.map(a => conveniosMap.get(a.no_siafi)?.proponente).filter(Boolean))].sort();
-    const classificacoes = [...new Set(arrecadacaoData.map(a => a.codigo_classificacao_receita).filter(Boolean))].sort();
+    const unidades = [...new Set(arrecadacaoData.map(a=>conveniosMap.get(a.no_siafi)?.proponente).filter(Boolean))].sort();
+    const classificacoes = [...new Set(arrecadacaoData.map(a=>a.codigo_classificacao_receita).filter(Boolean))].sort();
+    const siafisArr = [...new Set(arrecadacaoData.map(a=>a.no_siafi)).filter(Boolean)].sort();
 
     container.innerHTML = `
-        <div class="filter-container" id="filtros-arrecadacao">
+        <div class="filter-container">
             <div class="row g-2">
                 <div class="col-md-3">
                     <label class="filter-label">Ano</label>
-                    ${criarSelectComBusca('anoArrecadacao', anos, filtrosArrecadacao.ano, 'Selecione o ano...')}
+                    ${criarSelectComBusca('anoArrecadacao', anos, filtrosArrecadacao.ano, 'Selecione...')}
                 </div>
                 <div class="col-md-3">
                     <label class="filter-label">Nº SIAFI</label>
-                    <input type="text" class="form-control" id="filtroSiafiArrecadacao" placeholder="Digite..." value="${filtrosArrecadacao.numeroSiafi || ''}">
+                    ${criarAutocomplete('filtroSiafiArrecadacao', siafisArr, filtrosArrecadacao.numeroSiafi, 'Digite ou selecione...')}
                 </div>
                 <div class="col-md-3">
                     <label class="filter-label">Tipo Receita</label>
-                    ${criarSelectComBusca('tipoArrecadacao', tipos, filtrosArrecadacao.tipoReceita, 'Selecione o tipo...')}
+                    ${criarSelectComBusca('tipoArrecadacao', tipos, filtrosArrecadacao.tipoReceita, 'Selecione...')}
                 </div>
                 <div class="col-md-3">
                     <label class="filter-label">Fonte</label>
-                    ${criarSelectComBusca('fonteArrecadacao', fontes, filtrosArrecadacao.fonte, 'Selecione a fonte...')}
+                    ${criarSelectComBusca('fonteArrecadacao', fontes, filtrosArrecadacao.fonte, 'Selecione...')}
                 </div>
             </div>
             <div class="row g-2 mt-2">
@@ -1454,9 +1504,9 @@ function renderizarArrecadacao() {
                     ${criarAutocomplete('filtroClassifArrecadacao', classificacoes, filtrosArrecadacao.classificacaoOrcamentaria, 'Digite ou selecione...')}
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
-                    <div class="d-flex gap-3 flex-wrap">
-                        <button class="btn-pesquisa" onclick="aplicarFiltrosArrecadacao()"><i class="fas fa-search"></i>Pesquisar</button>
-                        <button class="btn-limpar" onclick="limparFiltrosArrecadacao()"><i class="fas fa-redo"></i>Limpar Filtros</button>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn-pesquisa" onclick="aplicarFiltrosArrecadacao()"><i class="material-icons">search</i>Pesquisar</button>
+                        <button class="btn-limpar" onclick="limparFiltrosArrecadacao()"><i class="material-icons">clear</i>Limpar</button>
                     </div>
                 </div>
             </div>
@@ -1465,12 +1515,12 @@ function renderizarArrecadacao() {
         <div id="tabela-arrecadacao"></div>
     `;
 
-    initSelectComBusca('anoArrecadacao', val => { filtrosArrecadacao.ano = val; });
-    initSelectComBusca('tipoArrecadacao', val => { filtrosArrecadacao.tipoReceita = val; });
-    initSelectComBusca('fonteArrecadacao', val => { filtrosArrecadacao.fonte = val; });
+    initSelectComBusca('anoArrecadacao', v => { filtrosArrecadacao.ano = v; });
+    initSelectComBusca('tipoArrecadacao', v => { filtrosArrecadacao.tipoReceita = v; });
+    initSelectComBusca('fonteArrecadacao', v => { filtrosArrecadacao.fonte = v; });
+    initAutocomplete('filtroSiafiArrecadacao');
     initAutocomplete('filtroUnidadeArrecadacao');
     initAutocomplete('filtroClassifArrecadacao');
-
     renderizarTabelaArrecadacao();
 }
 
@@ -1478,7 +1528,7 @@ function renderizarTabelaArrecadacao() {
     const conveniosMap = new Map();
     conveniosData.forEach(c => { if (c.codigo_siafi) conveniosMap.set(c.codigo_siafi, c); });
 
-    let dadosFiltrados = arrecadacaoData.filter(a => {
+    let df = arrecadacaoData.filter(a => {
         if (filtrosArrecadacao.ano && a.ano_exercicio_receita != filtrosArrecadacao.ano) return false;
         if (filtrosArrecadacao.numeroSiafi && !a.no_siafi?.toLowerCase().includes(filtrosArrecadacao.numeroSiafi.toLowerCase())) return false;
         if (filtrosArrecadacao.tipoReceita && a.tipo_de_receita !== filtrosArrecadacao.tipoReceita) return false;
@@ -1497,53 +1547,43 @@ function renderizarTabelaArrecadacao() {
         _siafi_key: a.no_siafi
     }));
 
-    // Filtro unidade orçamentária (aplicado após join)
-    if (filtrosArrecadacao.unidadeOrcamentaria) {
-        dadosFiltrados = dadosFiltrados.filter(a => a.unidade_orcamentaria?.toLowerCase().includes(filtrosArrecadacao.unidadeOrcamentaria.toLowerCase()));
+    if (filtrosArrecadacao.unidadeOrcamentaria)
+        df = df.filter(a => a.unidade_orcamentaria?.toLowerCase().includes(filtrosArrecadacao.unidadeOrcamentaria.toLowerCase()));
+
+    if (buscas.arrecadacao) {
+        const t = buscas.arrecadacao.toLowerCase();
+        df = df.filter(a => a.no_siafi?.toLowerCase().includes(t) || a.unidade_orcamentaria?.toLowerCase().includes(t));
     }
 
-    if (buscaArrecadacao) {
-        const t = buscaArrecadacao.toLowerCase();
-        dadosFiltrados = dadosFiltrados.filter(a => a.no_siafi?.toLowerCase().includes(t) || a.unidade_orcamentaria?.toLowerCase().includes(t));
-    }
-
-    dadosFiltrados = ordenarDados(dadosFiltrados, ordenacaoArrecadacao.coluna, ordenacaoArrecadacao.direcao);
-    const totalRegistros = dadosFiltrados.length;
-    const inicio = (paginaAtual.arrecadacao - 1) * itensPorPagina;
-    const dadosPagina = dadosFiltrados.slice(inicio, inicio + itensPorPagina);
-    const colunasExibidas = ordemColunasArrecadacao.filter(col => colunasVisiveisArrecadacao[col]);
-    const totalArrecadado = dadosFiltrados.reduce((s, i) => s + (parseFloat(i.receita_arrecadada) || 0), 0);
-
-    const colNomesArr = {
-        no_siafi: 'Nº SIAFI', unidade_orcamentaria: 'Unidade Orçamentária',
-        ano_exercicio_receita: 'Ano Exercício', classificacao_orcamentaria: 'Classificação Orçamentária',
-        tipo_de_receita: 'Tipo de Receita', fonte: 'Fonte',
-        data_da_arrecadacao: 'Data Arrecadação', receita_arrecadada: 'Valor Arrecadado'
-    };
+    df = ordenarDados(df, ordenacaoArrecadacao.coluna, ordenacaoArrecadacao.direcao);
+    const total = df.length;
+    const ipp = itensPorPagina.arrecadacao;
+    const inicio = (paginaAtual.arrecadacao-1)*ipp;
+    const pagina = df.slice(inicio, inicio+ipp);
+    const colsVis = ordemColunasArrecadacao.filter(col => colunasVisiveisArrecadacao[col]);
+    const totalArr = df.reduce((s,i)=>s+(parseFloat(i.receita_arrecadada)||0),0);
 
     const toolbar = document.getElementById('toolbar-arrecadacao');
     if (toolbar) toolbar.innerHTML = `
         <div class="toolbar">
-            <div class="d-flex gap-2">
-                <button class="btn-export" onclick="exportarArrecadacaoCSV()"><i class="material-icons" style="font-size:14px">description</i>CSV</button>
-                <button class="btn-export" onclick="exportarArrecadacaoPDF()"><i class="material-icons" style="font-size:14px">picture_as_pdf</i>PDF</button>
-                <div class="column-selector-icon" onclick="toggleColumnSelector(event,'arrecadacao')">
-                    <i class="material-icons" style="font-size:16px">view_column</i> Colunas
-                    <div class="column-selector-popup" id="columnSelectorPopupArrecadacao">
-                        <div class="column-selector-grid">
-                            ${ordemColunasArrecadacao.map(col => `<label class="column-selector-item"><input type="checkbox" ${colunasVisiveisArrecadacao[col]?'checked':''} onchange="toggleColunaArrecadacao('${col}')">${colNomesArr[col]||col.replace(/_/g,' ').toUpperCase()}</label>`).join('')}
-                        </div>
+            <div class="toolbar-left">
+                <button class="btn-export" onclick="exportarArrecadacaoCSV()"><i class="material-icons">description</i> CSV</button>
+                <button class="btn-export" onclick="exportarArrecadacaoPDF()"><i class="material-icons">print</i> PDF</button>
+                <button class="btn-export" onclick="copiarLink()"><i class="material-icons">link</i> Copiar Link</button>
+                <div class="col-sel-wrap">
+                    <button class="col-sel-btn" onclick="toggleColSel('arrecadacao')"><i class="material-icons">view_column</i> Colunas</button>
+                    <div class="col-sel-popup" id="colSelPopup_arrecadacao">
+                        <div class="col-sel-title">Exibir colunas:</div>
+                        ${ordemColunasArrecadacao.map(col=>`<label><input type="checkbox" ${colunasVisiveisArrecadacao[col]?'checked':''} onchange="toggleColunaArrecadacao('${col}')"> ${colNomesArrecadacao[col]||col}</label>`).join('')}
                     </div>
                 </div>
             </div>
             <div class="toolbar-right">
-                <span class="badge bg-secondary">Total: ${totalRegistros} registros</span>
-                <select class="items-per-page" onchange="alterarItensPorPagina('arrecadacao',this.value)">
-                    <option value="25" ${itensPorPagina==25?'selected':''}>25 por página</option>
-                    <option value="50" ${itensPorPagina==50?'selected':''}>50 por página</option>
-                    <option value="100" ${itensPorPagina==100?'selected':''}>100 por página</option>
-                </select>
-                <input type="text" class="search-input-small" placeholder="Buscar na tabela..." id="buscaArrecadacaoInput" value="${buscaArrecadacao}" oninput="buscaArrecadacaoChange(this.value)">
+                <span class="table-badge">${total.toLocaleString('pt-BR')} registros</span>
+                <div class="table-search-container">
+                    <i class="material-icons" style="font-size:14px;color:#94a3b8;">search</i>
+                    <input class="table-search-input" placeholder="Busca rápida..." value="${buscas.arrecadacao}" oninput="onBusca('arrecadacao',this.value)">
+                </div>
             </div>
         </div>`;
 
@@ -1551,38 +1591,50 @@ function renderizarTabelaArrecadacao() {
     if (!tab) return;
     tab.innerHTML = `
         <div class="table-container">
-            <table class="table">
-                <thead><tr>
-                    ${colunasExibidas.map(col => `<th class="${ordenacaoArrecadacao.coluna===col?ordenacaoArrecadacao.direcao:''}" onclick="ordenar('arrecadacao','${col}')">${colNomesArr[col]||col.replace(/_/g,' ').toUpperCase()}</th>`).join('')}
-                    <th>AÇÕES</th>
-                </tr></thead>
-                <tbody>
-                    ${dadosPagina.map(item => {
-                        const convenio = conveniosMap.get(item._siafi_key || item.no_siafi);
-                        const link = convenio ? getLinkInteiroTeor(convenio) : null;
-                        return `<tr>
-                            ${colunasExibidas.map(col => {
-                                let valor = item[col] ?? '-';
-                                if (valor === '' || valor === null || valor === undefined) valor = '-';
-                                if (col === 'data_da_arrecadacao') valor = formatarData(String(valor));
-                                if (col === 'receita_arrecadada') valor = formatarMoeda(valor);
-                                if (col === 'no_siafi' && valor !== '-') return `<td>${link ? `<a href="${link}" target="_blank" class="siafi-link">${valor}</a>` : valor}</td>`;
-                                return `<td>${valor}</td>`;
-                            }).join('')}
-                            <td class="text-center"><button class="btn-action" onclick='abrirModalArrecadacao(${JSON.stringify(item).replace(/'/g,"\\'")})'><i class="material-icons" style="font-size:16px">visibility</i></button></td>
-                        </tr>`;
-                    }).join('')}
-                </tbody>
-                <tfoot class="table-footer-total"><tr>
-                    <td colspan="${colunasExibidas.length - 1}" class="text-end fw-bold">TOTAL ARRECADADO:</td>
-                    <td class="text-end fw-bold">${formatarMoeda(totalArrecadado)}</td>
-                    <td></td>
-                </tr></tfoot>
-            </table>
+            <div class="table-fixed-header-container">
+                <table class="table">
+                    <thead><tr>
+                        ${colsVis.map(col=>`<th class="${ordenacaoArrecadacao.coluna===col?ordenacaoArrecadacao.direcao:''}" onclick="ordenar('arrecadacao','${col}')">${colNomesArrecadacao[col]||col}</th>`).join('')}
+                        <th>AÇÕES</th>
+                    </tr></thead>
+                    <tbody>
+                        ${pagina.map((item,i)=>{
+                            const convenio = conveniosMap.get(item._siafi_key||item.no_siafi);
+                            const link = convenio ? getLinkInteiroTeor(convenio) : null;
+                            return `<tr>
+                                ${colsVis.map(col=>{
+                                    let v = item[col]??'-';
+                                    if (v===''||v===null||v===undefined) v='-';
+                                    if (col==='data_da_arrecadacao') v=formatarData(String(v));
+                                    if (col==='receita_arrecadada') v=formatarMoeda(v);
+                                    if (col==='no_siafi'&&v!=='-') return `<td>${link?`<a href="${link}" target="_blank" class="siafi-link">${v}</a>`:v}</td>`;
+                                    return `<td>${v}</td>`;
+                                }).join('')}
+                                <td class="text-center"><button class="btn-action" title="Ver detalhes" onclick="abrirModalArrecadacaoIdx(${inicio+i})"><i class="material-icons" style="font-size:15px">visibility</i></button></td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                    <tfoot class="table-footer-total"><tr>
+                        <td colspan="${colsVis.length-1}" class="text-end fw-bold">TOTAL ARRECADADO:</td>
+                        <td class="text-end fw-bold">${formatarMoeda(totalArr)}</td>
+                        <td></td>
+                    </tr></tfoot>
+                </table>
+            </div>
         </div>
-        ${renderizarPaginacao('arrecadacao', totalRegistros)}`;
+        ${renderizarPaginacao('arrecadacao', total)}
+        <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+            <button class="btn-topo" onclick="voltarAoTopo()"><i class="material-icons">arrow_upward</i> Topo</button>
+        </div>`;
+
+    window._dfArrecadacao = df;
 }
 
+function abrirModalArrecadacaoIdx(idx) {
+    const item = (window._dfArrecadacao || [])[idx];
+    if (!item) return;
+    abrirModalArrecadacao(item);
+}
 
 function aplicarFiltrosArrecadacao() {
     filtrosArrecadacao.ano = document.getElementById('anoArrecadacao_input')?.value || '';
@@ -1591,25 +1643,36 @@ function aplicarFiltrosArrecadacao() {
     filtrosArrecadacao.numeroSiafi = document.getElementById('filtroSiafiArrecadacao')?.value || '';
     filtrosArrecadacao.unidadeOrcamentaria = document.getElementById('filtroUnidadeArrecadacao')?.value || '';
     filtrosArrecadacao.classificacaoOrcamentaria = document.getElementById('filtroClassifArrecadacao')?.value || '';
-    paginaAtual.arrecadacao = 1;
-    renderizarTabelaArrecadacao();
+    paginaAtual.arrecadacao = 1; renderizarTabelaArrecadacao();
 }
-
 function limparFiltrosArrecadacao() {
     filtrosArrecadacao = { ano:'', numeroSiafi:'', tipoReceita:'', fonte:'', unidadeOrcamentaria:'', classificacaoOrcamentaria:'' };
-    buscaArrecadacao = '';
+    buscas.arrecadacao = '';
     ['anoArrecadacao_input','tipoArrecadacao_input','fonteArrecadacao_input','filtroSiafiArrecadacao',
-     'filtroUnidadeArrecadacao','filtroClassifArrecadacao','buscaArrecadacaoInput'].forEach(id => {
-        const el = document.getElementById(id); if (el) el.value = '';
+     'filtroUnidadeArrecadacao','filtroClassifArrecadacao'].forEach(id=>{
+        const el=document.getElementById(id); if(el) el.value='';
     });
-    paginaAtual.arrecadacao = 1;
-    renderizarTabelaArrecadacao();
+    paginaAtual.arrecadacao = 1; renderizarTabelaArrecadacao();
 }
-
-function buscaArrecadacaoChange(valor) { buscaArrecadacao = valor; paginaAtual.arrecadacao = 1; renderizarTabelaArrecadacao(); }
+function toggleColunaArrecadacao(col) { colunasVisiveisArrecadacao[col]=!colunasVisiveisArrecadacao[col]; renderizarTabelaArrecadacao(); }
 
 // ==================== MODAIS ====================
+let _modalItemAtual = null;
+
+function exportarModalPDF() {
+    if (!_modalItemAtual) return;
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation:'landscape' });
+    doc.setFontSize(11);
+    doc.text('Detalhes do Convênio — ' + (_modalItemAtual.codigo_siafi || _modalItemAtual.no_siafi || ''), 14, 10);
+    const rows = Object.entries(_modalItemAtual).filter(([k])=>!k.startsWith('_')).map(([k,v])=>[k.replace(/_/g,' ').toUpperCase(), String(v||'-')]);
+    doc.autoTable({ startY:16, head:[['Campo','Valor']], body:rows, headStyles:{ fillColor:[32,68,93] }, styles:{ fontSize:8 }, didDrawPage:()=>{ doc.setFontSize(9); doc.text(`Emitido em: ${new Date().toLocaleString('pt-BR')}`, 14, doc.internal.pageSize.height-5); } });
+    doc.save(`convenio_${_modalItemAtual.codigo_siafi||_modalItemAtual.no_siafi||'detalhe'}.pdf`);
+}
+
 function abrirModalDetalhesConvenio(item) {
+    if (!item) return;
+    _modalItemAtual = item;
     const todosLinks = getTodosLinks(item);
     const grupos = {
         '📋 IDENTIFICAÇÃO': ['codigo_siafi','codigo_sigcon','sei','instrumento','ano'],
@@ -1620,10 +1683,8 @@ function abrirModalDetalhesConvenio(item) {
     };
     let html = '';
     if (todosLinks.length > 0) {
-        html += `<div class="alert alert-info mb-3"><i class="material-icons">link</i> <strong>Documentos Disponíveis:</strong><div class="mt-2 d-flex flex-wrap gap-2">`;
-        todosLinks.forEach(l => {
-            html += `<a href="${l.url}" target="_blank" class="btn-link-document"><i class="material-icons">open_in_new</i> ${l.label}</a>`;
-        });
+        html += `<div class="alert alert-info mb-3"><i class="material-icons">link</i> <strong>Documentos:</strong><div class="mt-2 d-flex flex-wrap gap-2">`;
+        todosLinks.forEach(l => { html += `<a href="${l.url}" target="_blank" class="btn-link-document"><i class="material-icons">open_in_new</i> ${l.label}</a>`; });
         html += `</div></div>`;
     }
     for (const [titulo, campos] of Object.entries(grupos)) {
@@ -1631,7 +1692,7 @@ function abrirModalDetalhesConvenio(item) {
         for (const campo of campos) {
             const valor = item[campo];
             if (valor && valor !== '' && valor !== '-') {
-                let vd = campo.includes('valor') ? formatarMoeda(valor) : campo.includes('data') || campo.includes('vigencia') || campo.includes('publicacao') || campo.includes('assinatura') ? formatarData(valor) : valor;
+                let vd = campo.includes('valor') ? formatarMoeda(valor) : (campo.includes('data')||campo.includes('vigencia')||campo.includes('publicacao')||campo.includes('assinatura')) ? formatarData(valor) : valor;
                 conteudo += `<div class="info-row"><div class="info-label">${campo.replace(/_/g,' ').toUpperCase()}:</div><div class="info-value">${vd}</div></div>`;
             }
         }
@@ -1642,11 +1703,13 @@ function abrirModalDetalhesConvenio(item) {
 }
 
 function abrirModalExecucao(item) {
+    if (!item) return;
+    _modalItemAtual = item;
     const convenio = conveniosData.find(c => c.codigo_siafi === item.no_siafi);
     const todosLinks = convenio ? getTodosLinks(convenio) : [];
     let html = '';
     if (todosLinks.length > 0) {
-        html += `<div class="alert alert-info mb-3"><i class="material-icons">link</i> <strong>Documentos Disponíveis:</strong><div class="mt-2 d-flex flex-wrap gap-2">`;
+        html += `<div class="alert alert-info mb-3"><i class="material-icons">link</i> <strong>Documentos:</strong><div class="mt-2 d-flex flex-wrap gap-2">`;
         todosLinks.forEach(l => { html += `<a href="${l.url}" target="_blank" class="btn-link-document"><i class="material-icons">open_in_new</i> ${l.label}</a>`; });
         html += `</div></div>`;
     }
@@ -1655,11 +1718,10 @@ function abrirModalExecucao(item) {
         <div class="info-row"><div class="info-label">Nº Empenho:</div><div class="info-value">${item.no_empenho||'-'}</div></div>
         <div class="info-row"><div class="info-label">Ano Empenho:</div><div class="info-value">${item.ano_empenho||'-'}</div></div>
         <div class="info-row"><div class="info-label">Credor:</div><div class="info-value">${item.razao_social_credor||'-'}</div></div>
-        <div class="info-row"><div class="info-label">CNPJ/CPF Credor:</div><div class="info-value">${formatarCpfCnpj(String(item.cnpj_cpf_credor||''))}</div></div>
+        <div class="info-row"><div class="info-label">CNPJ/CPF:</div><div class="info-value">${formatarCpfCnpj(String(item.cnpj_cpf_credor||''))}</div></div>
         <div class="info-row"><div class="info-label">Valor Empenhado:</div><div class="info-value">${formatarMoeda(item.valor_empenhado)}</div></div>
         <div class="info-row"><div class="info-label">Valor Liquidado:</div><div class="info-value">${formatarMoeda(item.valor_liquidado)}</div></div>
         <div class="info-row"><div class="info-label">Valor Pago:</div><div class="info-value">${formatarMoeda(item.valor_pago)}</div></div>
-        <div class="info-row"><div class="info-label">Ano Exercício:</div><div class="info-value">${item.ano_exercicio_receita||'-'}</div></div>
     </div>`;
     if (convenio) {
         html += `<div class="info-section"><h6>📋 DADOS DO CONVÊNIO</h6>
@@ -1668,7 +1730,6 @@ function abrirModalExecucao(item) {
             <div class="info-row"><div class="info-label">Situação:</div><div class="info-value">${convenio.situacao||'-'}</div></div>
             <div class="info-row"><div class="info-label">Valor Total:</div><div class="info-value">${formatarMoeda(convenio.valor_total_convenio)}</div></div>
             <div class="info-row"><div class="info-label">Objeto:</div><div class="info-value">${convenio.objeto||'-'}</div></div>
-            <div class="info-row"><div class="info-label">Data Assinatura:</div><div class="info-value">${formatarData(convenio.data_assinatura)}</div></div>
             <div class="info-row"><div class="info-label">Vigência:</div><div class="info-value">${formatarData(convenio.inicio_vigencia)} até ${formatarData(convenio.termino_vigencia)}</div></div>
         </div>`;
     }
@@ -1677,11 +1738,13 @@ function abrirModalExecucao(item) {
 }
 
 function abrirModalArrecadacao(item) {
-    const convenio = conveniosData.find(c => c.codigo_siafi === (item._siafi_key || item.no_siafi));
+    if (!item) return;
+    _modalItemAtual = item;
+    const convenio = conveniosData.find(c => c.codigo_siafi === (item._siafi_key||item.no_siafi));
     const todosLinks = convenio ? getTodosLinks(convenio) : [];
     let html = '';
     if (todosLinks.length > 0) {
-        html += `<div class="alert alert-info mb-3"><i class="material-icons">link</i> <strong>Documentos Disponíveis:</strong><div class="mt-2 d-flex flex-wrap gap-2">`;
+        html += `<div class="alert alert-info mb-3"><i class="material-icons">link</i> <strong>Documentos:</strong><div class="mt-2 d-flex flex-wrap gap-2">`;
         todosLinks.forEach(l => { html += `<a href="${l.url}" target="_blank" class="btn-link-document"><i class="material-icons">open_in_new</i> ${l.label}</a>`; });
         html += `</div></div>`;
     }
@@ -1744,13 +1807,15 @@ function renderizarDownloads() {
     ];
     document.getElementById('downloads-content').innerHTML = `
         <div class="filter-container text-center p-4">
-            <i class="material-icons" style="font-size:64px">cloud_download</i>
+            <i class="material-icons" style="font-size:64px;color:#20445d;">cloud_download</i>
             <h4 class="fw-bold mt-3">Portal de Dados Abertos</h4>
-            <p>Acesse os dados completos de Convênios, Execução e Arrecadação</p>
-            <a href="https://dados.mg.gov.br/dataset/convenios" target="_blank" class="btn-pesquisa">Acessar Portal Dados MG</a>
+            <p>Acesse os dados completos de Convênios, Execução e Arrecadação do Estado de Minas Gerais</p>
+            <a href="https://dados.mg.gov.br/dataset/convenios" target="_blank" class="btn-pesquisa">
+                <i class="material-icons">open_in_new</i> Portal Dados MG
+            </a>
         </div>
         <div class="filter-container mt-3">
-            <h5 class="fw-bold mb-3"><i class="material-icons me-2">info</i>Metadados das Planilhas CSV</h5>
+            <h5 class="fw-bold mb-3"><i class="material-icons me-2">info</i>Metadados — Dicionário de Variáveis</h5>
             <div class="table-container">
                 <table class="table metadata-table">
                     <thead><tr><th>Planilha</th><th>Campo</th><th>Descrição</th><th>Tipo</th></tr></thead>
@@ -1758,40 +1823,42 @@ function renderizarDownloads() {
                 </table>
             </div>
         </div>`;
+    setTimeout(iframeUpdateHeight, 300);
 }
 
 // ==================== EXPORTAÇÕES ====================
-function exportarIndividualCSV() { const csv = Papa.unparse(conveniosData,{delimiter:';'}); const blob = new Blob(['\uFEFF'+csv],{type:'text/csv'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='convenios.csv'; a.click(); }
-function exportarIndividualPDF() { const {jsPDF} = window.jspdf; const doc = new jsPDF({orientation:'landscape'}); doc.text('Convênios',14,10); doc.autoTable({html:'#individual .table',startY:20}); doc.save('convenios.pdf'); }
-function exportarExecucaoCSV() { const csv = Papa.unparse(execucaoData,{delimiter:';'}); const blob = new Blob(['\uFEFF'+csv],{type:'text/csv'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='execucao.csv'; a.click(); }
-function exportarExecucaoPDF() { const {jsPDF} = window.jspdf; const doc = new jsPDF({orientation:'landscape'}); doc.text('Execução',14,10); doc.autoTable({html:'#execucao .table',startY:20}); doc.save('execucao.pdf'); }
-function exportarArrecadacaoCSV() { const csv = Papa.unparse(arrecadacaoData,{delimiter:';'}); const blob = new Blob(['\uFEFF'+csv],{type:'text/csv'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='arrecadacao.csv'; a.click(); }
-function exportarArrecadacaoPDF() { const {jsPDF} = window.jspdf; const doc = new jsPDF({orientation:'landscape'}); doc.text('Arrecadação',14,10); doc.autoTable({html:'#arrecadacao .table',startY:20}); doc.save('arrecadacao.pdf'); }
+function exportarFormalizadosCSV() { const csv=Papa.unparse(conveniosData,{delimiter:';'}); const blob=new Blob(['\uFEFF'+csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='formalizados.csv'; a.click(); }
+function exportarFormalizadosPDF() { const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'landscape'}); doc.setFontSize(11); doc.text('Visão Geral — Convênios de Entrada',14,10); doc.autoTable({head:[['Proponente','Qtd','Valor Proponente','Valor Concedente','Valor Total']],body:Array.from(new Map(conveniosData.map(c=>[c.proponente,c])).keys()).map(p=>{ const rows=conveniosData.filter(c=>c.proponente===p); return [p,rows.length,formatarMoeda(rows.reduce((a,c)=>a+(parseFloat(c.valor_proponente)||0),0)),formatarMoeda(rows.reduce((a,c)=>a+(parseFloat(c.valor_concedente)||0),0)),formatarMoeda(rows.reduce((a,c)=>a+(parseFloat(c.valor_total_convenio)||0),0))]; }),startY:16,headStyles:{fillColor:[32,68,93]},styles:{fontSize:8}}); doc.save('formalizados.pdf'); }
+function exportarIndividualCSV() { const csv=Papa.unparse(conveniosData,{delimiter:';'}); const blob=new Blob(['\uFEFF'+csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='convenios.csv'; a.click(); }
+function exportarIndividualPDF() { const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'landscape'}); doc.setFontSize(11); doc.text('Consulta Individual — Convênios',14,10); const rows=conveniosData.slice(0,500).map(c=>[c.codigo_siafi||'-',c.proponente||'-',c.concedente||'-',c.situacao||'-',formatarData(c.data_assinatura)]); doc.autoTable({head:[['SIAFI','Proponente','Concedente','Situação','Data Assin.']],body:rows,startY:16,headStyles:{fillColor:[32,68,93]},styles:{fontSize:8},didDrawPage:()=>{ doc.setFontSize(9); doc.text(`Emitido em: ${new Date().toLocaleString('pt-BR')}`, 14, doc.internal.pageSize.height-5); }}); doc.save('convenios.pdf'); }
+function exportarExecucaoCSV() { const csv=Papa.unparse(execucaoData,{delimiter:';'}); const blob=new Blob(['\uFEFF'+csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='execucao.csv'; a.click(); }
+function exportarExecucaoPDF() { const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'landscape'}); doc.setFontSize(11); doc.text('Execução — Convênios de Entrada',14,10); const df=window._dfExecucao||execucaoData; const rows=df.slice(0,500).map(e=>[e.no_siafi||'-',e.no_empenho||'-',e.ano_empenho||'-',e.razao_social_credor||'-',formatarMoeda(e.valor_empenhado),formatarMoeda(e.valor_pago)]); doc.autoTable({head:[['SIAFI','Empenho','Ano','Credor','Empenhado','Pago']],body:rows,startY:16,headStyles:{fillColor:[32,68,93]},styles:{fontSize:8},didDrawPage:()=>{ doc.setFontSize(9); doc.text(`Emitido em: ${new Date().toLocaleString('pt-BR')}`, 14, doc.internal.pageSize.height-5); }}); doc.save('execucao.pdf'); }
+function exportarArrecadacaoCSV() { const csv=Papa.unparse(arrecadacaoData,{delimiter:';'}); const blob=new Blob(['\uFEFF'+csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='arrecadacao.csv'; a.click(); }
+function exportarArrecadacaoPDF() { const {jsPDF}=window.jspdf; const doc=new jsPDF({orientation:'landscape'}); doc.setFontSize(11); doc.text('Arrecadação — Convênios de Entrada',14,10); const df=window._dfArrecadacao||arrecadacaoData; const rows=df.slice(0,500).map(a=>[a.no_siafi||'-',a.unidade_orcamentaria||'-',a.ano_exercicio_receita||'-',a.tipo_de_receita||'-',formatarData(a.data_da_arrecadacao),formatarMoeda(a.receita_arrecadada)]); doc.autoTable({head:[['SIAFI','Unidade','Ano','Tipo','Data','Valor']],body:rows,startY:16,headStyles:{fillColor:[32,68,93]},styles:{fontSize:8},didDrawPage:()=>{ doc.setFontSize(9); doc.text(`Emitido em: ${new Date().toLocaleString('pt-BR')}`, 14, doc.internal.pageSize.height-5); }}); doc.save('arrecadacao.pdf'); }
 
 // ==================== EVENTOS GLOBAIS ====================
 document.addEventListener('click', e => {
-    if (!e.target.closest('.column-selector-icon'))
-        document.querySelectorAll('.column-selector-popup').forEach(p => p.classList.remove('show'));
+    if (!e.target.closest('.col-sel-wrap'))
+        document.querySelectorAll('.col-sel-popup').forEach(p => p.classList.remove('show'));
     if (!e.target.closest('.select-with-search'))
         document.querySelectorAll('.select-options').forEach(o => o.classList.remove('show'));
     if (!e.target.closest('.autocomplete-wrapper'))
         document.querySelectorAll('.autocomplete-list').forEach(o => o.classList.remove('show'));
 });
 
-document.addEventListener('DOMContentLoaded', carregarDados);
+document.addEventListener('DOMContentLoaded', () => {
+    setupAtualizacaoData();
+    carregarDados();
+});
 
-// Iframe height: usa ResizeObserver para disparar somente quando necessário
+// ==================== IFRAME RESIZE ====================
 (function() {
     function sendHeight() {
-        const h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, document.body.offsetHeight);
-        try { window.parent.postMessage({ iframeHeight: h + 30, iframeResize: true }, '*'); } catch(e) {}
+        const h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) + 30;
+        try { window.parent.postMessage({ iframeHeight: h, iframeResize: true, type:'resize' }, '*'); } catch(e) {}
     }
-    if (window.ResizeObserver) {
-        new ResizeObserver(sendHeight).observe(document.body);
-    } else {
-        window.addEventListener('resize', sendHeight);
-        setInterval(sendHeight, 2000);
-    }
+    if (window.ResizeObserver) new ResizeObserver(sendHeight).observe(document.body);
+    else { window.addEventListener('resize', sendHeight); setInterval(sendHeight, 2000); }
     sendHeight();
 })();
 </script>
