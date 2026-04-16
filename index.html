@@ -753,13 +753,19 @@ function initAutocomplete(id, callback) {
             const txt = item.getAttribute('data-value').toLowerCase();
             const match = txt.includes(t);
             item.style.display = match ? '' : 'none';
-            if (match) { item.innerHTML = item.getAttribute('data-value').replace(new RegExp(`(${t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<mark>$1</mark>'); any = true; }
+            if (match) { 
+                item.innerHTML = item.getAttribute('data-value').replace(new RegExp(`(${t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<mark>$1</mark>'); 
+                any = true;
+            }
         });
         list.classList.toggle('show', any && t.length > 0);
         if (callback) callback(this.value);
     });
     input.addEventListener('focus', function() {
-        if (this.value.length > 0) { list.querySelectorAll('.autocomplete-item').forEach(i=>i.style.display=''); list.classList.add('show'); }
+        if (this.value.length > 0) { 
+            list.querySelectorAll('.autocomplete-item').forEach(i => i.style.display = ''); 
+            list.classList.add('show');
+        }
     });
     input.addEventListener('blur', () => setTimeout(() => list.classList.remove('show'), 200));
     list.querySelectorAll('.autocomplete-item').forEach(item => {
@@ -1465,14 +1471,31 @@ function toggleColunaExecucao(col) { colunasVisiveisExecucao[col]=!colunasVisive
 function renderizarArrecadacao() {
     const container = document.getElementById('arrecadacao-content');
     if (!container) return;
-    const anos = [...new Set(arrecadacaoData.map(a=>a.ano_exercicio_receita))].filter(Boolean).sort().reverse();
-    const tipos = [...new Set(arrecadacaoData.map(a=>a.tipo_de_receita))].filter(Boolean).sort();
-    const fontes = [...new Set(arrecadacaoData.map(a=>a.fonte))].filter(Boolean).sort();
+    
+    // Verificar se os dados existem
+    if (!arrecadacaoData || arrecadacaoData.length === 0) {
+        container.innerHTML = `<div class="alert alert-warning">Dados de arrecadação não disponíveis no momento.</div>`;
+        return;
+    }
+    
+    const anos = [...new Set(arrecadacaoData.filter(a => a.ano_exercicio_receita).map(a => a.ano_exercicio_receita))].filter(Boolean).sort().reverse();
+    const tipos = [...new Set(arrecadacaoData.filter(a => a.tipo_de_receita).map(a => a.tipo_de_receita))].filter(Boolean).sort();
+    const fontes = [...new Set(arrecadacaoData.filter(a => a.fonte).map(a => a.fonte))].filter(Boolean).sort();
+    
+    // Criar um mapa de convenios para lookup
     const conveniosMap = new Map();
-    conveniosData.forEach(c => { if (c.codigo_siafi) conveniosMap.set(c.codigo_siafi, c); });
-    const unidades = [...new Set(arrecadacaoData.map(a=>conveniosMap.get(a.no_siafi)?.proponente).filter(Boolean))].sort();
-    const classificacoes = [...new Set(arrecadacaoData.map(a=>a.codigo_classificacao_receita).filter(Boolean))].sort();
-    const siafisArr = [...new Set(arrecadacaoData.map(a=>a.no_siafi)).filter(Boolean)].sort();
+    if (conveniosData && conveniosData.length > 0) {
+        conveniosData.forEach(c => { if (c.codigo_siafi) conveniosMap.set(c.codigo_siafi, c); });
+    }
+    
+    // Extrair unidades orçamentárias dos convênios relacionados
+    const unidades = [...new Set(arrecadacaoData.map(a => {
+        const convenio = conveniosMap.get(a.no_siafi);
+        return convenio ? convenio.proponente : null;
+    }).filter(Boolean))].sort();
+    
+    const classificacoes = [...new Set(arrecadacaoData.filter(a => a.codigo_classificacao_receita).map(a => a.codigo_classificacao_receita))].filter(Boolean).sort();
+    const siafisArr = [...new Set(arrecadacaoData.filter(a => a.no_siafi).map(a => a.no_siafi))].filter(Boolean).sort();
 
     container.innerHTML = `
         <div class="filter-container">
@@ -1515,12 +1538,13 @@ function renderizarArrecadacao() {
         <div id="tabela-arrecadacao"></div>
     `;
 
-    initSelectComBusca('anoArrecadacao', v => { filtrosArrecadacao.ano = v; });
-    initSelectComBusca('tipoArrecadacao', v => { filtrosArrecadacao.tipoReceita = v; });
-    initSelectComBusca('fonteArrecadacao', v => { filtrosArrecadacao.fonte = v; });
-    initAutocomplete('filtroSiafiArrecadacao');
-    initAutocomplete('filtroUnidadeArrecadacao');
-    initAutocomplete('filtroClassifArrecadacao');
+    initSelectComBusca('anoArrecadacao', v => { filtrosArrecadacao.ano = v; renderizarTabelaArrecadacao(); });
+    initSelectComBusca('tipoArrecadacao', v => { filtrosArrecadacao.tipoReceita = v; renderizarTabelaArrecadacao(); });
+    initSelectComBusca('fonteArrecadacao', v => { filtrosArrecadacao.fonte = v; renderizarTabelaArrecadacao(); });
+    initAutocomplete('filtroSiafiArrecadacao', (val) => { filtrosArrecadacao.numeroSiafi = val; renderizarTabelaArrecadacao(); });
+    initAutocomplete('filtroUnidadeArrecadacao', (val) => { filtrosArrecadacao.unidadeOrcamentaria = val; renderizarTabelaArrecadacao(); });
+    initAutocomplete('filtroClassifArrecadacao', (val) => { filtrosArrecadacao.classificacaoOrcamentaria = val; renderizarTabelaArrecadacao(); });
+    
     renderizarTabelaArrecadacao();
 }
 
