@@ -235,7 +235,7 @@
             padding: 5px 10px; height: 34px;
         }
         .table-search-container:hover { border-color: #1a3a5c; }
-        .table-search-input { border: none !important; outline: none; background: transparent; font-size: 12px; width: 180px; color: #1a3a5c; }
+        .table-search-input { border: none !important; outline: none; background: transparent; font-size: 12px; width: 220px; max-width: 400px; color: #1a3a5c; }
         .table-search-input::placeholder { color: #94a3b8; }
 
         /* ============================================================
@@ -445,6 +445,7 @@ const EXECUCAO_URLS = [
 let conveniosData = [];
 let execucaoData  = [];
 let arrecadacaoData = [];
+let licitacoesData = []; // dados de licitações por número de processo
 let siafiValidosSet = new Set();
 
 let filtrosFormalizados = { ano: '', proponente: '' };
@@ -862,11 +863,72 @@ async function carregarDados() {
         renderizarArrecadacao();
         renderizarDownloads();
         setTimeout(iframeUpdateHeight, 500);
+        // Carrega licitações em background (anos 2020-2026)
+        carregarLicitacoes();
     } catch(e) { console.error(e); }
     finally { mostrarLoading(false); }
 }
 
-// ==================== VISÃO GERAL ====================
+async function carregarLicitacoes() {
+    const anos = [2026,2025,2024,2023,2022,2021,2020];
+    for (const ano of anos) {
+        try {
+            const r = await fetch(`https://raw.githubusercontent.com/transparencia-mg/portal_licitacoes_mg/refs/heads/main/dataset/data/licitacoes${ano}.csv`);
+            if (r.ok) {
+                const texto = await r.text();
+                // Parse CSV de licitações com PapaParse para lidar com campos complexos
+                const result = Papa.parse(texto, { header: true, skipEmptyLines: true, delimiter: ',' });
+                if (result.data && result.data.length > 0) {
+                    // Normaliza chaves para minúsculas com underscore
+                    const norm = result.data.map(row => {
+                        const n = {};
+                        Object.keys(row).forEach(k => {
+                            const nk = k.trim().toLowerCase().replace(/ /g,'_').replace(/[()]/g,'');
+                            n[nk] = row[k];
+                        });
+                        return n;
+                    });
+                    licitacoesData.push(...norm);
+                }
+            }
+        } catch(e) {}
+    }
+}
+
+function getLicitacaoPorProcesso(numeroProcesso) {
+    if (!numeroProcesso || !licitacoesData.length) return null;
+    const clean = String(numeroProcesso).replace(/\D/g,'').replace(/^0+/,'');
+    if (!clean) return null;
+    return licitacoesData.find(l => {
+        const campos = ['numero_processo_formatado','numero_processo','processo','num_processo','numero_licitacao'];
+        return campos.some(c => {
+            if (!l[c]) return false;
+            const lv = String(l[c]).replace(/\D/g,'').replace(/^0+/,'');
+            return lv === clean;
+        });
+    }) || null;
+}
+
+function getLicitacaoPorConvenio(item) {
+    if (!item || !licitacoesData.length) return null;
+    // Tenta pelo número do processo no próprio item
+    const numProcesso = item.numero_processo_formatado || item.numero_processo || '';
+    if (numProcesso) {
+        const r = getLicitacaoPorProcesso(numProcesso);
+        if (r) return r;
+    }
+    // Tenta localizar pelo código SIAFI no dataset de licitações
+    if (item.codigo_siafi) {
+        const siafi = String(item.codigo_siafi).trim();
+        const found = licitacoesData.find(l => {
+            const campos = ['codigo_siafi','no_siafi','siafi'];
+            return campos.some(c => l[c] && String(l[c]).trim() === siafi);
+        });
+        if (found) return found;
+    }
+    return null;
+}
+
 function renderizarFormalizados() {
     const container = document.getElementById('formalizados-content');
     if (!container) return;
@@ -886,7 +948,7 @@ function renderizarFormalizados() {
                 <div class="col-12 mt-2">
                     <div class="d-flex gap-2 flex-wrap">
                         <button class="btn-pesquisa" onclick="aplicarFiltrosFormalizados()"><i class="material-icons">search</i>Pesquisar</button>
-                        <button class="btn-limpar" onclick="limparFiltrosFormalizados()"><i class="material-icons">clear</i>Limpar</button>
+                        <button class="btn-limpar" onclick="limparFiltrosFormalizados()"><i class="material-icons">clear</i>Limpar Filtros</button>
                     </div>
                 </div>
             </div>
@@ -988,7 +1050,7 @@ function renderizarTabelaFormalizados() {
         </div>
         ${renderizarPaginacao('formalizados', total)}
         <div style="display:flex;justify-content:flex-end;margin-top:12px;">
-            <button class="btn-topo" onclick="voltarAoTopo()"><i class="material-icons">arrow_upward</i> Topo</button>
+            <button class="btn-topo" onclick="voltarAoTopo()"><i class="material-icons">arrow_upward</i> Voltar ao Topo</button>
         </div>`;
     renderizarGraficosFormalizados(df);
     setTimeout(iframeUpdateHeight, 300);
@@ -1038,7 +1100,7 @@ function irParaConsultaIndividual(proponente) {
 function renderizarIndividual() {
     const container = document.getElementById('individual-content');
     if (!container) return;
-    const anos = [...new Set(conveniosData.map(c=>c.ano))].filter(Boolean).sort().reverse();
+    const anos = [...new Set(conveniosData.map(c=>c.ano||getAnoFromData(c.data_assinatura)))].filter(Boolean).sort().reverse();
     const instrumentos = [...new Set(conveniosData.map(c=>c.instrumento))].filter(Boolean).sort();
     const situacoes = [...new Set(conveniosData.map(c=>c.situacao))].filter(Boolean).sort();
     const proponentes = [...new Set(conveniosData.map(c=>c.proponente))].filter(Boolean).sort();
@@ -1099,7 +1161,7 @@ function renderizarIndividual() {
                 <div class="col-md-6 d-flex align-items-end">
                     <div class="d-flex gap-2 flex-wrap">
                         <button class="btn-pesquisa" onclick="aplicarFiltrosIndividual()"><i class="material-icons">search</i>Pesquisar</button>
-                        <button class="btn-limpar" onclick="limparFiltrosIndividual()"><i class="material-icons">clear</i>Limpar</button>
+                        <button class="btn-limpar" onclick="limparFiltrosIndividual()"><i class="material-icons">clear</i>Limpar Filtros</button>
                     </div>
                 </div>
             </div>
@@ -1217,7 +1279,7 @@ function renderizarTabelaIndividual() {
         </div>
         ${renderizarPaginacao('individual', total)}
         <div style="display:flex;justify-content:flex-end;margin-top:12px;">
-            <button class="btn-topo" onclick="voltarAoTopo()"><i class="material-icons">arrow_upward</i> Topo</button>
+            <button class="btn-topo" onclick="voltarAoTopo()"><i class="material-icons">arrow_upward</i> Voltar ao Topo</button>
         </div>`;
 }
 
@@ -1249,7 +1311,7 @@ function toggleColunaIndividual(col) { colunasVisiveisIndividual[col]=!colunasVi
 function renderizarExecucao() {
     const container = document.getElementById('execucao-content');
     if (!container) return;
-    const anos = [...new Set(execucaoData.map(e=>e.ano_exercicio_receita))].filter(Boolean).sort().reverse();
+    const anos = [...new Set(execucaoData.map(e=>e.ano_empenho))].filter(Boolean).sort().reverse();
     const situacoes = [...new Set(conveniosData.map(c=>c.situacao))].filter(Boolean).sort();
     const proponentes = [...new Set(conveniosData.map(c=>c.proponente))].filter(Boolean).sort();
     const concedentes = [...new Set(conveniosData.map(c=>c.concedente))].filter(Boolean).sort();
@@ -1305,7 +1367,7 @@ function renderizarExecucao() {
                 <div class="col-md-9 d-flex align-items-end">
                     <div class="d-flex gap-2 flex-wrap">
                         <button class="btn-pesquisa" onclick="aplicarFiltrosExecucao()"><i class="material-icons">search</i>Pesquisar</button>
-                        <button class="btn-limpar" onclick="limparFiltrosExecucao()"><i class="material-icons">clear</i>Limpar</button>
+                        <button class="btn-limpar" onclick="limparFiltrosExecucao()"><i class="material-icons">clear</i>Limpar Filtros</button>
                     </div>
                 </div>
             </div>
@@ -1331,7 +1393,7 @@ function renderizarTabelaExecucao() {
     conveniosData.forEach(c => { if (c.codigo_siafi) conveniosMap.set(c.codigo_siafi, c); });
 
     let df = execucaoData.filter(e => {
-        if (filtrosExecucao.ano && e.ano_exercicio_receita != filtrosExecucao.ano) return false;
+        if (filtrosExecucao.ano && String(e.ano_empenho||'') != String(filtrosExecucao.ano)) return false;
         if (filtrosExecucao.numeroSiafi && !e.no_siafi?.toLowerCase().includes(filtrosExecucao.numeroSiafi.toLowerCase())) return false;
         if (filtrosExecucao.anoEmpenho && !String(e.ano_empenho||'').toLowerCase().includes(String(filtrosExecucao.anoEmpenho).toLowerCase())) return false;
         if (filtrosExecucao.numeroEmpenho && !e.no_empenho?.toLowerCase().includes(filtrosExecucao.numeroEmpenho.toLowerCase())) return false;
@@ -1430,7 +1492,7 @@ function renderizarTabelaExecucao() {
         </div>
         ${renderizarPaginacao('execucao', total)}
         <div style="display:flex;justify-content:flex-end;margin-top:12px;">
-            <button class="btn-topo" onclick="voltarAoTopo()"><i class="material-icons">arrow_upward</i> Topo</button>
+            <button class="btn-topo" onclick="voltarAoTopo()"><i class="material-icons">arrow_upward</i> Voltar ao Topo</button>
         </div>`;
 
     // Guarda df filtrado para o modal por índice
@@ -1529,7 +1591,7 @@ function renderizarArrecadacao() {
                 <div class="col-md-4 d-flex align-items-end">
                     <div class="d-flex gap-2 flex-wrap">
                         <button class="btn-pesquisa" onclick="aplicarFiltrosArrecadacao()"><i class="material-icons">search</i>Pesquisar</button>
-                        <button class="btn-limpar" onclick="limparFiltrosArrecadacao()"><i class="material-icons">clear</i>Limpar</button>
+                        <button class="btn-limpar" onclick="limparFiltrosArrecadacao()"><i class="material-icons">clear</i>Limpar Filtros</button>
                     </div>
                 </div>
             </div>
@@ -1648,7 +1710,7 @@ function renderizarTabelaArrecadacao() {
         </div>
         ${renderizarPaginacao('arrecadacao', total)}
         <div style="display:flex;justify-content:flex-end;margin-top:12px;">
-            <button class="btn-topo" onclick="voltarAoTopo()"><i class="material-icons">arrow_upward</i> Topo</button>
+            <button class="btn-topo" onclick="voltarAoTopo()"><i class="material-icons">arrow_upward</i> Voltar ao Topo</button>
         </div>`;
 
     window._dfArrecadacao = df;
@@ -1706,11 +1768,62 @@ function abrirModalDetalhesConvenio(item) {
         '📄 INFORMAÇÕES': ['objeto','situacao']
     };
     let html = '';
-    if (todosLinks.length > 0) {
-        html += `<div class="alert alert-info mb-3"><i class="material-icons">link</i> <strong>Documentos:</strong><div class="mt-2 d-flex flex-wrap gap-2">`;
-        todosLinks.forEach(l => { html += `<a href="${l.url}" target="_blank" class="btn-link-document"><i class="material-icons">open_in_new</i> ${l.label}</a>`; });
-        html += `</div></div>`;
+
+    // Seção de documentos — Inteiro Teor, Edital e Termos Aditivos
+    let docsHtml = '';
+    // Inteiro Teor
+    const linkIT = getLinkInteiroTeor(item);
+    if (linkIT) docsHtml += `<a href="${linkIT}" target="_blank" class="btn-link-document"><i class="material-icons">description</i> Inteiro Teor</a>`;
+    // Edital via coluna edital_retificacao_arquivos do próprio convênio
+    const editalCols = Object.keys(item).filter(k => k.includes('edital'));
+    editalCols.forEach(c => {
+        const v = item[c];
+        if (v && v !== '' && v !== '#' && (v.startsWith('http') || v.startsWith('www')))
+            docsHtml += `<a href="${v}" target="_blank" class="btn-link-document" style="background:#1a6e34;"><i class="material-icons">gavel</i> Edital de Licitação</a>`;
+    });
+    // Termos Aditivos
+    const aditivoCols = Object.keys(item).filter(k => k.includes('aditivo') || k.includes('termo_adit'));
+    aditivoCols.forEach((c,i) => {
+        const v = item[c];
+        if (v && v !== '' && v !== '#' && (v.startsWith('http') || v.startsWith('www')))
+            docsHtml += `<a href="${v}" target="_blank" class="btn-link-document" style="background:#0277bd;"><i class="material-icons">add_box</i> Termo Aditivo${aditivoCols.length>1?' '+(i+1):''}</a>`;
+    });
+    // Outros links genéricos não capturados acima
+    todosLinks.filter(l => {
+        const lc = l.label.toLowerCase();
+        return !lc.includes('inteiro teor') && !lc.includes('edital') && !lc.includes('aditivo');
+    }).forEach(l => { docsHtml += `<a href="${l.url}" target="_blank" class="btn-link-document"><i class="material-icons">open_in_new</i> ${l.label}</a>`; });
+
+    // Processo Licitatório
+    const numProcesso = item.numero_processo_formatado || item.numero_processo || '';
+    // Tenta buscar edital no dataset de licitações pelo número do processo ou SIAFI
+    let licitacao = getLicitacaoPorConvenio(item);
+    if (licitacao) {
+        const editalLic = licitacao.edital_retificacao_arquivos || licitacao.edital_arquivo || licitacao.link_edital || '';
+        if (editalLic && editalLic !== '' && editalLic !== '#' && editalLic.startsWith('http') && !docsHtml.includes('Edital de Licitação'))
+            docsHtml += `<a href="${editalLic}" target="_blank" class="btn-link-document" style="background:#1a6e34;"><i class="material-icons">gavel</i> Edital de Licitação</a>`;
+        // Termos aditivos do dataset de licitações
+        const aditivosLic = Object.keys(licitacao).filter(k => k.includes('aditivo'));
+        aditivosLic.forEach((c,i) => {
+            const v = licitacao[c];
+            if (v && v !== '' && v !== '#' && v.startsWith('http'))
+                docsHtml += `<a href="${v}" target="_blank" class="btn-link-document" style="background:#0277bd;"><i class="material-icons">add_box</i> Termo Aditivo${aditivosLic.length>1?' '+(i+1):''}</a>`;
+        });
     }
+
+    if (docsHtml) {
+        html += `<div class="alert alert-info mb-3"><i class="material-icons">link</i> <strong>Documentos:</strong><div class="mt-2 d-flex flex-wrap gap-2">${docsHtml}</div></div>`;
+    }
+
+    // Número do processo licitatório
+    if (numProcesso) {
+        html += `<div class="info-section"><h6>⚖️ PROCESSO LICITATÓRIO</h6>
+            <div class="info-row"><div class="info-label">Nº DO PROCESSO:</div><div class="info-value" style="font-weight:700;color:#1a3a5c;">${numProcesso}</div></div>
+            ${licitacao && licitacao.modalidade_licitacao ? `<div class="info-row"><div class="info-label">MODALIDADE:</div><div class="info-value">${licitacao.modalidade_licitacao}</div></div>` : ''}
+            ${licitacao && licitacao.objeto_licitacao ? `<div class="info-row"><div class="info-label">OBJETO DA LICITAÇÃO:</div><div class="info-value">${licitacao.objeto_licitacao}</div></div>` : ''}
+        </div>`;
+    }
+
     for (const [titulo, campos] of Object.entries(grupos)) {
         let conteudo = '';
         for (const campo of campos) {
