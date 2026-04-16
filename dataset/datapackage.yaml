@@ -1,9 +1,8 @@
 name: portal_convenios_entrada
-owner_org: ''
+owner_org: secretaria-de-estado-de-casa-civil
 profile: data-package
 resources:
-  - description: Insira a descrição/explicação detalhada deste recurso.
-    dialect:
+  - dialect:
       delimiter: ;
     encoding: utf-8-sig
     format: csv
@@ -36,9 +35,8 @@ resources:
         - name: data_da_arrecadacao
           type: datetime
     scheme: file
-    title: Insira um título humanamente legível para este recurso.
-  - description: Insira a descrição/explicação detalhada deste recurso.
-    dialect:
+    title: Arrecadação
+  - dialect:
       delimiter: ;
     encoding: utf-8-sig
     format: csv
@@ -109,9 +107,8 @@ resources:
         - name: 4deg_termo_aditivo
           type: string
     scheme: file
-    title: Insira um título humanamente legível para este recurso.
-  - description: Insira a descrição/explicação detalhada deste recurso.
-    dialect:
+    title: Dados Gerais Convênios
+  - dialect:
       delimiter: ;
     encoding: utf-8-sig
     format: csv
@@ -200,9 +197,8 @@ resources:
         - name: rpp_anulado_retencao
           type: integer
     scheme: file
-    title: Insira um título humanamente legível para este recurso.
-  - description: Insira a descrição/explicação detalhada deste recurso.
-    dialect:
+    title: Execução Convênios 2021
+  - dialect:
       delimiter: ;
     encoding: utf-8-sig
     format: csv
@@ -291,9 +287,8 @@ resources:
         - name: rpp_anulado_retencao
           type: integer
     scheme: file
-    title: Insira um título humanamente legível para este recurso.
-  - description: Insira a descrição/explicação detalhada deste recurso.
-    dialect:
+    title: Execução Convênios 2022
+  - dialect:
       delimiter: ;
     encoding: utf-8-sig
     format: csv
@@ -382,9 +377,8 @@ resources:
         - name: rpp_anulado_retencao
           type: integer
     scheme: file
-    title: Insira um título humanamente legível para este recurso.
-  - description: Insira a descrição/explicação detalhada deste recurso.
-    dialect:
+    title: Execução Convênios 2023
+  - dialect:
       delimiter: ;
     encoding: utf-8-sig
     format: csv
@@ -473,9 +467,8 @@ resources:
         - name: rpp_anulado_retencao
           type: integer
     scheme: file
-    title: Insira um título humanamente legível para este recurso.
-  - description: Insira a descrição/explicação detalhada deste recurso.
-    dialect:
+    title: Execução Convênios 2024
+  - dialect:
       delimiter: ;
     encoding: utf-8-sig
     format: csv
@@ -564,9 +557,8 @@ resources:
         - name: rpp_anulado_retencao
           type: integer
     scheme: file
-    title: Insira um título humanamente legível para este recurso.
-  - description: Insira a descrição/explicação detalhada deste recurso.
-    dialect:
+    title: Execução Convênios 2025
+  - dialect:
       delimiter: ;
     encoding: utf-8-sig
     format: csv
@@ -655,5 +647,5 @@ resources:
         - name: rpp_anulado_retencao
           type: integer
     scheme: file
-    title: Insira um título humanamente legível para este recurso.
-title: Portal_convenios_entrada
+    title: Execução Convênios 2026
+title: Convênios Entrada 2026
