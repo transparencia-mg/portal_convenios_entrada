@@ -430,16 +430,8 @@
 // ==================== CONSTANTES ====================
 const CONVENIOS_URL  = 'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/convenios.csv';
 const ARRECADACAO_URL = 'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/arrecadacao.csv';
+const EXECUCAO_URL   = 'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao.csv';
 const GITHUB_API_DATA = 'https://api.github.com/repos/transparencia-mg/portal_convenios_entrada/contents/dataset/data';
-const EXECUCAO_URLS = [
-    'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao2026.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao2025.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao2024.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao2023.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao2022.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao2021.csv',
-    'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao2020.csv'
-];
 
 // ==================== ESTADO GLOBAL ====================
 let conveniosData = [];
@@ -789,44 +781,17 @@ function toggleColSel(aba) {
 async function setupAtualizacaoData() {
     const el = document.getElementById('data-atualizacao-header');
     try {
-        // Tenta via GitHub API para achar o arquivo execucao mais recente
-        const resp = await fetch(GITHUB_API_DATA);
-        if (!resp.ok) throw new Error('api erro');
-        const arquivos = await resp.json();
-        const execFiles = arquivos
-            .filter(f => f.name && f.name.match(/^execucao\d{4}\.csv$/))
-            .sort((a,b) => b.name.localeCompare(a.name));
-        if (execFiles.length > 0) {
-            const arqRecente = execFiles[0].name;
-            const commitResp = await fetch(`https://api.github.com/repos/transparencia-mg/portal_convenios_entrada/commits?path=dataset/data/${arqRecente}&per_page=1`);
-            if (commitResp.ok) {
-                const commits = await commitResp.json();
-                if (commits && commits.length > 0) {
-                    el.textContent = new Date(commits[0].commit.committer.date).toLocaleDateString('pt-BR');
-                    return;
-                }
+        const commitResp = await fetch('https://api.github.com/repos/transparencia-mg/portal_convenios_entrada/commits?path=dataset/data/execucao.csv&per_page=1');
+        if (commitResp.ok) {
+            const commits = await commitResp.json();
+            if (commits && commits.length > 0) {
+                el.textContent = new Date(commits[0].commit.committer.date).toLocaleDateString('pt-BR');
+                return;
             }
-            // Fallback: extrai ano do nome
-            const match = arqRecente.match(/execucao(\d{4})\.csv/);
-            if (match) { el.textContent = match[1]; return; }
         }
-        // Fallback: tenta pegar data do commit do execucao2026.csv diretamente
-        const fb = await fetch('https://api.github.com/repos/transparencia-mg/portal_convenios_entrada/commits?path=dataset/data/execucao2026.csv&per_page=1');
-        if (fb.ok) {
-            const cs = await fb.json();
-            if (cs && cs.length > 0) { el.textContent = new Date(cs[0].commit.committer.date).toLocaleDateString('pt-BR'); return; }
-        }
-        el.textContent = '2026';
+        el.textContent = new Date().getFullYear();
     } catch(e) {
-        // Último fallback: data do commit do execucao2026.csv
-        try {
-            const fb = await fetch('https://api.github.com/repos/transparencia-mg/portal_convenios_entrada/commits?path=dataset/data/execucao2026.csv&per_page=1');
-            if (fb.ok) {
-                const cs = await fb.json();
-                if (cs && cs.length > 0) { document.getElementById('data-atualizacao-header').textContent = new Date(cs[0].commit.committer.date).toLocaleDateString('pt-BR'); return; }
-            }
-        } catch(e2) {}
-        document.getElementById('data-atualizacao-header').textContent = 'Não disponível';
+        el.textContent = 'Não disponível';
     }
 }
 
@@ -842,15 +807,13 @@ async function carregarDados() {
             conveniosData.forEach(c => { if (c.codigo_siafi?.trim()) siafiValidosSet.add(c.codigo_siafi.trim()); });
         }
         mostrarLoading(true, 'Carregando execução...');
-        for (const url of EXECUCAO_URLS) {
-            try {
-                const r = await fetch(url);
-                if (r.ok) {
-                    const dados = parseCSV(await r.text());
-                    execucaoData.push(...dados.filter(d => siafiValidosSet.has(d.no_siafi?.trim())));
-                }
-            } catch(e) {}
-        }
+        try {
+            const r = await fetch(EXECUCAO_URL);
+            if (r.ok) {
+                const dados = parseCSV(await r.text());
+                execucaoData.push(...dados.filter(d => siafiValidosSet.has(d.no_siafi?.trim())));
+            }
+        } catch(e) { console.error('Erro ao carregar execucao.csv', e); }
         mostrarLoading(true, 'Carregando arrecadação...');
         const arrecResp = await fetch(ARRECADACAO_URL);
         if (arrecResp.ok) {
