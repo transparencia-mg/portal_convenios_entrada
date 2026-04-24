@@ -1,0 +1,430 @@
+{
+  "name": "portal_convenios_entrada",
+  "owner_org": "secretaria-de-estado-de-casa-civil",
+  "profile": "data-package",
+  "resources": [
+    {
+      "description": "Insira a descrição/explicação detalhada deste recurso.",
+      "dialect": {
+        "delimiter": ";"
+      },
+      "encoding": "utf-8-sig",
+      "format": "csv",
+      "hashing": "md5",
+      "name": "arrecadacao",
+      "path": "data/arrecadacao.csv",
+      "profile": "tabular-data-resource",
+      "schema": {
+        "fields": [
+          {
+            "name": "uo",
+            "type": "integer"
+          },
+          {
+            "name": "tipo_siafi",
+            "type": "string"
+          },
+          {
+            "name": "no_siafi",
+            "type": "integer"
+          },
+          {
+            "name": "ano_exercicio_receita",
+            "type": "integer"
+          },
+          {
+            "name": "codigo_classificacao_receita",
+            "type": "string"
+          },
+          {
+            "name": "tipo_de_receita",
+            "type": "string"
+          },
+          {
+            "name": "fonte",
+            "type": "integer"
+          },
+          {
+            "name": "receita_arrecadada_r",
+            "type": "string"
+          },
+          {
+            "name": "classificacao_receita",
+            "type": "string"
+          },
+          {
+            "name": "registro_receita",
+            "type": "string"
+          },
+          {
+            "name": "data_da_arrecadacao",
+            "type": "string"
+          }
+        ]
+      },
+      "scheme": "file",
+      "title": "Insira um título humanamente legível para este recurso."
+    },
+    {
+      "description": "Insira a descrição/explicação detalhada deste recurso.",
+      "dialect": {
+        "delimiter": ";"
+      },
+      "encoding": "utf-8-sig",
+      "format": "csv",
+      "hashing": "md5",
+      "name": "convenios",
+      "path": "data/convenios.csv",
+      "profile": "tabular-data-resource",
+      "schema": {
+        "fields": [
+          {
+            "name": "unidade_orcamentaria",
+            "type": "integer"
+          },
+          {
+            "name": "codigo_sigcon",
+            "type": "string"
+          },
+          {
+            "name": "codigo_uniao",
+            "type": "integer"
+          },
+          {
+            "name": "codigo_plano_de_trabalho",
+            "type": "integer"
+          },
+          {
+            "name": "codigo_siafi",
+            "type": "integer"
+          },
+          {
+            "name": "sei",
+            "type": "string"
+          },
+          {
+            "name": "instrumento",
+            "type": "string"
+          },
+          {
+            "name": "titulo",
+            "type": "string"
+          },
+          {
+            "name": "proponente",
+            "type": "string"
+          },
+          {
+            "name": "concedente",
+            "type": "string"
+          },
+          {
+            "name": "esfera_concedente",
+            "type": "string"
+          },
+          {
+            "name": "objeto",
+            "type": "string"
+          },
+          {
+            "name": "situacao",
+            "type": "string"
+          },
+          {
+            "name": "tipo_de_contrapartida",
+            "type": "string"
+          },
+          {
+            "name": "data_assinatura",
+            "type": "string"
+          },
+          {
+            "name": "data_publicacao",
+            "type": "string"
+          },
+          {
+            "name": "inicio_vigencia",
+            "type": "string"
+          },
+          {
+            "name": "termino_vigencia",
+            "type": "string"
+          },
+          {
+            "name": "valor_proponente_r",
+            "type": "string"
+          },
+          {
+            "name": "valor_concedente_r",
+            "type": "string"
+          },
+          {
+            "name": "valor_total_convenio_r",
+            "type": "string"
+          },
+          {
+            "name": "fim_vigencia_inicial",
+            "type": "string"
+          },
+          {
+            "name": "inteiro_teor_do_instrumento_transferegov",
+            "type": "any"
+          },
+          {
+            "name": "inteiro_teor_do_instrumento_sigcon",
+            "type": "string"
+          },
+          {
+            "name": "ta_1",
+            "type": "any"
+          },
+          {
+            "name": "ta_2",
+            "type": "any"
+          },
+          {
+            "name": "ta_3",
+            "type": "any"
+          },
+          {
+            "name": "ta_4",
+            "type": "any"
+          },
+          {
+            "name": "ta_5",
+            "type": "any"
+          },
+          {
+            "name": "ta_6",
+            "type": "any"
+          },
+          {
+            "name": "ta_7",
+            "type": "any"
+          },
+          {
+            "name": "ta_8",
+            "type": "any"
+          },
+          {
+            "name": "ta_9",
+            "type": "any"
+          },
+          {
+            "name": "ta_10",
+            "type": "any"
+          },
+          {
+            "name": "ta_11",
+            "type": "any"
+          },
+          {
+            "name": "ta_12",
+            "type": "any"
+          },
+          {
+            "name": "ta_13",
+            "type": "any"
+          },
+          {
+            "name": "ta_16",
+            "type": "any"
+          },
+          {
+            "name": "ta_17",
+            "type": "any"
+          },
+          {
+            "name": "ta_20",
+            "type": "any"
+          },
+          {
+            "name": "ta_21",
+            "type": "any"
+          },
+          {
+            "name": "ta_22",
+            "type": "any"
+          }
+        ]
+      },
+      "scheme": "file",
+      "title": "Insira um título humanamente legível para este recurso."
+    },
+    {
+      "description": "Insira a descrição/explicação detalhada deste recurso.",
+      "dialect": {
+        "delimiter": ";"
+      },
+      "encoding": "utf-8-sig",
+      "format": "csv",
+      "hashing": "md5",
+      "name": "execucao",
+      "path": "data/execucao.csv",
+      "profile": "tabular-data-resource",
+      "schema": {
+        "fields": [
+          {
+            "name": "uo",
+            "type": "integer"
+          },
+          {
+            "name": "tipo_siafi",
+            "type": "string"
+          },
+          {
+            "name": "no_siafi",
+            "type": "integer"
+          },
+          {
+            "name": "ano_empenho",
+            "type": "integer"
+          },
+          {
+            "name": "no_empenho",
+            "type": "integer"
+          },
+          {
+            "name": "ue",
+            "type": "integer"
+          },
+          {
+            "name": "data_empenho",
+            "type": "string"
+          },
+          {
+            "name": "acao",
+            "type": "integer"
+          },
+          {
+            "name": "c",
+            "type": "integer"
+          },
+          {
+            "name": "g",
+            "type": "integer"
+          },
+          {
+            "name": "m",
+            "type": "integer"
+          },
+          {
+            "name": "ed",
+            "type": "integer"
+          },
+          {
+            "name": "id",
+            "type": "integer"
+          },
+          {
+            "name": "natureza_dea",
+            "type": "integer"
+          },
+          {
+            "name": "ed_dea",
+            "type": "integer"
+          },
+          {
+            "name": "f",
+            "type": "integer"
+          },
+          {
+            "name": "p",
+            "type": "integer"
+          },
+          {
+            "name": "valor_empenhado_r",
+            "type": "string"
+          },
+          {
+            "name": "valor_liquidado_r",
+            "type": "string"
+          },
+          {
+            "name": "valor_pago_r",
+            "type": "string"
+          },
+          {
+            "name": "cnpj_cpf_credor",
+            "type": "string"
+          },
+          {
+            "name": "razao_social_credor",
+            "type": "string"
+          },
+          {
+            "name": "despesa_empenhada",
+            "type": "string"
+          },
+          {
+            "name": "despesa_liquidada",
+            "type": "string"
+          },
+          {
+            "name": "pago_orcamentario",
+            "type": "string"
+          },
+          {
+            "name": "rpnp_inscrito",
+            "type": "string"
+          },
+          {
+            "name": "rpnp_cancelado",
+            "type": "string"
+          },
+          {
+            "name": "rpnp_restabelecido",
+            "type": "geopoint"
+          },
+          {
+            "name": "rpnp_liquidado",
+            "type": "geopoint"
+          },
+          {
+            "name": "rpnp_pago",
+            "type": "geopoint"
+          },
+          {
+            "name": "rpnp_anulado_pago",
+            "type": "geopoint"
+          },
+          {
+            "name": "rpp_inscrito",
+            "type": "geopoint"
+          },
+          {
+            "name": "rpp_cancelado",
+            "type": "geopoint"
+          },
+          {
+            "name": "rpp_restabelecido",
+            "type": "geopoint"
+          },
+          {
+            "name": "rpp_pago",
+            "type": "geopoint"
+          },
+          {
+            "name": "rpp_anulado_pago",
+            "type": "geopoint"
+          },
+          {
+            "name": "retido_rpnp_e_rpp",
+            "type": "geopoint"
+          },
+          {
+            "name": "rpnp_anulado_retencao",
+            "type": "geopoint"
+          },
+          {
+            "name": "rpp_anulado_retencao",
+            "type": "geopoint"
+          }
+        ]
+      },
+      "scheme": "file",
+      "title": "Insira um título humanamente legível para este recurso."
+    }
+  ],
+  "title": "Portal_convenios_entrada"
+}
