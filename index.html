@@ -481,20 +481,20 @@ const ordemColunasExecucao     = ['no_siafi','proponente','concedente','situacao
 const ordemColunasArrecadacao  = ['no_siafi','unidade_orcamentaria','ano_exercicio_receita','classificacao_orcamentaria','tipo_de_receita','fonte','data_da_arrecadacao','receita_arrecadada'];
 
 const colNomesIndividual = {
-    codigo_siafi:'Cód. SIAFI', codigo_sigcon:'Cód. SIGCON', sei:'SEI', instrumento:'Instrumento',
+    codigo_siafi:'Inteiro Teor', codigo_sigcon:'Cód. SIGCON', sei:'SEI', instrumento:'Instrumento',
     proponente:'Proponente', concedente:'Concedente', esfera_concedente:'Esfera Concedente',
     objeto:'Objeto', situacao:'Situação', tipo_contrapartida:'Tipo Contrapartida',
     data_assinatura:'Data Assinatura', data_publicacao:'Data Publicação',
     inicio_vigencia:'Início Vigência', termino_vigencia:'Término Vigência'
 };
 const colNomesExecucao = {
-    no_siafi:'Nº SIAFI', proponente:'Proponente', concedente:'Concedente',
+    no_siafi:'Inteiro Teor', proponente:'Proponente', concedente:'Concedente',
     situacao_convenio:'Situação', no_empenho:'Nº Empenho', ano_empenho:'Ano Empenho',
     razao_social_credor:'Razão Social Credor', cnpj_cpf_credor:'CNPJ/CPF Credor',
     valor_empenhado:'Valor Empenhado', valor_liquidado:'Valor Liquidado', valor_pago:'Valor Pago'
 };
 const colNomesArrecadacao = {
-    no_siafi:'Nº SIAFI', unidade_orcamentaria:'Unidade Orçamentária',
+    no_siafi:'Inteiro Teor', unidade_orcamentaria:'Unidade Orçamentária',
     ano_exercicio_receita:'Ano Exercício', classificacao_orcamentaria:'Classificação Orçamentária',
     tipo_de_receita:'Tipo de Receita', fonte:'Fonte',
     data_da_arrecadacao:'Data Arrecadação', receita_arrecadada:'Valor Arrecadado'
@@ -531,8 +531,20 @@ function formatarData(dataStr) {
 }
 
 function getLinkInteiroTeor(item) {
-    if (item.inteiro_teor_do_instrumento_sigcon && item.inteiro_teor_do_instrumento_sigcon !== '' && item.inteiro_teor_do_instrumento_sigcon !== '#') return item.inteiro_teor_do_instrumento_sigcon;
-    if (item.inteiro_teor_do_instrumento_transferegov && item.inteiro_teor_do_instrumento_transferegov !== '' && item.inteiro_teor_do_instrumento_transferegov !== '#') return item.inteiro_teor_do_instrumento_transferegov;
+    // Nova coluna do convenios.xlsx: "inteiro_teor"
+    const candidatos = [
+        item.inteiro_teor,
+        item.inteiro_teor_do_instrumento_sigcon,
+        item.inteiro_teor_do_instrumento_transferegov
+    ];
+    for (let v of candidatos) {
+        if (v === null || v === undefined) continue;
+        v = String(v).trim();
+        if (v !== '' && v !== '#' && v !== '-') {
+            if (v.toLowerCase().startsWith('www.')) v = 'https://' + v;
+            return v;
+        }
+    }
     return null;
 }
 
