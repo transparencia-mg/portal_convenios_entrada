@@ -1920,11 +1920,22 @@ function renderizarDownloads() {
     document.getElementById('downloads-content').innerHTML = `
         <div class="filter-container text-center p-4">
             <i class="material-icons" style="font-size:64px;color:#20445d;">cloud_download</i>
-            <h4 class="fw-bold mt-3">Portal de Dados Abertos</h4>
-            <p>Acesse os dados completos de Convênios, Execução e Arrecadação do Estado de Minas Gerais</p>
-            <a href="https://dados.mg.gov.br/dataset/convenios" target="_blank" class="btn-pesquisa">
-                <i class="material-icons">open_in_new</i> Portal Dados MG
-            </a>
+            <h4 class="fw-bold mt-3">Acesso aos Dados e Documentos</h4>
+            <p class="mb-4">Acesse os dados completos de Convênios, Execução e Arrecadação do Estado de Minas Gerais, bem como os documentos dos instrumentos firmados.</p>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a href="https://dados.mg.gov.br/dataset/convenios" target="_blank" class="btn-pesquisa" style="background:#20445d;font-size:14px;padding:10px 20px;height:auto;border-radius:8px;">
+                    <i class="material-icons" style="font-size:18px;">dataset</i> Portal Dados MG
+                    <span style="display:block;font-size:10px;font-weight:400;opacity:0.85;">dados.mg.gov.br</span>
+                </a>
+                <a href="https://app.powerbi.com/view?r=eyJrIjoiNGZlMjAzNTctNzRkMC00Nzg4LWFmNWQtZjBkOTZhZDYyNzJmIiwidCI6ImU1ZDNhZTdjLTliMzgtNDhkZS1hMDg3LWY2NzM0YTI4NzU3NCJ9" target="_blank" class="btn-pesquisa" style="background:#117A65;font-size:14px;padding:10px 20px;height:auto;border-radius:8px;">
+                    <i class="material-icons" style="font-size:18px;">bar_chart</i> Painel Power BI
+                    <span style="display:block;font-size:10px;font-weight:400;opacity:0.85;">Monitoramento de Convênios</span>
+                </a>
+                <a href="https://drive.google.com/drive/folders/1FzCWIXr9A-1wrBNf1RwFCLdtusXJjKwd" target="_blank" class="btn-pesquisa" style="background:#6c757d;font-size:14px;padding:10px 20px;height:auto;border-radius:8px;">
+                    <i class="material-icons" style="font-size:18px;">folder_open</i> Documentos Assinados
+                    <span style="display:block;font-size:10px;font-weight:400;opacity:0.85;">Google Drive — últimos 3 anos</span>
+                </a>
+            </div>
         </div>
         <div class="filter-container mt-3">
             <h5 class="fw-bold mb-3"><i class="material-icons me-2">info</i>Metadados — Dicionário de Variáveis</h5>
