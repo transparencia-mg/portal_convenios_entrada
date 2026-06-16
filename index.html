@@ -428,9 +428,13 @@
 
 <script>
 // ==================== CONSTANTES ====================
-const CONVENIOS_URL  = 'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/convenios.csv';
+const CONVENIOS_URL   = 'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/convenios.csv';
 const ARRECADACAO_URL = 'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/arrecadacao.csv';
-const EXECUCAO_URL   = 'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao.csv';
+const EXECUCAO_URLS   = [
+    'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao1.csv',
+    'https://raw.githubusercontent.com/transparencia-mg/portal_convenios_entrada/refs/heads/main/dataset/data/execucao2.csv'
+];
 const GITHUB_API_DATA = 'https://api.github.com/repos/transparencia-mg/portal_convenios_entrada/contents/dataset/data';
 
 // ==================== ESTADO GLOBAL ====================
@@ -818,14 +822,16 @@ async function carregarDados() {
             siafiValidosSet.clear();
             conveniosData.forEach(c => { if (c.codigo_siafi?.trim()) siafiValidosSet.add(c.codigo_siafi.trim()); });
         }
-        mostrarLoading(true, 'Carregando execução...');
-        try {
-            const r = await fetch(EXECUCAO_URL);
-            if (r.ok) {
-                const dados = parseCSV(await r.text());
-                execucaoData.push(...dados.filter(d => siafiValidosSet.has(d.no_siafi?.trim())));
-            }
-        } catch(e) { console.error('Erro ao carregar execucao.csv', e); }
+        mostrarLoading(true, 'Carregando execução (1/3)...');
+        await Promise.all(EXECUCAO_URLS.map(async (url, idx) => {
+            try {
+                const r = await fetch(url);
+                if (r.ok) {
+                    const dados = parseCSV(await r.text());
+                    execucaoData.push(...dados.filter(d => siafiValidosSet.has(d.no_siafi?.trim())));
+                }
+            } catch(e) { console.error(`Erro ao carregar ${url}`, e); }
+        }));
         mostrarLoading(true, 'Carregando arrecadação...');
         const arrecResp = await fetch(ARRECADACAO_URL);
         if (arrecResp.ok) {
