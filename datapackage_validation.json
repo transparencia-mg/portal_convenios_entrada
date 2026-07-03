@@ -1,6 +1,6 @@
 {
   "version": "4.16.6",
-  "time": 3.573,
+  "time": 4.123,
   "errors": [],
   "tasks": [
     {
@@ -71,7 +71,7 @@
           "rows": 157951
         }
       },
-      "time": 3.16,
+      "time": 3.632,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -209,13 +209,13 @@
         "scheme": "file",
         "title": "Convênios de Entrada",
         "stats": {
-          "hash": "d4916496e8d57ebeb401592a92f750da",
+          "hash": "a308bfa16e8aa6204ebaeed40491ea1c",
           "bytes": 799968,
           "fields": 23,
           "rows": 1337
         }
       },
-      "time": 0.072,
+      "time": 0.085,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -1241,7 +1241,7 @@
           "rows": 0
         }
       },
-      "time": 0.079,
+      "time": 0.099,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -60450,7 +60450,7 @@
           "rows": 0
         }
       },
-      "time": 0.078,
+      "time": 0.094,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -119659,7 +119659,7 @@
           "rows": 0
         }
       },
-      "time": 0.076,
+      "time": 0.09,
       "scope": [
         "hash-count-error",
         "byte-count-error",
