@@ -1,13 +1,12 @@
 import os
 import glob
-import subprocess
 import pandas as pd
 
 # ============================================================
 # CONFIGURAÇÕES
 # ============================================================
 
-BASE_DIR = r"C:\Users\kbomf\Google Drive\CGE\bi_atualizacao\portal_convenios_entrada"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = os.path.join(BASE_DIR, "upload")
 
 ARQUIVO_LINKS = os.path.join(BASE_DIR, "link_convenios.xlsx")
@@ -157,27 +156,9 @@ except Exception as e:
     print(f"Não foi possível remover: {e}")
 
 # ============================================================
-# GIT
+# (o git add/commit/push agora fica só em publicar.py,
+# executado por último no pipeline, depois de TODAS as etapas)
 # ============================================================
-
-print("Atualizando GitHub...")
-
-os.chdir(BASE_DIR)
-
-subprocess.run(["git", "add", "."], check=True)
-
-try:
-    subprocess.run(
-        ["git", "commit", "-m", "Atualização automática convênios"],
-        check=True
-    )
-except subprocess.CalledProcessError:
-    print("Nenhuma alteração para commit.")
-
-subprocess.run(
-    ["git", "push", "origin", "main"],
-    check=True
-)
 
 print()
 print("=" * 60)
