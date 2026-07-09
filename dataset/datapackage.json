@@ -1,6 +1,6 @@
 {
   "name": "portal_convenios_entrada",
-  "owner_org": "secretaria-de-estado-de-casa-civil",
+  "owner_org": "secretaria-de-estado-de-planejamento-e-gestao-seplag",
   "profile": "data-package",
   "resources": [
     {
@@ -693,5 +693,5 @@
       "title": "Execução 2021"
     }
   ],
-  "title": "Portal_convenios_entrada"
+  "title": "Portal - Convênios de Entrada"
 }
