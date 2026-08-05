@@ -204,6 +204,16 @@
         .table-badge { background: #1a3a5c; color: white; padding: 5px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; white-space: nowrap; }
 
         /* ============================================================
+           10b. DICIONÁRIO DE DADOS
+        ============================================================ */
+        .metadata-container { background: white; border-radius: 10px; box-shadow: 0 3px 12px rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 20px; }
+        .metadata-header { background: #20445d; color: white; padding: 12px 16px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .metadata-table code { background: #e2e8f0; color: #0f172a; padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+        .dic-tab-btn { background: #f0f4f8; border: none; padding: 7px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; color: #1a3a5c; cursor: pointer; transition: all 0.2s; }
+        .dic-tab-btn.active, .dic-tab-btn:hover { background: #1a3a5c; color: white; }
+        .dic-row-highlight { background: #fff8dc !important; }
+
+        /* ============================================================
            11. PAGINAÇÃO
         ============================================================ */
         .pagination-container {
@@ -368,6 +378,7 @@
             <li class="nav-item"><button class="nav-link" id="individual-tab" data-bs-toggle="tab" data-bs-target="#individual"><i class="material-icons">search</i>Consulta Individual</button></li>
             <li class="nav-item"><button class="nav-link" id="execucao-tab" data-bs-toggle="tab" data-bs-target="#execucao"><i class="material-icons">timeline</i>Execução</button></li>
             <li class="nav-item"><button class="nav-link" id="arrecadacao-tab" data-bs-toggle="tab" data-bs-target="#arrecadacao"><i class="material-icons">attach_money</i>Arrecadação</button></li>
+            <li class="nav-item"><button class="nav-link" id="dicionario-tab" data-bs-toggle="tab" data-bs-target="#dicionario"><i class="material-icons">menu_book</i>Dicionário de Dados</button></li>
             <li class="nav-item"><button class="nav-link" id="downloads-tab" data-bs-toggle="tab" data-bs-target="#downloads"><i class="material-icons">download</i>Downloads</button></li>
         </ul>
     </div>
@@ -385,6 +396,7 @@
         <div class="tab-pane fade" id="individual"><div id="individual-content"></div></div>
         <div class="tab-pane fade" id="execucao"><div id="execucao-content"></div></div>
         <div class="tab-pane fade" id="arrecadacao"><div id="arrecadacao-content"></div></div>
+        <div class="tab-pane fade" id="dicionario"><div id="dicionario-content"></div></div>
         <div class="tab-pane fade" id="downloads"><div id="downloads-content"></div></div>
     </div>
 </div>
@@ -805,9 +817,9 @@ async function setupAtualizacaoData() {
                 return;
             }
         }
-        el.textContent = new Date().getFullYear();
+        el.textContent = new Date().toLocaleDateString('pt-BR');
     } catch(e) {
-        el.textContent = 'Não disponível';
+        el.textContent = new Date().toLocaleDateString('pt-BR');
     }
 }
 
@@ -842,6 +854,7 @@ async function carregarDados() {
         renderizarIndividual();
         renderizarExecucao();
         renderizarArrecadacao();
+        renderizarDicionario();
         renderizarDownloads();
         setTimeout(iframeUpdateHeight, 500);
         // Carrega licitações em background (anos 2020-2026)
@@ -1891,38 +1904,6 @@ function abrirModalArrecadacao(item) {
 
 // ==================== DOWNLOADS ====================
 function renderizarDownloads() {
-    const metadata = [
-        { planilha:"CONVÊNIOS", campo:"codigo_siafi", descricao:"Código identificador do convênio no sistema SIAFI", tipo:"Texto" },
-        { planilha:"CONVÊNIOS", campo:"codigo_sigcon", descricao:"Código identificador do convênio no sistema SIGCON", tipo:"Texto" },
-        { planilha:"CONVÊNIOS", campo:"sei", descricao:"Número do processo no sistema SEI", tipo:"Texto" },
-        { planilha:"CONVÊNIOS", campo:"instrumento", descricao:"Tipo de instrumento formalizado", tipo:"Texto" },
-        { planilha:"CONVÊNIOS", campo:"proponente", descricao:"Nome do órgão ou entidade proponente", tipo:"Texto" },
-        { planilha:"CONVÊNIOS", campo:"concedente", descricao:"Nome do órgão ou entidade concedente", tipo:"Texto" },
-        { planilha:"CONVÊNIOS", campo:"valor_proponente", descricao:"Valor financeiro aportado pelo proponente", tipo:"Numérico (moeda)" },
-        { planilha:"CONVÊNIOS", campo:"valor_concedente", descricao:"Valor financeiro aportado pelo concedente", tipo:"Numérico (moeda)" },
-        { planilha:"CONVÊNIOS", campo:"valor_total_convenio", descricao:"Valor total do convênio", tipo:"Numérico (moeda)" },
-        { planilha:"CONVÊNIOS", campo:"objeto", descricao:"Descrição do objeto do convênio", tipo:"Texto" },
-        { planilha:"CONVÊNIOS", campo:"situacao", descricao:"Situação atual do convênio", tipo:"Texto" },
-        { planilha:"CONVÊNIOS", campo:"data_assinatura", descricao:"Data de assinatura do instrumento", tipo:"Data" },
-        { planilha:"CONVÊNIOS", campo:"data_publicacao", descricao:"Data de publicação no diário oficial", tipo:"Data" },
-        { planilha:"CONVÊNIOS", campo:"inicio_vigencia", descricao:"Data de início da vigência", tipo:"Data" },
-        { planilha:"CONVÊNIOS", campo:"termino_vigencia", descricao:"Data de término da vigência", tipo:"Data" },
-        { planilha:"EXECUÇÃO", campo:"no_siafi", descricao:"Número SIAFI do convênio", tipo:"Texto" },
-        { planilha:"EXECUÇÃO", campo:"no_empenho", descricao:"Número do empenho", tipo:"Texto" },
-        { planilha:"EXECUÇÃO", campo:"ano_empenho", descricao:"Ano do empenho", tipo:"Numérico" },
-        { planilha:"EXECUÇÃO", campo:"razao_social_credor", descricao:"Razão social do credor", tipo:"Texto" },
-        { planilha:"EXECUÇÃO", campo:"cnpj_cpf_credor", descricao:"CNPJ/CPF do credor", tipo:"Texto" },
-        { planilha:"EXECUÇÃO", campo:"valor_empenhado", descricao:"Valor empenhado", tipo:"Numérico (moeda)" },
-        { planilha:"EXECUÇÃO", campo:"valor_liquidado", descricao:"Valor liquidado", tipo:"Numérico (moeda)" },
-        { planilha:"EXECUÇÃO", campo:"valor_pago", descricao:"Valor pago", tipo:"Numérico (moeda)" },
-        { planilha:"ARRECADAÇÃO", campo:"no_siafi", descricao:"Número SIAFI do convênio", tipo:"Texto" },
-        { planilha:"ARRECADAÇÃO", campo:"ano_exercicio_receita", descricao:"Ano de exercício da receita", tipo:"Numérico" },
-        { planilha:"ARRECADAÇÃO", campo:"codigo_classificacao_receita", descricao:"Código de classificação da receita", tipo:"Texto" },
-        { planilha:"ARRECADAÇÃO", campo:"tipo_de_receita", descricao:"Tipo de receita arrecadada", tipo:"Texto" },
-        { planilha:"ARRECADAÇÃO", campo:"fonte", descricao:"Fonte de recurso", tipo:"Texto" },
-        { planilha:"ARRECADAÇÃO", campo:"data_da_arrecadacao", descricao:"Data da arrecadação", tipo:"Data" },
-        { planilha:"ARRECADAÇÃO", campo:"receita_arrecadada", descricao:"Valor arrecadado", tipo:"Numérico (moeda)" }
-    ];
     document.getElementById('downloads-content').innerHTML = `
         <div class="filter-container text-center p-4">
             <i class="material-icons" style="font-size:64px;color:#20445d;">cloud_download</i>
@@ -1942,18 +1923,141 @@ function renderizarDownloads() {
                     <span style="display:block;font-size:10px;font-weight:400;opacity:0.85;">Google Drive — últimos 3 anos</span>
                 </a>
             </div>
-        </div>
-        <div class="filter-container mt-3">
-            <h5 class="fw-bold mb-3"><i class="material-icons me-2">info</i>Metadados — Dicionário de Variáveis</h5>
-            <div class="table-container">
-                <table class="table metadata-table">
-                    <thead><tr><th>Planilha</th><th>Campo</th><th>Descrição</th><th>Tipo</th></tr></thead>
-                    <tbody>${metadata.map(m=>`<tr><td><span class="badge bg-secondary">${m.planilha}</span></td><td><code>${m.campo}</code></td><td>${m.descricao}</td><td>${m.tipo}</td></tr>`).join('')}</tbody>
-                </table>
-            </div>
         </div>`;
     setTimeout(iframeUpdateHeight, 300);
 }
+
+// ==================== DICIONÁRIO DE DADOS ====================
+const DICIONARIO_DADOS = {
+    convenios: [
+        { campo:"codigo_siafi", descricao:"Código identificador do convênio no sistema SIAFI", tipo:"Texto" },
+        { campo:"codigo_sigcon", descricao:"Código identificador do convênio no sistema SIGCON", tipo:"Texto" },
+        { campo:"sei", descricao:"Número do processo no sistema SEI", tipo:"Texto" },
+        { campo:"instrumento", descricao:"Tipo de instrumento formalizado", tipo:"Texto" },
+        { campo:"proponente", descricao:"Nome do órgão ou entidade proponente", tipo:"Texto" },
+        { campo:"concedente", descricao:"Nome do órgão ou entidade concedente", tipo:"Texto" },
+        { campo:"valor_proponente", descricao:"Valor financeiro aportado pelo proponente", tipo:"Numérico (moeda)" },
+        { campo:"valor_concedente", descricao:"Valor financeiro aportado pelo concedente", tipo:"Numérico (moeda)" },
+        { campo:"valor_total_convenio", descricao:"Valor total do convênio", tipo:"Numérico (moeda)" },
+        { campo:"objeto", descricao:"Descrição do objeto do convênio", tipo:"Texto" },
+        { campo:"situacao", descricao:"Situação atual do convênio", tipo:"Texto" },
+        { campo:"data_assinatura", descricao:"Data de assinatura do instrumento", tipo:"Data" },
+        { campo:"data_publicacao", descricao:"Data de publicação no diário oficial", tipo:"Data" },
+        { campo:"inicio_vigencia", descricao:"Data de início da vigência", tipo:"Data" },
+        { campo:"termino_vigencia", descricao:"Data de término da vigência", tipo:"Data" },
+    ],
+    execucao: [
+        { campo:"no_siafi", descricao:"Número SIAFI do convênio", tipo:"Texto" },
+        { campo:"no_empenho", descricao:"Número do empenho", tipo:"Texto" },
+        { campo:"ano_empenho", descricao:"Ano do empenho", tipo:"Numérico" },
+        { campo:"razao_social_credor", descricao:"Razão social do credor", tipo:"Texto" },
+        { campo:"cnpj_cpf_credor", descricao:"CNPJ/CPF do credor", tipo:"Texto" },
+        { campo:"valor_empenhado", descricao:"Valor empenhado", tipo:"Numérico (moeda)" },
+        { campo:"valor_liquidado", descricao:"Valor liquidado", tipo:"Numérico (moeda)" },
+        { campo:"valor_pago", descricao:"Valor pago", tipo:"Numérico (moeda)" },
+    ],
+    arrecadacao: [
+        { campo:"no_siafi", descricao:"Número SIAFI do convênio", tipo:"Texto" },
+        { campo:"ano_exercicio_receita", descricao:"Ano de exercício da receita", tipo:"Numérico" },
+        { campo:"codigo_classificacao_receita", descricao:"Código de classificação da receita", tipo:"Texto" },
+        { campo:"tipo_de_receita", descricao:"Tipo de receita arrecadada", tipo:"Texto" },
+        { campo:"fonte", descricao:"Fonte de recurso", tipo:"Texto" },
+        { campo:"data_da_arrecadacao", descricao:"Data da arrecadação", tipo:"Data" },
+        { campo:"receita_arrecadada", descricao:"Valor arrecadado", tipo:"Numérico (moeda)" },
+    ],
+};
+
+function renderizarDicionario() {
+    const container = document.getElementById('dicionario-content');
+    if (!container) return;
+
+    const labelsTabela = { convenios: 'Convênios', execucao: 'Execução', arrecadacao: 'Arrecadação' };
+    const coresTabela  = { convenios: '#1a3a5c', execucao: '#28a745', arrecadacao: '#b93c42' };
+    const tabelas = Object.keys(DICIONARIO_DADOS);
+
+    container.innerHTML = `
+        <div class="filter-container">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <i class="material-icons" style="font-size:32px;color:#20445d;">menu_book</i>
+                <div>
+                    <h5 style="font-size:15px;font-weight:700;color:#20445d;margin:0;">Dicionário de Dados</h5>
+                    <p style="color:#6c757d;font-size:12px;margin:0;">Descrição de todas as colunas de cada tabela do dataset de Convênios de Entrada</p>
+                </div>
+            </div>
+            <div style="margin-top:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <input type="text" id="dicBusca" class="form-control" style="height:36px;font-size:12px;max-width:340px;padding:4px 12px;" placeholder="Buscar campo ou descrição em qualquer tabela..." oninput="buscarDicionario(this.value)">
+            </div>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;" id="dicTabs">
+            <button class="dic-tab-btn active" onclick="mostrarTabelaDic('todas',this)">Todas as Tabelas</button>
+            ${tabelas.map(t=>`<button class="dic-tab-btn" onclick="mostrarTabelaDic('${t}',this)">${labelsTabela[t]||t}</button>`).join('')}
+        </div>
+
+        <div id="dicConteudo">
+            ${tabelas.map(tabela => `
+            <div class="metadata-container dic-section" data-tabela="${tabela}">
+                <div class="metadata-header">
+                    <i class="material-icons" style="font-size:16px;vertical-align:middle;">table_chart</i>
+                    ${labelsTabela[tabela]||tabela}
+                    <span style="margin-left:8px;background:rgba(255,255,255,0.2);padding:2px 10px;border-radius:10px;font-size:11px;">${DICIONARIO_DADOS[tabela].length} campos</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table metadata-table" id="dicTabela_${tabela}">
+                        <thead><tr>
+                            <th>Campo</th>
+                            <th>Descrição</th>
+                            <th>Tipo</th>
+                            <th>Tabela</th>
+                        </tr></thead>
+                        <tbody>
+                            ${DICIONARIO_DADOS[tabela].map(row=>`<tr class="dic-linha">
+                                <td><code>${row.campo}</code></td>
+                                <td>${row.descricao}</td>
+                                <td><span style="background:#e2e8f0;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;color:#475569;">${row.tipo}</span></td>
+                                <td><span style="background:${coresTabela[tabela]||'#1a3a5c'};color:white;padding:2px 10px;border-radius:12px;font-size:10px;font-weight:600;">${labelsTabela[tabela]||tabela}</span></td>
+                            </tr>`).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>`).join('')}
+        </div>`;
+
+    setTimeout(iframeUpdateHeight, 300);
+}
+
+window.mostrarTabelaDic = function(qual, btnEl) {
+    document.querySelectorAll('.dic-tab-btn').forEach(b => b.classList.remove('active'));
+    if (btnEl) btnEl.classList.add('active');
+    document.querySelectorAll('.dic-section').forEach(s => {
+        s.style.display = (qual === 'todas' || s.dataset.tabela === qual) ? 'block' : 'none';
+    });
+    const busca = document.getElementById('dicBusca');
+    if (busca) busca.value = '';
+    document.querySelectorAll('.dic-linha').forEach(r => { r.style.display = ''; r.classList.remove('dic-row-highlight'); });
+};
+
+window.buscarDicionario = function(termo) {
+    const t = (termo||'').toLowerCase().trim();
+    document.querySelectorAll('.dic-section').forEach(s => s.style.display = 'block');
+    document.querySelectorAll('.dic-tab-btn').forEach(b => b.classList.remove('active'));
+    const btnTodas = document.querySelector('.dic-tab-btn');
+    if (btnTodas) btnTodas.classList.add('active');
+    if (!t) {
+        document.querySelectorAll('.dic-linha').forEach(r => { r.style.display = ''; r.classList.remove('dic-row-highlight'); });
+        return;
+    }
+    document.querySelectorAll('.dic-linha').forEach(row => {
+        const texto = row.textContent.toLowerCase();
+        const match = texto.includes(t);
+        row.style.display = match ? '' : 'none';
+        if (match) row.classList.add('dic-row-highlight'); else row.classList.remove('dic-row-highlight');
+    });
+    document.querySelectorAll('.dic-section').forEach(s => {
+        const visiveis = s.querySelectorAll('.dic-linha:not([style*="display: none"])').length;
+        s.style.display = visiveis > 0 ? 'block' : 'none';
+    });
+};
 
 // ==================== EXPORTAÇÕES ====================
 function exportarFormalizadosCSV() { const csv=Papa.unparse(conveniosData,{delimiter:';'}); const blob=new Blob(['\uFEFF'+csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='formalizados.csv'; a.click(); }
