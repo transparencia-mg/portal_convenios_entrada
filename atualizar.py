@@ -1,10 +1,16 @@
 import subprocess
 import sys
 
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+UPLOAD_DIR = BASE_DIR / "upload"
+ARQUIVO_LINKS = BASE_DIR / "link_convenios.xlsx"
+
 SCRIPTS = [
-    "processar.py",
-    "particionar_execucao.py",
-    "publicar.py",
+    "scripts/processar.py",
+    "scripts/particionar_execucao.py",
+    "scripts/publicar.py",
 ]
 
 for script in SCRIPTS:

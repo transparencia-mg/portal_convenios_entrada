@@ -1,15 +1,17 @@
-import os
-import glob
+from pathlib import Path
 import pandas as pd
 
 # ============================================================
-# CONFIGURAÇÕES
+# CAMINHOS
 # ============================================================
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_DIR = os.path.join(BASE_DIR, "upload")
+BASE_DIR = Path(__file__).resolve().parent.parent
+UPLOAD_DIR = BASE_DIR / "upload"
+ARQUIVO_LINKS = BASE_DIR / "link_convenios.xlsx"
 
-ARQUIVO_LINKS = os.path.join(BASE_DIR, "link_convenios.xlsx")
+# ============================================================
+# COLUNAS A REMOVER
+# ============================================================
 
 COLUNAS_EXCLUIR = [
     "Inteiro teor do Instrumento - TransfereGov",
@@ -39,31 +41,35 @@ COLUNAS_EXCLUIR = [
 ]
 
 # ============================================================
-# LOCALIZA ARQUIVO SIGCON
+# LOCALIZA O ARQUIVO SIGCON
 # ============================================================
 
-arquivos = glob.glob(
-    os.path.join(
-        UPLOAD_DIR,
-        "Consultas SIGCON - Instrumentos de 2021 até 2026*.xlsx"
-    )
+arquivos = sorted(
+    UPLOAD_DIR.glob("Consultas SIGCON - Instrumentos de 2021 até 2026*.xlsx")
 )
 
+print(f"Diretório do projeto : {BASE_DIR}")
+print(f"Pasta upload         : {UPLOAD_DIR}")
+
 if not arquivos:
+    print("\nArquivos encontrados na pasta upload:")
+    for arq in sorted(UPLOAD_DIR.glob("*")):
+        print(f" - {arq.name}")
+
     raise FileNotFoundError(
-        "Arquivo 'Consultas SIGCON - Instrumentos de 2021 até 2026' não encontrado."
+        "Arquivo 'Consultas SIGCON - Instrumentos de 2021 até 2026*.xlsx' não encontrado."
     )
 
 arquivo_sigcon = arquivos[0]
 
-print(f"Arquivo encontrado:")
-print(arquivo_sigcon)
+print("\nArquivo encontrado:")
+print(arquivo_sigcon.name)
 
 # ============================================================
 # LEITURA DOS ARQUIVOS
 # ============================================================
 
-print("Lendo arquivo SIGCON...")
+print("\nLendo arquivo SIGCON...")
 df = pd.read_excel(arquivo_sigcon)
 
 print("Lendo link_convenios.xlsx...")
@@ -80,7 +86,7 @@ if cols_existentes:
     df = df.drop(columns=cols_existentes)
 
 # ============================================================
-# RELACIONAMENTO
+# VALIDAÇÕES
 # ============================================================
 
 if "Código SIAFI" not in df.columns:
@@ -98,7 +104,11 @@ if "Inteiro Teor" not in links.columns:
         "Coluna 'Inteiro Teor' não encontrada em link_convenios.xlsx."
     )
 
-print("Criando dicionário de relacionamento...")
+# ============================================================
+# RELACIONAMENTO
+# ============================================================
+
+print("Criando relacionamento...")
 
 mapa = dict(
     zip(
@@ -109,19 +119,16 @@ mapa = dict(
 
 nova_coluna = (
     df["Código SIAFI"]
-    .astype(str)
-    .str.strip()
-    .map(mapa)
+      .astype(str)
+      .str.strip()
+      .map(mapa)
 )
 
 # ============================================================
-# INSERE COLUNA W
+# INSERE A COLUNA
 # ============================================================
 
-posicao_w = 22  # coluna W (índice 22)
-
-if posicao_w > len(df.columns):
-    posicao_w = len(df.columns)
+posicao_w = min(22, len(df.columns))
 
 df.insert(
     posicao_w,
@@ -130,13 +137,10 @@ df.insert(
 )
 
 # ============================================================
-# SALVA
+# SALVA O RESULTADO
 # ============================================================
 
-arquivo_saida = os.path.join(
-    UPLOAD_DIR,
-    "convenios.xlsx"
-)
+arquivo_saida = UPLOAD_DIR / "convenios.xlsx"
 
 print("Salvando convenios.xlsx...")
 
@@ -146,18 +150,17 @@ df.to_excel(
 )
 
 # ============================================================
-# REMOVE ARQUIVO ORIGINAL
+# REMOVE O ARQUIVO ORIGINAL
 # ============================================================
 
 try:
-    os.remove(arquivo_sigcon)
+    arquivo_sigcon.unlink()
     print("Arquivo original removido.")
 except Exception as e:
-    print(f"Não foi possível remover: {e}")
+    print(f"Não foi possível remover o arquivo original: {e}")
 
 # ============================================================
-# (o git add/commit/push agora fica só em publicar.py,
-# executado por último no pipeline, depois de TODAS as etapas)
+# FINALIZAÇÃO
 # ============================================================
 
 print()

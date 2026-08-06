@@ -6,8 +6,9 @@ import time
 # ============================================================
 # CONFIGURAÇÕES
 # ============================================================
+from pathlib import Path
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = Path(__file__).resolve().parent.parent
 BRANCH = "main"
 MAX_TENTATIVAS = 3
 ESPERA_ENTRE_TENTATIVAS = 5  # segundos

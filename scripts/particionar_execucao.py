@@ -7,10 +7,12 @@ import pandas as pd
 # CONFIGURAÇÕES
 # ============================================================
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_DIR = os.path.join(BASE_DIR, "upload")
+from pathlib import Path
 
-LINHAS_POR_ARQUIVO = 65000
+BASE_DIR = Path(__file__).resolve().parent.parent
+UPLOAD_DIR = BASE_DIR / "upload"
+
+LINHAS_POR_ARQUIVO = 50000
 
 # ============================================================
 # LOCALIZA ARQUIVO DE EXECUÇÃO
