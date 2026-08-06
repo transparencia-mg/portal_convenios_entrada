@@ -472,8 +472,8 @@ let buscas = { individual: '', execucao: '', arrecadacao: '' };
 
 let ordenacaoFormalizados = { coluna: 'proponente', direcao: 'asc' };
 let ordenacaoIndividual   = { coluna: 'proponente',  direcao: 'asc' };
-let ordenacaoExecucao     = { coluna: 'no_siafi',    direcao: 'asc' };
-let ordenacaoArrecadacao  = { coluna: 'no_siafi',    direcao: 'asc' };
+let ordenacaoExecucao     = { coluna: 'proponente',  direcao: 'asc' };
+let ordenacaoArrecadacao  = { coluna: 'unidade_orcamentaria', direcao: 'asc' };
 
 let colunasVisiveisIndividual = {
     codigo_siafi: true, codigo_sigcon: true, sei: true, instrumento: true,
@@ -535,6 +535,22 @@ function formatarCpfCnpj(valor) {
     if (d.length === 11) return d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
     if (d.length === 14) return d.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
     return valor;
+}
+
+// Correções manuais de dados divergentes na fonte (origem: convenios.csv),
+// aplicadas apenas na exibição/uso interno do dashboard.
+const CORRECOES_DATA_ASSINATURA = {
+    '9445606': '2024-07-04',
+    '9517436': '2026-01-01'
+};
+
+function aplicarCorrecoesManuais(dados) {
+    dados.forEach(c => {
+        const chave = c.codigo_siafi?.trim();
+        if (chave && CORRECOES_DATA_ASSINATURA[chave]) {
+            c.data_assinatura = CORRECOES_DATA_ASSINATURA[chave];
+        }
+    });
 }
 
 function formatarData(dataStr) {
@@ -607,6 +623,27 @@ function voltarAoTopo() {
 function iframeUpdateHeight() {
     const h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) + 30;
     try { window.parent.postMessage({ iframeHeight: h, iframeResize: true, type: 'resize' }, '*'); } catch(e) {}
+}
+
+// ==================== PRESERVAR FOCO DO CAMPO DE BUSCA ====================
+// A toolbar (incluindo o input de busca rápida) é reconstruída via innerHTML
+// a cada renderização de tabela, o que substitui o elemento <input> e faz o
+// campo perder o foco/cursor. Estas funções salvam o estado do foco antes da
+// renderização e o restauram no novo elemento depois.
+function capturarFocoBusca(toolbarId) {
+    const input = document.querySelector(`#${toolbarId} .table-search-input`);
+    if (input && document.activeElement === input) {
+        return { focado: true, inicio: input.selectionStart, fim: input.selectionEnd };
+    }
+    return { focado: false };
+}
+function restaurarFocoBusca(toolbarId, estado) {
+    if (!estado || !estado.focado) return;
+    const input = document.querySelector(`#${toolbarId} .table-search-input`);
+    if (input) {
+        input.focus();
+        try { input.setSelectionRange(estado.inicio, estado.fim); } catch(e) {}
+    }
 }
 
 // ==================== DEBOUNCE BUSCA ====================
@@ -830,6 +867,7 @@ async function carregarDados() {
         const convResp = await fetch(CONVENIOS_URL);
         if (convResp.ok) {
             conveniosData = parseCSV(await convResp.text());
+            aplicarCorrecoesManuais(conveniosData);
             conveniosData.forEach(c => { if (!c.ano && c.data_assinatura) c.ano = getAnoFromData(c.data_assinatura); });
             siafiValidosSet.clear();
             conveniosData.forEach(c => { if (c.codigo_siafi?.trim()) siafiValidosSet.add(c.codigo_siafi.trim()); });
@@ -941,7 +979,7 @@ function renderizarFormalizados() {
                 </div>
                 <div class="col-12 mt-2">
                     <div class="d-flex gap-2 flex-wrap">
-                        <button class="btn-pesquisa" onclick="aplicarFiltrosFormalizados()"><i class="material-icons">search</i>Pesquisar</button>
+                        <button class="btn-pesquisa" onclick="aplicarFiltrosFormalizados()"><i class="material-icons">search</i>Atualizar Filtros</button>
                         <button class="btn-limpar" onclick="limparFiltrosFormalizados()"><i class="material-icons">clear</i>Limpar Filtros</button>
                     </div>
                 </div>
@@ -1154,7 +1192,7 @@ function renderizarIndividual() {
                 </div>
                 <div class="col-md-6 d-flex align-items-end">
                     <div class="d-flex gap-2 flex-wrap">
-                        <button class="btn-pesquisa" onclick="aplicarFiltrosIndividual()"><i class="material-icons">search</i>Pesquisar</button>
+                        <button class="btn-pesquisa" onclick="aplicarFiltrosIndividual()"><i class="material-icons">search</i>Atualizar Filtros</button>
                         <button class="btn-limpar" onclick="limparFiltrosIndividual()"><i class="material-icons">clear</i>Limpar Filtros</button>
                     </div>
                 </div>
@@ -1207,6 +1245,7 @@ function renderizarTabelaIndividual() {
     const totalVT = df.reduce((s,i)=>s+(parseFloat(i.valor_total_convenio)||0),0);
 
     const toolbar = document.getElementById('toolbar-individual');
+    const _focoBusca = capturarFocoBusca('toolbar-individual');
     if (toolbar) toolbar.innerHTML = `
         <div class="toolbar">
             <div class="toolbar-left">
@@ -1229,6 +1268,7 @@ function renderizarTabelaIndividual() {
                 </div>
             </div>
         </div>`;
+    restaurarFocoBusca('toolbar-individual', _focoBusca);
 
     const tab = document.getElementById('tabela-individual');
     if (!tab) return;
@@ -1360,7 +1400,7 @@ function renderizarExecucao() {
                 </div>
                 <div class="col-md-9 d-flex align-items-end">
                     <div class="d-flex gap-2 flex-wrap">
-                        <button class="btn-pesquisa" onclick="aplicarFiltrosExecucao()"><i class="material-icons">search</i>Pesquisar</button>
+                        <button class="btn-pesquisa" onclick="aplicarFiltrosExecucao()"><i class="material-icons">search</i>Atualizar Filtros</button>
                         <button class="btn-limpar" onclick="limparFiltrosExecucao()"><i class="material-icons">clear</i>Limpar Filtros</button>
                     </div>
                 </div>
@@ -1423,6 +1463,7 @@ function renderizarTabelaExecucao() {
     const totalPago = df.reduce((s,i)=>s+(parseFloat(i.valor_pago)||0),0);
 
     const toolbar = document.getElementById('toolbar-execucao');
+    const _focoBusca = capturarFocoBusca('toolbar-execucao');
     if (toolbar) toolbar.innerHTML = `
         <div class="toolbar">
             <div class="toolbar-left">
@@ -1445,6 +1486,7 @@ function renderizarTabelaExecucao() {
                 </div>
             </div>
         </div>`;
+    restaurarFocoBusca('toolbar-execucao', _focoBusca);
 
     const tab = document.getElementById('tabela-execucao');
     if (!tab) return;
@@ -1584,7 +1626,7 @@ function renderizarArrecadacao() {
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
                     <div class="d-flex gap-2 flex-wrap">
-                        <button class="btn-pesquisa" onclick="aplicarFiltrosArrecadacao()"><i class="material-icons">search</i>Pesquisar</button>
+                        <button class="btn-pesquisa" onclick="aplicarFiltrosArrecadacao()"><i class="material-icons">search</i>Atualizar Filtros</button>
                         <button class="btn-limpar" onclick="limparFiltrosArrecadacao()"><i class="material-icons">clear</i>Limpar Filtros</button>
                     </div>
                 </div>
@@ -1644,6 +1686,7 @@ function renderizarTabelaArrecadacao() {
     const totalArr = df.reduce((s,i)=>s+(parseFloat(i.receita_arrecadada)||0),0);
 
     const toolbar = document.getElementById('toolbar-arrecadacao');
+    const _focoBusca = capturarFocoBusca('toolbar-arrecadacao');
     if (toolbar) toolbar.innerHTML = `
         <div class="toolbar">
             <div class="toolbar-left">
@@ -1666,6 +1709,7 @@ function renderizarTabelaArrecadacao() {
                 </div>
             </div>
         </div>`;
+    restaurarFocoBusca('toolbar-arrecadacao', _focoBusca);
 
     const tab = document.getElementById('tabela-arrecadacao');
     if (!tab) return;
