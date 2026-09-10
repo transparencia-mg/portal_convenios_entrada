@@ -1,6 +1,6 @@
 {
   "version": "4.16.6",
-  "time": 4.128,
+  "time": 4.22,
   "errors": [],
   "tasks": [
     {
@@ -71,7 +71,7 @@
           "rows": 160633
         }
       },
-      "time": 3.527,
+      "time": 3.619,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -209,13 +209,13 @@
         "scheme": "file",
         "title": "Convênios de Entrada",
         "stats": {
-          "hash": "b99ad76e7ad29f21eee43e94e2b2c8b9",
-          "bytes": 859484,
+          "hash": "0021b1843a8565c897600d5764e9a422",
+          "bytes": 863574,
           "fields": 23,
           "rows": 1420
         }
       },
-      "time": 0.087,
+      "time": 0.088,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -266,7 +266,7 @@
             "2600000,0",
             "2888888,89",
             "22/09/2025",
-            "https://drive.google.com/file/d/1ZuvWk48eS2Obi3uI2Q1S3hrLtE998n47/view"
+            "https://nuvem.cge.mg.gov.br/index.php/s/DNoiWeTLmCKjByw"
           ],
           "rowNumber": 171,
           "rowPosition": 172,
@@ -1284,7 +1284,7 @@
           "rows": 0
         }
       },
-      "time": 0.093,
+      "time": 0.094,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -60493,7 +60493,7 @@
           "rows": 0
         }
       },
-      "time": 0.091,
+      "time": 0.092,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -119702,7 +119702,7 @@
           "rows": 0
         }
       },
-      "time": 0.091,
+      "time": 0.09,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -178911,7 +178911,7 @@
           "rows": 0
         }
       },
-      "time": 0.092,
+      "time": 0.091,
       "scope": [
         "hash-count-error",
         "byte-count-error",
