@@ -1,6 +1,6 @@
 {
   "version": "4.16.6",
-  "time": 4.22,
+  "time": 4.05,
   "errors": [],
   "tasks": [
     {
@@ -71,7 +71,7 @@
           "rows": 160633
         }
       },
-      "time": 3.619,
+      "time": 3.515,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -209,13 +209,13 @@
         "scheme": "file",
         "title": "Convênios de Entrada",
         "stats": {
-          "hash": "0021b1843a8565c897600d5764e9a422",
-          "bytes": 863574,
+          "hash": "b5d51e2d262fae7cc309c106dd6fe01e",
+          "bytes": 863794,
           "fields": 23,
           "rows": 1420
         }
       },
-      "time": 0.088,
+      "time": 0.084,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -309,7 +309,7 @@
             "0,0",
             "0,0",
             "30/08/2026",
-            ""
+            "https://nuvem.cge.mg.gov.br/index.php/s/3je8MbXPHTMPiH2"
           ],
           "rowNumber": 544,
           "rowPosition": 545,
@@ -352,7 +352,7 @@
             "0,0",
             "0,0",
             "30/08/2026",
-            ""
+            "https://nuvem.cge.mg.gov.br/index.php/s/ezRekmfGzw7TqS4"
           ],
           "rowNumber": 545,
           "rowPosition": 546,
@@ -395,7 +395,7 @@
             "0,0",
             "0,0",
             "30/08/2026",
-            ""
+            "https://nuvem.cge.mg.gov.br/index.php/s/FdP7CXTxzcXJnn4"
           ],
           "rowNumber": 546,
           "rowPosition": 547,
@@ -438,7 +438,7 @@
             "0,0",
             "0,0",
             "30/08/2026",
-            ""
+            "https://nuvem.cge.mg.gov.br/index.php/s/wyiceeaoCd2nQbD"
           ],
           "rowNumber": 547,
           "rowPosition": 548,
@@ -1284,7 +1284,7 @@
           "rows": 0
         }
       },
-      "time": 0.094,
+      "time": 0.08,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -60493,7 +60493,7 @@
           "rows": 0
         }
       },
-      "time": 0.092,
+      "time": 0.079,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -119702,7 +119702,7 @@
           "rows": 0
         }
       },
-      "time": 0.09,
+      "time": 0.077,
       "scope": [
         "hash-count-error",
         "byte-count-error",
@@ -178911,7 +178911,7 @@
           "rows": 0
         }
       },
-      "time": 0.091,
+      "time": 0.079,
       "scope": [
         "hash-count-error",
         "byte-count-error",
